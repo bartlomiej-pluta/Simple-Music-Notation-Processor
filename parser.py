@@ -1,5 +1,5 @@
-from tokenizer import *
-from note import *
+from Tokenizer import *
+from Note import *
 from AST import *
 
 class ParseError(Exception):
@@ -154,8 +154,8 @@ def parse(input):
     while len(input) > 0:
         root.append(parseToken(input, root))
     return root
-  
-def test():
+
+if __name__ == "__main__":      
     try:
         with open(sys.argv[1], 'r') as source:
             lines = [line.rstrip('\n') for line in source.readlines()]
@@ -170,7 +170,4 @@ def test():
         
     except ParseError as e:
         print(str(e))
-  
-if __name__ == "__main__":      
-    test()
     
