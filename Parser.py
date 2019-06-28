@@ -1,9 +1,7 @@
 from Tokenizer import *
 from Note import *
 from AST import *
-
-class ParseError(Exception):
-    pass
+from Error import ParseError
 
 def expectedFound(expected, found):
     raise ParseError(f"Expected: {expected}, found: {found}")
@@ -41,23 +39,22 @@ def parseComma(input, parent):
     input.pop(0)
     return CommaNode()
 
-def parseArguments(input, parent):    
-   #import pdb; pdb.set_trace()
+def parseList(input, parent):       
     input.pop(0)
     
-    arguments = ArgumentsNode()
+    node = ListNode()
     
     while input[0].type != TokenType.CLOSE_PAREN:  
-        argument = parseArrayElement(input, arguments)
-        if argument is None:
-            raise ParseError(f"Line: {input[0].pos[0]+1}, col: {input[0].pos[1]+1}: Invalid function argument '{input[0].value}'")
-        arguments.append(argument) #TODO: parseExpression
+        element = parseArrayElement(input, node)
+        if element is None:
+            raise ParseError(f"Line: {input[0].pos[0]+1}, col: {input[0].pos[1]+1}: Invalid element'{input[0].value}'")
+        node.append(element)
     
     if input[0].type != TokenType.CLOSE_PAREN:
         expectedFound(TokenType.CLOSE_PAREN, input[0].type)
     input.pop(0)
     
-    return arguments
+    return node
             
 def parseBlock(input, parent):
     input.pop(0)
@@ -95,7 +92,7 @@ def parseFunctionCallOrAssignOrIdentifier(input, parent):
     identifier = IdentifierNode(input.pop(0).value)
     # Function call
     if len(input) > 0 and input[0].type == TokenType.OPEN_PAREN:            
-        arguments = parseArguments(input, parent)        
+        arguments = parseList(input, parent)        
         return FunctionCallNode(identifier, arguments)
     # Assign
     if len(input) > 1 and input[0].type == TokenType.ASSIGN:          
@@ -125,7 +122,7 @@ def parseExpression(input, parent):
     if type == TokenType.PERCENT:
         return parsePercent(input, parent)
     if type == TokenType.OPEN_PAREN:
-        return parseArguments(input, parent)
+        return parseList(input, parent)
     if type == TokenType.COLON:
         return parseColon(input, parent)    
  

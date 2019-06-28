@@ -1,5 +1,5 @@
 from enum import Enum
-from parser import ParseError
+from Error import ParseError
 
 class NotePitch(Enum):
     C = 1
@@ -15,6 +15,12 @@ class NotePitch(Enum):
     AIS = 11
     H = 12
     
+    def __str__(self):
+        return self.name
+    
+    def __repr__(self):
+        return self.__str__()    
+    
     @staticmethod
     def toPitch(string):
         try:
@@ -26,6 +32,13 @@ class NotePitch(Enum):
             return map[string.lower()]
         except KeyError as e:
             raise ParseError(f"Note '{string}' does not exist")
+    
+    @staticmethod
+    def range(a, b):
+        aValue = a.value
+        bValue = b.value
+        
+        return [note for note in NotePitch.__members__.items() if note[1].value >= aValue and note[1].value <= bValue]
 
 class Note:
     def __init__(self, note, octave, duration):        
@@ -37,4 +50,4 @@ class Note:
         self.duration = duration
         
     def __str__(self):
-        return f"{self.note}[{self.octave}, {self.duration}]"
+        return self.note.name
