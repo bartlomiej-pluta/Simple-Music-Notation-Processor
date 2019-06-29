@@ -47,7 +47,7 @@ def parseList(input, parent):
     while input[0].type != TokenType.CLOSE_PAREN:  
         element = parseArrayElement(input, node)
         if element is None:
-            raise ParseError(f"Line: {input[0].pos[0]+1}, col: {input[0].pos[1]+1}: Invalid element'{input[0].value}'")
+            raise ParseError(f"Line: {input[0].pos[0]+1}, col: {input[0].pos[1]+1}: Invalid element '{input[0].value}'")
         node.append(element)
     
     if input[0].type != TokenType.CLOSE_PAREN:
@@ -79,16 +79,18 @@ def parseAsterisk(input, parent):
     
     return AsteriskStatementNode(iterator, value)        
    
-def parseColon(input, parent):    
-    input.pop(0)
+def parseNoteOrColon(input, parent):
+    note = parseNote(input, parent)    
+    if len(input) > 1 and input[0].type == TokenType.COLON:
+        input.pop(0)                
+        b = parseExpression(input, parent) #TODO: only expressions!
+        if b is None:
+            raise ParseError(f"Line {input[0].pos[0]+1}, col {input[0].pos[1]+1}: Invalid colon argument '{input[0].value}'")
+        return ColonNode(note, b)
     
-    a = parent.pop(-1)
-    b = parseExpression(input, parent) #TODO: only expressions!
-    
-    return ColonNode(a, b)
+    return note
    
-def parseFunctionCallOrAssignOrIdentifier(input, parent):
-    #import pdb; pdb.set_trace()
+def parseFunctionCallOrAssignOrIdentifier(input, parent):    
     identifier = IdentifierNode(input.pop(0).value)
     # Function call
     if len(input) > 0 and input[0].type == TokenType.OPEN_PAREN:            
@@ -114,17 +116,15 @@ def parseExpression(input, parent):
     if type == TokenType.INTEGER:
         return parseInteger(input, parent)
     if type == TokenType.STRING:
-        return parseString(input, parent)
+        return parseString(input, parent)    
     if type == TokenType.NOTE:
-        return parseNote(input, parent)    
+        return parseNoteOrColon(input, parent)    
     if type == TokenType.IDENTIFIER:
         return parseFunctionCallOrAssignOrIdentifier(input, parent)
     if type == TokenType.PERCENT:
         return parsePercent(input, parent)
     if type == TokenType.OPEN_PAREN:
-        return parseList(input, parent)
-    if type == TokenType.COLON:
-        return parseColon(input, parent)    
+        return parseList(input, parent)     
  
 def parseArrayElement(input, parent):
     type = input[0].type

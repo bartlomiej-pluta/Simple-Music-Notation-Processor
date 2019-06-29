@@ -37,7 +37,7 @@ def evaluateString(string, environment):
     value = string.value    
     for scope in reversed(environment.scopes):
         for k, v in scope.items():
-            value = value.replace('{' + k + '}', str(v))
+            value = value.replace('{' + k + '}', objectString(v)) #TODO: poprawic
     return value
 
 def evaluateNote(note, environment):
@@ -45,8 +45,7 @@ def evaluateNote(note, environment):
 
 def evaluateFunctionCall(functionCall, environment):       
     function = functionCall.identifier.identifier
-    arguments = evaluateList(functionCall.arguments, environment)
-    #TODO: example
+    arguments = evaluateList(functionCall.arguments, environment)    
     for name, definition in environment.functions.items():
         if name == function:
             return definition(arguments)
@@ -72,17 +71,35 @@ def evaluateAssignment(assignment, environment):
 
 def evaluateAsterisk(asterisk, environment):    
     count = evaluate(asterisk.iterator, environment)
-    for i in range(count):
+    if isinstance(count, int):
+        for i in range(count):
+            if isinstance(asterisk.iterator, IdentifierNode):
+                environment.scopes[-1][f"_{asterisk.iterator.identifier}"] = i+1
+            else:
+                environment.scopes[-1]["_"] = i+1
+            evaluate(asterisk.statement, environment)
         if isinstance(asterisk.iterator, IdentifierNode):
-            environment.scopes[-1][f"_{asterisk.iterator.identifier}"] = i+1
-        evaluate(asterisk.statement, environment)
+            del environment.scopes[-1][f"_{asterisk.iterator.identifier}"]
+        else: 
+            environment.scopes[-1]["_"] = i+1
+    elif isinstance(count, list):
+        for i, v in enumerate(count):
+            if isinstance(asterisk.iterator, IdentifierNode):
+                environment.scopes[-1][f"_{asterisk.iterator.identifier}"] = i+1
+                environment.scopes[-1][f"{asterisk.iterator.identifier}_"] = v
+            else:
+                environment.scopes[-1]["_"] = i+1
+                environment.scopes[-1]["__"] = v
+            evaluate(asterisk.statement, environment)
+            if isinstance(asterisk.iterator, IdentifierNode):
+                del environment.scopes[-1][f"_{asterisk.iterator.identifier}"]
+                del environment.scopes[-1][f"{asterisk.iterator.identifier}_"]
+            else:
+                del environment.scopes[-1]["_"]
+                del environment.scopes[-1]["__"]
     
-def evaluateColon(colon, environment):
-    if isinstance(colon.a, IntegerLiteralNode) and isinstance(colon.b, IntegerLiteralNode):
-        return list(range(evaluateInteger(colon.a, environment), evaluateInteger(colon.b, environment)+1))
-    if isinstance(colon.a, NoteLiteralNode) and isinstance(colon.b, NoteLiteralNode):
-        return NotePitch.range(colon.a.value.note, colon.b.value.note)
-    raise RuntimeException("Range can be created using only note or integer literals")
+def evaluateColon(colon, environment):        
+    return Note.range(colon.a.value, colon.b.value)
 
 def evaluate(input, environment):
     if isinstance(input, Program):
@@ -111,14 +128,33 @@ def evaluate(input, environment):
         return evaluateColon(input, environment)
     if isinstance(input, IdentifierNode):
         return evaluateIdentifier(input, environment)
-        
+  
+def rand(args):
+    if len(args) == 1 and isinstance(args[0], list):
+        return args[0][int(random.uniform(0, len(args[0])))]
 
+def objectString(obj):    
+    if isinstance(obj, str):
+        return obj
+    if isinstance(obj, int):       
+        return str(obj)
+    if isinstance(obj, Note):
+        return obj.note.name
+    if isinstance(obj, list):
+        return "(" + ", ".join([objectString(v) for v in obj]) + ")"
+    raise RuntimeException(f"Don't know how to interpret {str(obj)}")
+ 
+def prt(args):
+    print("".join([objectString(arg) for arg in args]))
+ 
 if __name__ == "__main__":
     
     functions = {
-        'print': lambda args: print("".join([str(arg) for arg in args])),    
+        'print': prt,
         'midi': lambda args: print(":".join([str(type(arg)) for arg in args])),
-        'random': lambda args: args[0][int(random.uniform(0, len(args[0])))][1]
+        'type': lambda args: print(type(args[0])),
+        'random': rand
+        
     }
     
     with open(sys.argv[1], 'r') as source:
@@ -126,8 +162,7 @@ if __name__ == "__main__":
             
     tokens = [token for token in tokenize(lines) if token.type != TokenType.COMMENT]
        
-    ast = parse(tokens)            
-    
+    ast = parse(tokens)                
     environment = Environment([{}], functions)
     evaluate(ast, environment)
     

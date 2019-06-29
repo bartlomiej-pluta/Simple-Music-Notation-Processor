@@ -38,7 +38,7 @@ class NotePitch(Enum):
         aValue = a.value
         bValue = b.value
         
-        return [note for note in NotePitch.__members__.items() if note[1].value >= aValue and note[1].value <= bValue]
+        return [note[1] for note in NotePitch.__members__.items() if note[1].value >= aValue and note[1].value <= bValue]
 
 class Note:
     def __init__(self, note, octave, duration):        
@@ -47,7 +47,8 @@ class Note:
         else:
             self.note = note
         self.octave = octave
-        self.duration = duration
-        
-    def __str__(self):
-        return self.note.name
+        self.duration = duration        
+    
+    @staticmethod
+    def range(a, b):        
+        return [Note(note, 1, 1) for note in NotePitch.range(a.note, b.note)]
