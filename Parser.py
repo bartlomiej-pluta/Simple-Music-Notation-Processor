@@ -17,8 +17,8 @@ def parseNote(input, parent):
     consumedChars = 1
     notePitch = value[consumedChars]
     consumedChars += 1
-    octave = 1
-    duration = 1
+    octave = 4
+    duration = 4
     if consumedChars < len(value) and value[consumedChars] in ('b', '#'):
         notePitch += value[consumedChars]
         consumedChars += 1
