@@ -5,6 +5,7 @@ import random
 import Synth
 import time
 from Error import RuntimeException
+from NoiseDetector import waitForSound
 
 types = {
     int: 'integer',
@@ -160,6 +161,7 @@ def createEnvironment():
         'transposeTo': transposeTo,
         'sleep': sleep,
         'random': rand,
+        'wait': waitForSound,
         'exit': exit
         
     }
