@@ -1,8 +1,9 @@
 from enum import Enum
 
 class Node:
-    def __init__(self):
-        self.children = []            
+    def __init__(self, pos):
+        self.children = []
+        self.pos = pos
         
     def __repr__(self):
         return self.__str__()
@@ -11,7 +12,7 @@ class Node:
         return len(self.children)
         
     def __getitem__(self, index):
-        return self.children[index]
+        return self.children[index]        
     
     def append(self, node):
         self.children.append(node)
@@ -21,36 +22,38 @@ class Node:
 
 class Program(Node):
     def __init__(self):
-        Node.__init__(self)        
+        Node.__init__(self, (-1, -1))        
     
     def __str__(self):
         return "Program:\n" + "\n".join([str(e) for e in self.children])
     
 
 class BlockNode(Node):
-    def __init__(self):      
-        Node.__init__(self)              
+    def __init__(self, pos):      
+        Node.__init__(self, pos)              
     
     def __str__(self):
         return "B{\n" + "\n".join([str(e) for e in self.children]) + "\n}"
 
 
 class ListNode(Node):
-    def __init__(self):
-        Node.__init__(self)              
+    def __init__(self, pos):
+        Node.__init__(self, pos)              
     
     def __str__(self):
         return "@(" + ", ".join([str(e) for e in self.children]) + ")"      
         
 class IdentifierNode(Node):
-    def __init__(self, identifier):        
+    def __init__(self, identifier, pos): 
+        Node.__init__(self, pos)   
         self.identifier = identifier
     
     def __str__(self):
         return f"L'{self.identifier}'"
         
 class AssignExpression(Node):
-    def __init__(self, target, value):        
+    def __init__(self, target, value, pos):
+        Node.__init__(self, pos)           
         self.target = target
         self.value = value
         
@@ -58,7 +61,8 @@ class AssignExpression(Node):
         return f"A[{self.target} = {self.value}]"
    
 class AsteriskStatementNode(Node):
-    def __init__(self, iterator, statement):        
+    def __init__(self, iterator, statement, pos):
+        Node.__init__(self, pos)   
         self.iterator = iterator
         self.statement = statement
         
@@ -66,7 +70,8 @@ class AsteriskStatementNode(Node):
         return f"*({self.iterator}: {self.statement})"
    
 class ColonNode(Node):
-    def __init__(self, a, b):        
+    def __init__(self, a, b, pos):
+        Node.__init__(self, pos)   
         self.a = a
         self.b = b
         
@@ -74,33 +79,40 @@ class ColonNode(Node):
         return f":({self.a}, {self.b})"
    
 class ExpressionNode(Node):
+    def __init__(self, pos):
+        Node.__init__(self, pos)   
+        
     def __str__(self):
         return f"{self.__class__.__name__}('{self.value}')"
 
 
 class IntegerLiteralNode(ExpressionNode):
-    def __init__(self, value):        
+    def __init__(self, value, pos):
+        Node.__init__(self, pos)   
         self.value = value        
     
     def __str__(self):
         return f"i'{self.value}'"
 
 class StringLiteralNode(ExpressionNode):
-    def __init__(self, value):        
+    def __init__(self, value, pos):
+        Node.__init__(self, pos)   
         self.value = value
 
     def __str__(self):
         return f"s'{self.value}'"
     
 class NoteLiteralNode(ExpressionNode):
-    def __init__(self, value):        
+    def __init__(self, value, pos):
+        Node.__init__(self, pos)   
         self.value = value
         
     def __str__(self):
         return f"n'{self.value.note}[{self.value.octave}, {self.value.duration}]'"
 
 class FunctionCallNode(Node):
-    def __init__(self, identifier, arguments):        
+    def __init__(self, identifier, arguments, pos):
+        Node.__init__(self, pos)   
         self.identifier = identifier
         self.arguments = arguments
         
@@ -108,11 +120,14 @@ class FunctionCallNode(Node):
         return f"F({self.identifier}: {self.arguments})"
 
 class CommaNode(Node):    
+    def __init__(self, pos):
+        Node.__init__(self, pos)   
     def __str__(self):
         return "[,]"
 
 class PercentNode(Node):
-    def __init__(self, value):        
+    def __init__(self, value, pos):        
+        Node.__init__(self, pos)   
         self.value = value
         
     def __str__(self):

@@ -2,9 +2,7 @@ from Tokenizer import tokenize, TokenType
 from Parser import parse
 from AST import *
 from Note import Note
-
-class RuntimeException(Exception):
-    pass
+from Error import RuntimeException
 
 def evaluateProgram(program, environment):
     for node in program.children:
@@ -39,8 +37,8 @@ def objectString(obj):
     if isinstance(obj, float):
         return f"{int(obj*100)}%"
     if obj is None:
-        raise RuntimeException(f"Trying to interpret void")
-    raise RuntimeException(f"Don't know how to interpret {str(obj)}")
+        raise RuntimeException(None, f"Trying to interpret void")
+    raise RuntimeException(None, f"Don't know how to interpret {str(obj)}")
 
 def evaluateNote(note, environment):
     return note.value
@@ -51,7 +49,7 @@ def evaluateFunctionCall(functionCall, environment):
     for name, definition in environment.functions.items():
         if name == function:
             return definition(arguments, environment)
-    raise RuntimeException(f"Function '{function}' does not exist")
+    raise RuntimeException(functionCall.pos, f"Function '{function}' does not exist")
         
 
 def evaluateComma(comma, environment):
@@ -109,7 +107,7 @@ def evaluateColon(colon, environment):
         return Note.range(colon.a.value, colon.b.value)
     elif isinstance(colon.a, IntegerLiteralNode) and isinstance(colon.b, IntegerLiteralNode):
         return list(range(colon.a.value, colon.b.value+1))
-    raise RuntimeException("Invalid colon arguments")
+    raise RuntimeException(colon.pos, "Invalid colon arguments")
 
 def evaluate(input, environment):
     if isinstance(input, Program):

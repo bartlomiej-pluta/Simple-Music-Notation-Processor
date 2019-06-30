@@ -1,9 +1,10 @@
 import sys
-from Evaluator import RuntimeException, objectString
+from Evaluator import objectString
 from Note import *
 import random
 import Synth
 import time
+from Error import RuntimeException
 
 types = {
     int: 'integer',
@@ -28,7 +29,7 @@ class Environment():
                         return value         
                 else:
                     return value
-        raise RuntimeException(f"Variable '{name}' is not declared" + ("" if type is None else f" (expected type: {types[type]})"))
+        raise RuntimeException(None, f"Variable '{name}' is not declared" + ("" if type is None else f" (expected type: {types[type]})"))
     
     def findVariableScope(self, name, type=None):
         for scope in reversed(self.scopes):

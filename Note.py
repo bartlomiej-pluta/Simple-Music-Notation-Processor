@@ -1,6 +1,6 @@
 from enum import Enum
-from Error import ParseError
 import math
+from Error import SyntaxException
 
 class NotePitch(Enum):
     C = 0
@@ -52,7 +52,7 @@ class NotePitch(Enum):
                 }
             return map[string.lower()]
         except KeyError as e:
-            raise ParseError(f"Note '{string}' does not exist")
+            raise SyntaxException(None, f"Note '{string}' does not exist")
 
 class Note:
     def __init__(self, note, octave = 4, duration = 4):        

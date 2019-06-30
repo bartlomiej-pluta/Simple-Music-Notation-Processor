@@ -2,6 +2,7 @@ from enum import Enum
 import time
 import re
 import sys
+from Error import SyntaxException
 
 class TokenType(Enum):
     OPEN_PAREN = 1
@@ -19,10 +20,6 @@ class TokenType(Enum):
     COMMENT = 13
     PERCENT = 14
     MINUS = 15
-    
-class TokenizerError(Exception):
-    pass
-    
 
 class Token:
     def __init__(self, type, value, pos):
@@ -188,7 +185,7 @@ def doTokenize(lines):
                     break            
             
             if not tokenized:
-                raise TokenizerError(f"Line {lineNumber+1}, col {current+1}: unknown symbol '{line[current]}'")
+                raise SyntaxException((lineNumber, current), f"Unknown symbol '{line[current]}'")
             
     return [token for token in tokens if token.type is not None]
 
