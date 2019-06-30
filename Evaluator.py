@@ -1,19 +1,10 @@
-import os
 from Tokenizer import tokenize, TokenType
 from Parser import parse
 from AST import *
-import sys
-from Note import *
-import random
-import Midi
+from Note import Note
 
 class RuntimeException(Exception):
     pass
-
-class Environment():
-    def __init__(self, scopes, functions):
-        self.scopes = scopes
-        self.functions = functions
 
 def evaluateProgram(program, environment):
     for node in program.children:
@@ -23,17 +14,11 @@ def evaluateInteger(integer, environment):
     return integer.value
 
 def evaluatePercent(percent, environment):
-    pass
+    return percent.value.value * 0.01
 
 def evaluateIdentifier(identifier, environment):
-    value = findVariable(identifier.identifier, environment)
+    value = environment.findVariable(identifier.identifier)
     return value
-
-def findVariable(name, environment):        
-    for scope in reversed(environment.scopes):
-        if name in scope:
-            return scope[name]
-    raise RuntimeException(f"Variable '{name}' is not declared")
 
 def evaluateString(string, environment):    
     value = string.value    
@@ -41,6 +26,21 @@ def evaluateString(string, environment):
         for k, v in scope.items():
             value = value.replace('{' + k + '}', objectString(v)) #TODO: poprawic
     return value
+
+def objectString(obj):    
+    if isinstance(obj, str):
+        return obj
+    if isinstance(obj, int):       
+        return str(obj)
+    if isinstance(obj, Note):
+        return obj.note.name
+    if isinstance(obj, list):
+        return "(" + ", ".join([objectString(v) for v in obj]) + ")"
+    if isinstance(obj, float):
+        return f"{int(obj*100)}%"
+    if obj is None:
+        raise RuntimeException(f"Trying to interpret void")
+    raise RuntimeException(f"Don't know how to interpret {str(obj)}")
 
 def evaluateNote(note, environment):
     return note.value
@@ -69,7 +69,11 @@ def evaluateList(list, environment):
 def evaluateAssignment(assignment, environment):
     target = assignment.target.identifier
     value = evaluate(assignment.value, environment)
-    environment.scopes[-1][target] = value
+    scopeOfExistingVariable = environment.findVariableScope(target)
+    if scopeOfExistingVariable is not None:
+        scopeOfExistingVariable[target] = value
+    else:
+        environment.scopes[-1][target] = value
 
 def evaluateAsterisk(asterisk, environment):    
     count = evaluate(asterisk.iterator, environment)
@@ -130,77 +134,3 @@ def evaluate(input, environment):
         return evaluateColon(input, environment)
     if isinstance(input, IdentifierNode):
         return evaluateIdentifier(input, environment)
-  
-def rand(args, env):
-    if len(args) == 1 and isinstance(args[0], list):
-        return args[0][int(random.uniform(0, len(args[0])))]
-
-def objectString(obj):    
-    if isinstance(obj, str):
-        return obj
-    if isinstance(obj, int):       
-        return str(obj)
-    if isinstance(obj, Note):
-        return obj.note.name
-    if isinstance(obj, list):
-        return "(" + ", ".join([objectString(v) for v in obj]) + ")"
-    raise RuntimeException(f"Don't know how to interpret {str(obj)}")
- 
-def prt(args, env):
-    print("".join([objectString(arg) for arg in args]))
-
-def semitonesList(list):
-    withoutPauses = tuple(filter(lambda x: isinstance(x, Note), list))    
-    r = [Note.checkInterval(withoutPauses[i-1], withoutPauses[i]) for i, _ in enumerate(withoutPauses) if i != 0]
-    return r[0] if len(r) == 1 else r
-
-def semitones(args, env):
-    if len(args) > 0 and isinstance(args[0], list):
-        return semitonesList(args[0])
-    return semitonesList(args)
-
-def intervalList(list):    
-    r = [intervalToString(x) for x in list]
-    return r[0] if len(r) == 1 else r
-
-def interval(args, env):    
-    if len(args) > 0 and isinstance(args[0], list):        
-        return intervalList(args[0])
-    return intervalList(args)
- 
-def transpose(args, env):
-    if len(args) > 1 and isinstance(args[0], int):
-        value = args[0]
-        transposed = []
-        for i, arg in enumerate(args):            
-            if i == 0:
-                continue
-            if not isinstance(arg, list):
-                return # is not list            
-            transposed.append([note.transpose(value) for note in arg if isinstance(note, Note)])
-        return transposed
-    else:
-        return # not valid signature
- 
-if __name__ == "__main__":            
-    functions = {
-        'print': prt,
-        'midi': Midi.play,
-        'pause': Midi.pause,
-        'type': lambda args, env: print(type(args[0])),
-        'random': rand,
-        'semitones': semitones,
-        'interval': interval,
-        'transpose': transpose
-        
-    }
-    
-    with open(sys.argv[1], 'r') as source:
-        lines = [line.rstrip('\n') for line in source.readlines()]
-            
-    tokens = [token for token in tokenize(lines) if token.type != TokenType.COMMENT]
-       
-    ast = parse(tokens)                
-    environment = Environment([{ "bpm": 120 }], functions)
-    evaluate(ast, environment)
-    

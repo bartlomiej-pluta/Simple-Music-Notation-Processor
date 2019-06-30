@@ -3,18 +3,18 @@ from Error import ParseError
 import math
 
 class NotePitch(Enum):
-    C = 1
-    CIS = 2
-    D = 3
-    DIS = 4
-    E = 5
-    F = 6
-    FIS = 7
-    G = 8
-    GIS = 9
-    A = 10
-    AIS = 11
-    H = 12
+    C = 0
+    CIS = 1
+    D = 2
+    DIS = 3
+    E = 4
+    F = 5
+    FIS = 6
+    G = 7
+    GIS = 8
+    A = 9
+    AIS = 10
+    H = 11
     
     def __str__(self):
         return self.name
@@ -53,13 +53,6 @@ class NotePitch(Enum):
             return map[string.lower()]
         except KeyError as e:
             raise ParseError(f"Note '{string}' does not exist")
-    
-    @staticmethod
-    def range(a, b):
-        aValue = a.value
-        bValue = b.value
-        
-        return [note[1] for note in NotePitch.__members__.items() if note[1].value >= aValue and note[1].value <= bValue]
 
 class Note:
     def __init__(self, note, octave = 4, duration = 4):        
@@ -79,10 +72,7 @@ class Note:
     def transpose(self, interval):
         origIntRepr = self._intRepr()
         transposedIntRepr = origIntRepr + interval
-        pitch = transposedIntRepr % len(NotePitch)
-        note = NotePitch(pitch if pitch != 0 else self.note.value)
-        octave = int(transposedIntRepr / len(NotePitch))
-        return Note(note, octave, self.duration)
+        return Note._fromIntRepr(transposedIntRepr, self.duration)
     
     def _intRepr(self):
         return self.octave * len(NotePitch) + self.note.value
@@ -93,13 +83,27 @@ class Note:
     def __repr__(self):
         return self.__str__()
     
+    def getLowerNeighbour(self):        
+        return Note._fromIntRepr(max((self._intRepr()-1), 0))
+    
+    def getUpperNeighbour(self):        
+        maxIntRepr = Note(NotePitch.H, 9)._intRepr() # max value for one-digit octave number
+        return Note._fromIntRepr(min((self._intRepr()+1), maxIntRepr))
+    
+    @staticmethod
+    def _fromIntRepr(intRepr, duration=4):
+        note = NotePitch(intRepr % len(NotePitch))        
+        octave = int(intRepr / len(NotePitch))
+        return Note(note, octave, duration)
+        
+    
     @staticmethod
     def checkInterval(a, b):
         return a._intRepr() - b._intRepr()
     
     @staticmethod
     def range(a, b):        
-        return [Note(note, 1, 1) for note in NotePitch.range(a.note, b.note)]
+        return [Note._fromIntRepr(x, 4) for x in range(a._intRepr(), b._intRepr()+1)]        
     
 def intervalToString(interval):
     octaveInterval = int(abs(interval) / len(NotePitch))

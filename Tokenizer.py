@@ -166,7 +166,7 @@ tokenizers = (
     tokenizeWhitespaces
 )
 
-def tokenize(lines):    
+def doTokenize(lines):    
     tokens = []         
     for lineNumber, line in enumerate(lines):    
         current = 0
@@ -185,15 +185,6 @@ def tokenize(lines):
             
     return [token for token in tokens if token.type is not None]
 
-if __name__ == "__main__":   
-    try:
-        with open(sys.argv[1], 'r') as source:
-            lines = [line.rstrip('\n') for line in source.readlines()]
-            
-            tokens = tokenize(lines)    
-        
-        for token in tokens:
-            print(token)        
-    except TokenizerError as e:
-        print(str(e))
-    
+def tokenize(lines):
+    tokens = doTokenize(lines)
+    return list(filter(lambda x: x.type != TokenType.COMMENT, tokens))
