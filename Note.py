@@ -74,6 +74,12 @@ class Note:
         transposedIntRepr = origIntRepr + interval
         return Note._fromIntRepr(transposedIntRepr, self.duration)
     
+    def withDuration(self, duration):
+        return Note(self.note, self.octave, duration)
+    
+    def withOctave(self, octave):
+        return Note(self.note, octave, self.duration)
+    
     def _intRepr(self):
         return self.octave * len(NotePitch) + self.note.value
     
@@ -92,7 +98,7 @@ class Note:
     
     @staticmethod
     def checkInterval(a, b):
-        return a._intRepr() - b._intRepr()
+        return b._intRepr() - a._intRepr()
     
     @staticmethod
     def range(a, b):        
@@ -103,16 +109,16 @@ def intervalToString(interval):
     pitchInterval = abs(interval) % len(NotePitch)
     pitchIntervalName = {
         0: "1",
-        1: "1>/2<",
-        2: "2",
-        3: "3<",
-        4: "3>",
+        1: "2m",
+        2: "2M",
+        3: "3m",
+        4: "3M",
         5: "4",
-        6: "4>/5<",
+        6: "5d/4A",
         7: "5",
-        8: "6<",
-        9: "6>",
-        10: "7<",
-        11: "7>"        
+        8: "6m",
+        9: "6M",
+        10: "7m",
+        11: "7M"        
     }
     return (str(pitchIntervalName[pitchInterval]) + (f"(+{octaveInterval}')" if octaveInterval > 0 else ""))

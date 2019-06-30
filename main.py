@@ -21,3 +21,5 @@ if __name__ == "__main__":
         print(e.msg)
     except RuntimeException as e:
         print(e.msg)
+    except KeyboardInterrupt:
+        print("Program interrupted")
