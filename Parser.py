@@ -83,12 +83,23 @@ def parseNoteOrColon(input, parent):
     note = parseNote(input, parent)    
     if len(input) > 1 and input[0].type == TokenType.COLON:
         input.pop(0)                
-        b = parseExpression(input, parent) #TODO: only expressions!
+        b = parseNote(input, parent) #TODO: only expressions!
         if b is None:
             raise ParseError(f"Line {input[0].pos[0]+1}, col {input[0].pos[1]+1}: Invalid colon argument '{input[0].value}'")
         return ColonNode(note, b)
     
     return note
+   
+def parseIntegerOrColon(input, parent):
+    integer = parseInteger(input, parent)    
+    if len(input) > 1 and input[0].type == TokenType.COLON:
+        input.pop(0)                
+        b = parseInteger(input, parent) #TODO: only expressions!
+        if b is None:
+            raise ParseError(f"Line {input[0].pos[0]+1}, col {input[0].pos[1]+1}: Invalid colon argument '{input[0].value}'")
+        return ColonNode(integer, b)
+    
+    return integer   
    
 def parseFunctionCallOrAssignOrIdentifier(input, parent):    
     identifier = IdentifierNode(input.pop(0).value)
@@ -111,10 +122,19 @@ def parsePercent(input, parent):
     
     return PercentNode(value)
 
+def parseMinus(input, parent):
+    input.pop(0)
+    
+    value = parseInteger(input, parent)
+    
+    return IntegerLiteralNode(-value.value)
+
 def parseExpression(input, parent):    
     type = input[0].type
+    if type == TokenType.MINUS:
+        return parseMinus(input, parent)
     if type == TokenType.INTEGER:
-        return parseInteger(input, parent)
+        return parseIntegerOrColon(input, parent)
     if type == TokenType.STRING:
         return parseString(input, parent)    
     if type == TokenType.NOTE:
@@ -125,6 +145,7 @@ def parseExpression(input, parent):
         return parsePercent(input, parent)
     if type == TokenType.OPEN_PAREN:
         return parseList(input, parent)     
+    raise ParseError(f"Line {input[0].pos[0]+1}, col {input[0].pos[1]+1}: Unexpected character '{input[0].value}'")
  
 def parseArrayElement(input, parent):
     type = input[0].type

@@ -83,13 +83,6 @@ class Note:
     def __repr__(self):
         return self.__str__()
     
-    def getLowerNeighbour(self):        
-        return Note._fromIntRepr(max((self._intRepr()-1), 0))
-    
-    def getUpperNeighbour(self):        
-        maxIntRepr = Note(NotePitch.H, 9)._intRepr() # max value for one-digit octave number
-        return Note._fromIntRepr(min((self._intRepr()+1), maxIntRepr))
-    
     @staticmethod
     def _fromIntRepr(intRepr, duration=4):
         note = NotePitch(intRepr % len(NotePitch))        

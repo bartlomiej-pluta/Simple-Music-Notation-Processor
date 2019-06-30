@@ -93,13 +93,13 @@ def transposeTo(args, env):
                 result.append([note.transpose(semitones) for note in notes if isinstance(note, Note)])
             else:
                 result.append([])
-        return returnElementOrList(result)
+        return returnElementOrList(result)    
     else:
         pass # not valid signature
                 
  
-def transpose(args, env):
-    if len(args) > 1 and isinstance(args[0], int):
+def transpose(args, env):    
+    if len(args) > 1 and isinstance(args[0], int) and all(isinstance(arg, list) for i, arg in enumerate(args) if i != 0):
         value = args[0]
         transposed = []
         for i, arg in enumerate(args):            
@@ -108,7 +108,11 @@ def transpose(args, env):
             if not isinstance(arg, list):
                 return # is not list            
             transposed.append([note.transpose(value) for note in arg if isinstance(note, Note)])
-        return transposed
+        return returnElementOrList(transposed)
+    if len(args) > 1 and all(isinstance(arg, Note) for i, arg in enumerate(args) if i != 0):        
+        value = args[0]
+        transposed = [note.transpose(value) for i, note in enumerate(args) if i != 0]
+        return returnElementOrList(transposed)
     else:
         return # not valid signature
 
@@ -123,42 +127,6 @@ def exit(args, env):
         sys.exit(args[0])
     else:
         pass # not valid signature
-
-def upper(args, env):
-    value = []
-    for arg in args:
-        if isinstance(arg, Note):
-            value.append(arg.getUpperNeighbour())
-        elif isinstance(arg, list):
-            value.append(upperList(arg))
-        else:
-            pass # invalid argument
-    return returnElementOrList(value)
-
-def upperList(list):
-    if all(isinstance(x, Note) for x in list):
-        value = [note.getUpperNeighbour() for note in list]
-        return returnElementOrList(value)
-    else:
-        pass #not valid signature
-
-def lower(args, env):
-    value = []
-    for arg in args:
-        if isinstance(arg, Note):
-            value.append(arg.getLowerNeighbour())
-        elif isinstance(arg, list):
-            value.append(lowerList(arg))
-        else:
-            pass # invalid argument
-    return returnElementOrList(value)
-
-def lowerList(list):
-    if all(isinstance(x, Note) for x in list):
-        value = [note.getLowerNeighbour() for note in list]
-        return returnElementOrList(value)
-    else:
-        pass #not valid signature
 
 def sleep(args, env):
     if len(args) == 1 and isinstance(args[0], int):
@@ -189,8 +157,6 @@ def createEnvironment():
         'interval': interval,
         'transpose': transpose,   
         'transposeTo': transposeTo,
-        'upper': upper,
-        'lower': lower,
         'sleep': sleep,
         'random': rand,
         'exit': exit

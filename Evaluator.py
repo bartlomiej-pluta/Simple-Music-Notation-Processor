@@ -104,8 +104,12 @@ def evaluateAsterisk(asterisk, environment):
                 del environment.scopes[-1]["_"]
                 del environment.scopes[-1]["__"]
     
-def evaluateColon(colon, environment):        
-    return Note.range(colon.a.value, colon.b.value)
+def evaluateColon(colon, environment):     
+    if isinstance(colon.a, NoteLiteralNode) and isinstance(colon.b, NoteLiteralNode):
+        return Note.range(colon.a.value, colon.b.value)
+    elif isinstance(colon.a, IntegerLiteralNode) and isinstance(colon.b, IntegerLiteralNode):
+        return list(range(colon.a.value, colon.b.value+1))
+    raise RuntimeException("Invalid colon arguments")
 
 def evaluate(input, environment):
     if isinstance(input, Program):

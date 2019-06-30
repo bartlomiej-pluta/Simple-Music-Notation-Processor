@@ -18,6 +18,7 @@ class TokenType(Enum):
     NOTE = 12
     COMMENT = 13
     PERCENT = 14
+    MINUS = 15
     
 class TokenizerError(Exception):
     pass
@@ -148,6 +149,11 @@ def tokenizePercent(input, current, line):
         return (1, Token(TokenType.PERCENT, input[current], (line, current)))
     return (0, None)
 
+def tokenizeMinus(input, current, line):
+    if input[current] == '-':
+        return (1, Token(TokenType.MINUS, input[current], (line, current)))
+    return (0, None)
+
 tokenizers = (
     tokenizeOpenParen, 
     tokenizeCloseParen, 
@@ -162,6 +168,7 @@ tokenizers = (
     tokenizeAssign,
     tokenizeColon,
     tokenizePercent,
+    tokenizeMinus,
     tokenizeComment,
     tokenizeWhitespaces
 )
