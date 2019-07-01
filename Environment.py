@@ -58,7 +58,7 @@ def sample(args, env):
 def _sample(list):
     return list[int(random.uniform(0, len(list)))]
  
-def doPrint(args, env):
+def doPrint(args, env):    
     print("".join([objectString(arg) for arg in args]))
 
 def semitonesList(list):

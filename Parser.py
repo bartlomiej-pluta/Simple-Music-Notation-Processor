@@ -132,7 +132,7 @@ def parseList(input, parent):
         # list -> expr listTail
         if input.hasCurrent():
             token = input.current()
-            expr = rollup(parseExpression)(input, node)
+            expr = parseExpression(input, node)
             item = ListItemNode(expr, node, token.pos)
             expr.parent = item
             node.append(item)
@@ -281,34 +281,18 @@ def parseReturn(input, parent):
     return None
 
 def parseStatement(input, parent):
-    value = runParsers(input, parent, [        
+    stmt = runParsers(input, parent, [        
         parseBlock,
         parseExpression,
         parseFunctionDefinition,
         parseReturn
-    ])        
-
-    return value
-
-def parseExpression(input, parent):
-    expr = runParsers(input, parent, [
-        parseIntegerAndPercent,
-        parseMinus,
-        parseString,
-        parseNote,        
-        parseList, 
-        parseIdentifierOrFunctionCallOrAssignment,
     ])    
-    
-    colon = parseColon(expr, input, parent)
-    if colon is not None:
-        return colon
-    
-    asterisk = parseAsterisk(expr, input, parent)
+
+    asterisk = parseAsterisk(stmt, input, parent)
     if asterisk is not None:
         return asterisk
-    
-    return expr
+
+    return stmt
 
 # asterisk -> expr '*' stmt
 def parseAsterisk(expr, input, parent):
@@ -323,6 +307,22 @@ def parseAsterisk(expr, input, parent):
         stmt.parent = asterisk
         return asterisk
     return None
+
+def parseExpression(input, parent):
+    expr = runParsers(input, parent, [
+        parseIntegerAndPercent,
+        parseMinus,
+        parseString,
+        parseNote,        
+        parseList, 
+        parseIdentifierOrFunctionCallOrAssignment,
+    ])    
+    
+    colon = parseColon(expr, input, parent)
+    if colon is not None:
+        return colon        
+    
+    return expr
 
 # colon -> expr ':' expr
 def parseColon(expr1, input, parent):

@@ -45,8 +45,8 @@ def evaluateNote(note, environment):
 
 def evaluateFunctionDefinition(definition, environment):
     name = definition.name
-    params = list([p for p in definition.parameters.children if not isinstance(p, CommaNode)])
-    body = definition.body.children
+    params = list([p for p in flatListNode(definition.parameters) if not isinstance(p, CommaNode)])
+    body = definition.body
     
     if not isinstance(definition.parent, Program):
         raise RuntimeException(name.pos, f"Functions can be defined only on the top level of script")
@@ -60,19 +60,32 @@ def evaluateFunctionDefinition(definition, environment):
     
     environment.customFunctions[name.identifier] = {
         'params': params,
-        'body': body
+        'body': flatListNode(body)
     }
+    
+def flatListNode(listNode):
+    if len(listNode.children[0].children) == 1:
+        return []
+    return _flatListNode(listNode.children[0], [])
 
-def evaluateFunctionCall(functionCall, environment):       
+def _flatListNode(listItemNode, list = []):        
+    if len(listItemNode.children) == 2:        
+        child1 = listItemNode.children[0]    
+        child2 = listItemNode.children[1]        
+        list.append(child1)
+        _flatListNode(child2, list)    
+    return list
+
+def evaluateFunctionCall(functionCall, environment):         
     funcName = functionCall.identifier.identifier
-    arguments = evaluateList(functionCall.arguments, environment)    
+    arguments = evaluateList(functionCall.arguments, environment)       
     for name, function in environment.customFunctions.items():
         if funcName == name:
             if len(function['params']) != len(arguments):
                 raise RuntimeException(functionCall.pos, f"Calling '{funcName}' requires {len(function['params'])} and {len(arguments)} was passed")
             environment.scopes.append({ function['params'][i].identifier: v for i, v in enumerate(arguments) })                      
-            returnValue = None
-            for node in function['body']:   
+            returnValue = None            
+            for node in function['body']:                   
                 if not isinstance(node, ReturnNode):
                     evaluate(node, environment)     
                 else:                    
@@ -92,12 +105,12 @@ def evaluateComma(comma, environment):
 
 def evaluateBlock(block, environment):
     environment.scopes.append({})
-    for node in block.children:
+    for node in flatListNode(block):
         evaluate(node, environment)
     environment.scopes.pop(-1)
 
 def evaluateList(list, environment):
-    return [evaluate(e, environment) for e in list if not isinstance(e, CommaNode)]
+    return [evaluate(e, environment) for e in flatListNode(list) if not isinstance(e, CommaNode)]    
 
 def evaluateAssignment(assignment, environment):
     target = assignment.target.identifier
@@ -165,9 +178,9 @@ def evaluate(input, environment):
         return evaluateBlock(input, environment)
     if isinstance(input, ListNode):
         return evaluateList(input, environment)
-    if isinstance(input, AssignExpression):
+    if isinstance(input, AssignmentNode):
         return evaluateAssignment(input, environment)
-    if isinstance(input, AsteriskStatementNode):
+    if isinstance(input, AsteriskNode):
         return evaluateAsterisk(input, environment)
     if isinstance(input, ColonNode):
         return evaluateColon(input, environment)
