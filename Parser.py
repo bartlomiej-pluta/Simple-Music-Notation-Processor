@@ -40,8 +40,9 @@ def parseString(input, parent):
 
 # note -> NOTE
 def parseNote(input, parent):    
-    if input.current().type == TokenType.NOTE:        
-        value = input.current().value
+    if input.current().type == TokenType.NOTE:   
+        token = input.current()
+        value = token.value
         consumedChars = 1
         notePitch = value[consumedChars]
         consumedChars += 1
@@ -66,7 +67,7 @@ def parseNote(input, parent):
                 consumedChars += 1
         
         input.ahead()
-        return NoteLiteralNode(Note(notePitch, octave, duration, dot), parent, input.current().pos)
+        return NoteLiteralNode(Note(notePitch, octave, duration, dot), parent, token.pos)
     return None
 
 # list -> CLOSE_PAREN | expr listTail
@@ -116,12 +117,28 @@ def parseListTail(input, parent):
     
     return None
 
+def parseColon(input, parent):          
+    if input.hasMore() and input.current().type == TokenType.COLON:
+        expr1 = parent.pop(-1)
+        
+        token = input.current()
+        input.ahead()           
+        
+        expr2 = parseExpression(input, parent)
+        
+        colon = ColonNode(expr1, expr2, parent, token.pos)
+        expr1.parent = colon
+        expr2.parent = colon
+        return colon
+    return None
+
 def parseExpression(input, parent):
     value = runParsers(input, parent, [
         parseInteger,
         parseString,
         parseNote,
-        parseList        
+        parseList,      
+        parseColon,
     ])
     
     if value is None:

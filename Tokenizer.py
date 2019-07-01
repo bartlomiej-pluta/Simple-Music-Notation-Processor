@@ -21,13 +21,13 @@ class Tokens:
             raise RuntimeError(f"Cursor points to not existing token! Cursor = {self.cursor}, len = {len(self.tokens)}")
         return self.tokens[self.cursor]
     
-    def next(self):
-        return self.tokens[self.cursor+1]
+    def next(self, number=1):
+        return self.tokens[self.cursor + number]
     
-    def prev(self):
-        return self.tokens[self.cursor-1]
+    def prev(self, number=1):
+        return self.tokens[self.cursor - number]
     
-    def hasMore(self, count):
+    def hasMore(self, count=1):
         return self.cursor + count < len(self.tokens)
     
     def ahead(self):
