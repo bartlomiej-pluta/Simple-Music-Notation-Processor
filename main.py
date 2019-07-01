@@ -12,9 +12,9 @@ if __name__ == "__main__":
         
         env = createEnvironment()
         
-        tokens = tokenize(lines)
+        tokens = tokenize(lines)                
         
-        ast = parse(tokens)
+        ast = parse(tokens)                
         
         evaluate(ast, env)
     except SyntaxException as e:

@@ -43,14 +43,49 @@ def objectString(obj):
 def evaluateNote(note, environment):
     return note.value
 
-def evaluateFunctionCall(functionCall, environment):       
-    function = functionCall.identifier.identifier
-    arguments = evaluateList(functionCall.arguments, environment)    
-    for name, definition in environment.functions.items():
-        if name == function:
-            return definition(arguments, environment)
-    raise RuntimeException(functionCall.pos, f"Function '{function}' does not exist")
+def evaluateFunctionDefinition(definition, environment):
+    name = definition.name
+    params = list([p for p in definition.parameters.children if not isinstance(p, CommaNode)])
+    body = definition.body.children
+    
+    if not isinstance(definition.parent, Program):
+        raise RuntimeException(name.pos, f"Functions can be defined only on the top level of script")
+    
+    for p in params:
+        if not isinstance(p, IdentifierNode):
+            raise RuntimeException(p.pos, "Parameter of function definition must be an identifier")
         
+    if name.identifier in environment.customFunctions or name.identifier in environment.functions:
+        raise RuntimeException(name.pos, f"Function '{name.identifier}' already exists")
+    
+    environment.customFunctions[name.identifier] = {
+        'params': params,
+        'body': body
+    }
+
+def evaluateFunctionCall(functionCall, environment):       
+    funcName = functionCall.identifier.identifier
+    arguments = evaluateList(functionCall.arguments, environment)    
+    for name, function in environment.customFunctions.items():
+        if funcName == name:
+            if len(function['params']) != len(arguments):
+                raise RuntimeException(functionCall.pos, f"Calling '{funcName}' requires {len(function['params'])} and {len(arguments)} was passed")
+            environment.scopes.append({ function['params'][i].identifier: v for i, v in enumerate(arguments) })                      
+            returnValue = None
+            for node in function['body']:   
+                if not isinstance(node, ReturnNode):
+                    evaluate(node, environment)     
+                else:                    
+                    returnValue = evaluateReturn(node, environment)
+            environment.scopes.pop(-1)
+            return returnValue
+    for name, definition in environment.functions.items():
+        if name == funcName:
+            return definition(arguments, environment)
+    raise RuntimeException(functionCall.pos, f"Function '{funcName}' does not exist")
+        
+def evaluateReturn(returnNode, environment):
+    return evaluate(returnNode.value, environment)
 
 def evaluateComma(comma, environment):
     pass
@@ -109,7 +144,7 @@ def evaluateColon(colon, environment):
         return list(range(colon.a.value, colon.b.value+1))
     raise RuntimeException(colon.pos, "Invalid colon arguments")
 
-def evaluate(input, environment):
+def evaluate(input, environment):    
     if isinstance(input, Program):
         return evaluateProgram(input, environment)
     if isinstance(input, IntegerLiteralNode):
@@ -120,6 +155,8 @@ def evaluate(input, environment):
         return evaluateString(input, environment)
     if isinstance(input, NoteLiteralNode):
         return evaluateNote(input, environment)
+    if isinstance(input, FunctionDefinitionNode):
+        return evaluateFunctionDefinition(input, environment)
     if isinstance(input, FunctionCallNode):
         return evaluateFunctionCall(input, environment)
     if isinstance(input, CommaNode):

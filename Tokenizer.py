@@ -20,6 +20,8 @@ class TokenType(Enum):
     COMMENT = 13
     PERCENT = 14
     MINUS = 15
+    FUNCTION = 16
+    RETURN = 17
 
 class Token:
     def __init__(self, type, value, pos):
@@ -154,11 +156,24 @@ def tokenizeMinus(input, current, line):
         return (1, Token(TokenType.MINUS, input[current], (line, current)))
     return (0, None)
 
+def tokenizeFunction(input, current, line):
+    return tokenizeKeyword(TokenType.FUNCTION, 'function', input, current, line)
+
+def tokenizeKeyword(type, keyword, input, current, line):       
+    if len(input) >= current+len(keyword) and input[current:current+len(keyword)] == keyword:
+        return (len(keyword), Token(type, keyword, (line, current)))
+    return (0, None)
+
+def tokenizeReturn(input, current, line):
+    return tokenizeKeyword(TokenType.RETURN, 'return', input, current, line)
+
 tokenizers = (
     tokenizeOpenParen, 
     tokenizeCloseParen, 
     tokenizeAsterisk, 
     tokenizeString, 
+    tokenizeFunction,
+    tokenizeReturn,
     tokenizeInteger,
     tokenizeNote,
     tokenizeIdentifier, 

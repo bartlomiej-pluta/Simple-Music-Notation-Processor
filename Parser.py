@@ -6,13 +6,17 @@ from Error import SyntaxException
 def expectedFound(expected, found):
     raise SyntaxException(None, f"Expected: {expected}, found: {found}")
 
+def assertType(expected, found):
+    if expected != found:
+        raise SyntaxException(None, f"Expected: {expected}, found: {found}")
+
 def parseInteger(input, parent):
     token = input.pop(0)
-    return IntegerLiteralNode(int(token.value), token.pos)
+    return IntegerLiteralNode(int(token.value), parent, token.pos)
     
 def parseString(input, parent):   
     token = input.pop(0)
-    return StringLiteralNode(token.value[1:-1], token.pos)
+    return StringLiteralNode(token.value[1:-1], parent, token.pos)
     
 def parseNote(input, parent): 
     token = input.pop(0)
@@ -40,16 +44,16 @@ def parseNote(input, parent):
             dot = True
             consumedChars += 1
     
-    return NoteLiteralNode(Note(notePitch, octave, duration, dot), token.pos)
+    return NoteLiteralNode(Note(notePitch, octave, duration, dot), parent, token.pos)
 
 def parseComma(input, parent):
     token = input.pop(0)
-    return CommaNode(token.pos)
+    return CommaNode(parent, token.pos)
 
 def parseList(input, parent):       
     token = input.pop(0)
     
-    node = ListNode(token.pos)
+    node = ListNode(parent, token.pos)
     
     while input[0].type != TokenType.CLOSE_PAREN:  
         element = parseArrayElement(input, node)
@@ -66,7 +70,7 @@ def parseList(input, parent):
 def parseBlock(input, parent):
     token = input.pop(0)
     
-    block = BlockNode(token.pos)
+    block = BlockNode(parent, token.pos)
     
     while input[0].type != TokenType.CLOSE_BRACKET:
         block.append(parseToken(input, block))
@@ -82,75 +86,119 @@ def parseAsterisk(input, parent):
     token = input.pop(0)
     
     iterator = parent.pop(-1)
-    value = parseStatement(input, parent) #TODO: only statements! (?)
+    value = parseStatement(input, parent)
     
-    return AsteriskStatementNode(iterator, value, token.pos)        
+    asterisk = AsteriskStatementNode(iterator, value, parent, token.pos)        
+    iterator.parent = asterisk
+    value.parent = asterisk
+    return asterisk
    
 def parseNoteOrColon(input, parent):
     note = parseNote(input, parent)    
     if len(input) > 1 and input[0].type == TokenType.COLON:
         token = input.pop(0)                
-        b = parseNote(input, parent) #TODO: only expressions!
+        b = parseNote(input, parent)
         if b is None:
             raise SyntaxException(input[0].pos, f"Invalid colon argument '{input[0].value}'")
-        return ColonNode(note, b, token.pos)
+        colon = ColonNode(note, b, parent, token.pos)
+        note.parent = colon
+        b.parent = colon
+        return colon
     
     return note
    
-def parseIntegerOrColon(input, parent):
+def parseIntegerOrColonOrPercent(input, parent):
     integer = parseInteger(input, parent)    
     if len(input) > 1 and input[0].type == TokenType.COLON:
         token = input.pop(0)                
-        b = parseInteger(input, parent) #TODO: only expressions!
+        b = parseInteger(input, parent) 
         if b is None:
             raise SyntaxException(input[0].pos, f"Invalid colon argument '{input[0].value}'")
-        return ColonNode(integer, b, token.pos)
+        colon = ColonNode(integer, b, parent, token.pos)
+        integer.parent = colon
+        b.parent = colon
+        return colon
+    
+    if len(input) > 0 and input[0].type == TokenType.PERCENT:
+        input.pop(0)
+        percent = PercentNode(integer, parent, integer.pos)
+        integer.parent = percent
+        return percent
     
     return integer   
    
 def parseFunctionCallOrAssignOrIdentifier(input, parent):   
     token = input.pop(0)
-    identifier = IdentifierNode(token.value, token.pos)
+    identifier = IdentifierNode(token.value, parent, token.pos)
     # Function call
     if len(input) > 0 and input[0].type == TokenType.OPEN_PAREN:            
         arguments = parseList(input, parent)        
-        return FunctionCallNode(identifier, arguments, token.pos)
+        func = FunctionCallNode(identifier, arguments, parent, token.pos)
+        identifier.parent = func
+        arguments.parent = func
+        return func
     # Assign
     if len(input) > 1 and input[0].type == TokenType.ASSIGN:          
         token = input.pop(0)            
-        value = parseExpression(input, parent) #TODO: only expressions!
-        return AssignExpression(identifier, value, token.pos)
+        value = parseExpression(input, parent) #
+        assign = AssignExpression(identifier, value, parent, token.pos)
+        identifier.parent = assign
+        value.parent = assign
+        return assign
         
     return identifier
-
-def parsePercent(input, parent):
-    token = input.pop(0)
-    
-    value = parent.pop(-1)
-    
-    return PercentNode(value, token.pos)
 
 def parseMinus(input, parent):
     token = input.pop(0)
     
     value = parseInteger(input, parent)
     
-    return IntegerLiteralNode(-value.value, token.pos)
+    return IntegerLiteralNode(-value.value, parent, token.pos)
+
+def parseFunctionDefinition(input, parent):
+    input.pop(0)
+    
+    assertType(TokenType.IDENTIFIER, input[0].type)
+    token = input.pop(0)
+    name = IdentifierNode(token.value, parent, token.pos)
+    
+    assertType(TokenType.OPEN_PAREN, input[0].type)
+    parameters = parseList(input, parent)
+    
+    assertType(TokenType.OPEN_BRACKET, input[0].type)
+    body = parseBlock(input, parent)
+    
+    func = FunctionDefinitionNode(name, parameters, body, parent, token.pos)
+    name.parent = func
+    parameters.parent = func
+    body.parent = func
+    return func
+
+def parseReturn(input, parent):
+    token = input.pop(0)
+    
+    value = parseExpression(input, parent)
+    
+    returnNode = ReturnNode(value, parent, token.pos)
+    value.parent = returnNode
+    return returnNode
 
 def parseExpression(input, parent):    
     type = input[0].type
+    if type == TokenType.FUNCTION:
+        return parseFunctionDefinition(input, parent)
+    if type == TokenType.RETURN:
+        return parseReturn(input, parent)
     if type == TokenType.MINUS:
         return parseMinus(input, parent)
     if type == TokenType.INTEGER:
-        return parseIntegerOrColon(input, parent)
+        return parseIntegerOrColonOrPercent(input, parent)
     if type == TokenType.STRING:
         return parseString(input, parent)    
     if type == TokenType.NOTE:
         return parseNoteOrColon(input, parent)    
     if type == TokenType.IDENTIFIER:
-        return parseFunctionCallOrAssignOrIdentifier(input, parent)
-    if type == TokenType.PERCENT:
-        return parsePercent(input, parent)
+        return parseFunctionCallOrAssignOrIdentifier(input, parent)    
     if type == TokenType.OPEN_PAREN:
         return parseList(input, parent)     
     raise SyntaxException(input[0].pos, f"Unexpected character '{input[0].value}'")

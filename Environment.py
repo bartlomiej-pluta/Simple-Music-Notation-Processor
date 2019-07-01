@@ -22,6 +22,8 @@ class Environment():
     def __init__(self, scopes, functions):
         self.scopes = scopes
         self.functions = functions
+        self.customFunctions = {}
+        self.callStack = []        
     
     def findVariable(self, name, type=None):
         for scope in reversed(self.scopes):
