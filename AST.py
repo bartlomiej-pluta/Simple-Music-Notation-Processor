@@ -22,13 +22,17 @@ class Node:
     def pop(self, index):
         return self.children.pop(index)
     
-    def _print(self, level):
-        print(f"{pad(level)}{self.__class__.__name__}({self.parent.__class__.__name__}):")
+    def _print(self, level):        
+        string = f"{pad(level)}{self.__class__.__name__}({self.parent.__class__.__name__}):\n"
         for child in self.children:
             if isinstance(child, str) or isinstance(child, int) or isinstance(child, Note):
-                print(pad(level+1) + f"'{child}'")           
+                string += pad(level+1) + f"'{child}'\n"
             else:
-                child._print(level+1)
+                string += child._print(level+1)
+        return string
+    
+    def __str__(self):
+        return self._print(0)
     
 def pad(level):
     return ("   " * level)
@@ -37,26 +41,26 @@ class Program(Node):
     def __init__(self):
         Node.__init__(self, None, (-1, -1))        
     
-    def __str__(self):
-        return "Program:\n" + "\n".join([str(e) for e in self.children])
+    #def __str__(self):
+        #return "Program:\n" + "\n".join([str(e) for e in self.children])
     
     def print(self):
-        self._print(0)
+        print(self._print(0))
 
 class BlockNode(Node):
     def __init__(self, parent, pos):      
         Node.__init__(self, parent, pos)              
     
-    def __str__(self):
-        return "B{\n" + "\n".join([str(e) for e in self.children]) + "\n}"
+    #def __str__(self):
+        #return "B{\n" + "\n".join([str(e) for e in self.children]) + "\n}"
 
 
 class ListNode(Node):
     def __init__(self, parent, pos):
         Node.__init__(self, parent, pos)              
     
-    def __str__(self):
-        return "@(" + ", ".join([str(e) for e in self.children]) + ")"      
+    #def __str__(self):
+        #return "@(" + ", ".join([str(e) for e in self.children]) + ")"      
         
 class IdentifierNode(Node):
     def __init__(self, identifier, parent, pos): 
@@ -65,8 +69,8 @@ class IdentifierNode(Node):
         
         self.identifier = self.children[0]
     
-    def __str__(self):
-        return f"L'{self.identifier}'"
+    #def __str__(self):
+        #return f"L'{self.identifier}'"
         
 class AssignExpression(Node):
     def __init__(self, target, value, parent, pos):
@@ -76,8 +80,8 @@ class AssignExpression(Node):
         self.target = self.children[0]
         self.value = self.children[1]
         
-    def __str__(self):
-        return f"A[{self.target} = {self.value}]"
+    #def __str__(self):
+        #return f"A[{self.target} = {self.value}]"
    
 class AsteriskStatementNode(Node):
     def __init__(self, iterator, statement, parent, pos):
@@ -87,8 +91,8 @@ class AsteriskStatementNode(Node):
         self.iterator = self.children[0]
         self.statement = self.children[1]
         
-    def __str__(self):
-        return f"*({self.iterator}: {self.statement})"
+    #def __str__(self):
+        #return f"*({self.iterator}: {self.statement})"
    
 class ColonNode(Node):
     def __init__(self, a, b, parent, pos):
@@ -98,16 +102,15 @@ class ColonNode(Node):
         self.a = self.children[0]
         self.b = self.children[1]
         
-    def __str__(self):
-        return f":({self.a}, {self.b})"
+    #def __str__(self):
+        #return f":({self.a}, {self.b})"
    
 class ExpressionNode(Node):
     def __init__(self, parent, pos):
         Node.__init__(self, parent, pos)   
         
-    def __str__(self):
-        return f"{self.__class__.__name__}('{self.value}')"
-
+    #def __str__(self):
+        #return f"{self.__class__.__name__}('{self.value}')"
 
 class IntegerLiteralNode(ExpressionNode):
     def __init__(self, value, parent, pos):
@@ -116,8 +119,8 @@ class IntegerLiteralNode(ExpressionNode):
         
         self.value = self.children[0]
     
-    def __str__(self):
-        return f"i'{self.value}'"
+    #def __str__(self):
+        #return f"i'{self.value}'"
 
 class StringLiteralNode(ExpressionNode):
     def __init__(self, value, parent, pos):
@@ -126,8 +129,8 @@ class StringLiteralNode(ExpressionNode):
         
         self.value = self.children[0]
 
-    def __str__(self):
-        return f"s'{self.value}'"
+    #def __str__(self):
+        #return f"s'{self.value}'"
     
 class NoteLiteralNode(ExpressionNode):
     def __init__(self, value, parent, pos):
@@ -136,8 +139,8 @@ class NoteLiteralNode(ExpressionNode):
         
         self.value = self.children[0]
         
-    def __str__(self):
-        return f"n'{self.value.note}[{self.value.octave}, {self.value.duration}]'"
+    #def __str__(self):
+        #return f"n'{self.value.note}[{self.value.octave}, {self.value.duration}]'"
 
 class FunctionCallNode(Node):
     def __init__(self, identifier, arguments, parent, pos):
@@ -147,15 +150,15 @@ class FunctionCallNode(Node):
         self.identifier = self.children[0]
         self.arguments = self.children[1]
         
-    def __str__(self):
-        return f"F({self.identifier}: {self.arguments})"
+    #def __str__(self):
+        #return f"F({self.identifier}: {self.arguments})"
 
 class CommaNode(Node):    
     def __init__(self, parent, pos):
         Node.__init__(self, parent, pos)   
         
-    def __str__(self):
-        return "[,]"
+    #def __str__(self):
+        #return "[,]"
 
 class PercentNode(Node):
     def __init__(self, value, parent, pos):        
@@ -164,8 +167,8 @@ class PercentNode(Node):
         
         self.value = self.children[0]
         
-    def __str__(self):
-        return f"%'{self.value}'"
+    #def __str__(self):
+        #return f"%'{self.value}'"
 
 class FunctionDefinitionNode(Node):
     def __init__(self, name, parameters, body, parent, pos):
@@ -176,8 +179,8 @@ class FunctionDefinitionNode(Node):
         self.parameters = self.children[1]
         self.body = self.children[2]
     
-    def __str__(self):
-        return f"$F'{self.name}{self.parameters}{self.body}"
+    #def __str__(self):
+        #return f"$F'{self.name}{self.parameters}{self.body}"
     
 class ReturnNode(Node):
     def __init__(self, value, parent, pos):
@@ -186,5 +189,15 @@ class ReturnNode(Node):
         
         self.value = self.children[0]
     
-    def __str__(self):
-        return f"Ret({self.value})"
+    #def __str__(self):
+        #return f"Ret({self.value})"
+    
+class ListItemNode(Node):
+    def __init__(self, value, parent, pos):
+        Node.__init__(self, parent, pos)
+        self.children.append(value)
+        
+        self.value = self.children[0]
+        
+class CloseListNode(Node):
+    pass

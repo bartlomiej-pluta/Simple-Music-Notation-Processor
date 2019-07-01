@@ -4,6 +4,51 @@ import re
 import sys
 from Error import SyntaxException
 
+class Tokens:
+    def __init__(self, tokens = []):
+        self.tokens = tokens
+        self.cursor = 0
+        self.snap = 0
+        
+    def append(self, token):
+        self.tokens.append(token)
+        
+    def __getitem__(self, index):
+        return self.tokens[index]
+    
+    def current(self):
+        if self.cursor >= len(self.tokens):
+            raise RuntimeError(f"Cursor points to not existing token! Cursor = {self.cursor}, len = {len(self.tokens)}")
+        return self.tokens[self.cursor]
+    
+    def next(self):
+        return self.tokens[self.cursor+1]
+    
+    def prev(self):
+        return self.tokens[self.cursor-1]
+    
+    def hasMore(self, count):
+        return self.cursor + count < len(self.tokens)
+    
+    def ahead(self):
+        self.cursor += 1        
+    
+    def snapshot(self):
+        self.snapshot = self.cursor
+        
+    def reset(self):
+        self.cursor = self.snapshot
+        return self.tokens[self.cursor]
+    
+    def notParsedTokensRemain(self):
+        return self.cursor < len(self.tokens)
+    
+    def __str__(self):
+        return f"[Cursor: {self.cursor}\n{', '.join([str(token) for token in self.tokens])}]"
+    
+    def __repr__(self):
+        return self.__str__()
+
 class TokenType(Enum):
     OPEN_PAREN = 1
     CLOSE_PAREN = 2
@@ -189,7 +234,7 @@ tokenizers = (
 )
 
 def doTokenize(lines):    
-    tokens = []         
+    tokens = []     
     for lineNumber, line in enumerate(lines):    
         current = 0
         while current < len(line):
@@ -209,4 +254,4 @@ def doTokenize(lines):
 
 def tokenize(lines):
     tokens = doTokenize(lines)
-    return list(filter(lambda x: x.type != TokenType.COMMENT, tokens))
+    return Tokens([ token for token in tokens if token.type != TokenType.COMMENT])
