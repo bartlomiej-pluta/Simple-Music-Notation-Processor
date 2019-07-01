@@ -83,7 +83,7 @@ class AssignExpression(Node):
     #def __str__(self):
         #return f"A[{self.target} = {self.value}]"
    
-class AsteriskStatementNode(Node):
+class AsteriskNode(Node):
     def __init__(self, iterator, statement, parent, pos):
         Node.__init__(self, parent, pos)  
         self.children.extend([iterator, statement])

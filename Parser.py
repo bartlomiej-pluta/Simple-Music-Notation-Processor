@@ -21,11 +21,17 @@ def returnAndGoAhead(input, getValue):
     return value
 
 # int -> INTEGER
-def parseInteger(input, parent):    
+# percent -> int '%'
+def parseIntegerAndPercent(input, parent):    
     if input.current().type == TokenType.INTEGER:
         integer = IntegerLiteralNode(input.current().value, parent, input.current().pos)
         input.ahead()
         
+        if input.hasMore() and input.current().type == TokenType.PERCENT:
+            percent = PercentNode(input.current().value, parent, input.current().pos)
+            integer.parent = percent
+            input.ahead()
+            return percent
         return integer
     return None
 
@@ -118,7 +124,7 @@ def parseListTail(input, parent):
     return None
 
 def parseColon(input, parent):          
-    if input.hasMore() and input.current().type == TokenType.COLON:
+    if input.hasMore(1) and input.current().type == TokenType.COLON:
         expr1 = parent.pop(-1)
         
         token = input.current()
@@ -132,13 +138,34 @@ def parseColon(input, parent):
         return colon
     return None
 
+def parseAsterisk(input, parent):
+    if input.hasMore(1) and input.current().type == TokenType.ASTERISK:
+        expr1 = parent.pop(-1)
+        
+        token = input.current()
+        input.ahead()
+        
+        expr2 = parseExpression(input, parent)
+        
+        asterisk = AsteriskNode(expr1, expr2, parent, token.pos)
+        expr1.parent = asterisk
+        expr2.parent = asterisk
+        return asterisk
+    return None
+
+def parseStatement(input, parent):
+    return runParsers(input, parent, [
+        parseAsterisk,
+        parseExpression,
+    ])
+
 def parseExpression(input, parent):
     value = runParsers(input, parent, [
-        parseInteger,
+        parseIntegerAndPercent,
         parseString,
-        parseNote,
+        parseNote,        
         parseList,      
-        parseColon,
+        parseColon,        
     ])
     
     if value is None:
@@ -149,7 +176,7 @@ def parseExpression(input, parent):
 
 def parseToken(input, parent):
     value = runParsers(input, parent, [
-        parseExpression
+        parseStatement        
     ])
     
     if value is None:

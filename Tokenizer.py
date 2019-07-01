@@ -25,9 +25,9 @@ class Tokens:
         return self.tokens[self.cursor + number]
     
     def prev(self, number=1):
-        return self.tokens[self.cursor - number]
+        return self.tokens[self.cursor - number]        
     
-    def hasMore(self, count=1):
+    def hasMore(self, count=0):
         return self.cursor + count < len(self.tokens)
     
     def ahead(self):
