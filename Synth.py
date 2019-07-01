@@ -26,6 +26,7 @@ def playList(notes, env):
 def playNote(note, bpm):
     frequency = note.toFrequency()
     duration = 60 * 4 / note.duration / bpm
+    duration *= 1.5 if note.dot else 1
     sine(frequency, duration)       
     
 def sine(frequency, duration):

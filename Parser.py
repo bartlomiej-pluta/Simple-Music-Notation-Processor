@@ -22,6 +22,7 @@ def parseNote(input, parent):
     consumedChars += 1
     octave = 4
     duration = 4
+    dot = False
     if consumedChars < len(value) and value[consumedChars] in ('b', '#'):
         notePitch += value[consumedChars]
         consumedChars += 1
@@ -35,8 +36,11 @@ def parseNote(input, parent):
             durationString += value[consumedChars]      
             consumedChars += 1  
             duration = int(durationString)
+        if consumedChars < len(value) and value[consumedChars] == '.':
+            dot = True
+            consumedChars += 1
     
-    return NoteLiteralNode(Note(notePitch, octave, duration), token.pos)
+    return NoteLiteralNode(Note(notePitch, octave, duration, dot), token.pos)
 
 def parseComma(input, parent):
     token = input.pop(0)

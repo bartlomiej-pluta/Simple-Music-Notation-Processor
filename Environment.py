@@ -203,6 +203,7 @@ def createEnvironment():
         'changeOctave': changeOctave,
         'wait': waitForSound,
         'read': read,
+        'debug': lambda args, env: print(args),
         'exit': exit
         
     }

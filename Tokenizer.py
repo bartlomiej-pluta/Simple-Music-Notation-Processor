@@ -138,6 +138,9 @@ def tokenizeNote(input, current, line):
                 while current+consumedChars < len(input) and re.match(r'\d', input[current+consumedChars]):
                     value += input[current+consumedChars]        
                     consumedChars += 1  
+                if current+consumedChars < len(input) and input[current+consumedChars] == '.':
+                    value += input[current+consumedChars]
+                    consumedChars += 1
             return (consumedChars, Token(TokenType.NOTE, value, (line, current)))
     return (0, None)
 
