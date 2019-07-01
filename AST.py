@@ -84,7 +84,7 @@ class IdentifierNode(Node):
     #def __str__(self):
         #return f"L'{self.identifier}'"
         
-class AssignExpression(Node):
+class AssignmentNode(Node):
     def __init__(self, target, value, parent, pos):
         Node.__init__(self, parent, pos)     
         self.children.extend([target, value])

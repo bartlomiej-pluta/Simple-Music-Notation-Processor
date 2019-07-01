@@ -51,6 +51,39 @@ def parseString(input, parent):
         return string
     return None
 
+# id -> IDENTIFIER
+def parseIdentifier(input, parent):
+    if input.current().type == TokenType.IDENTIFIER:
+        identifier = IdentifierNode(input.current().value, parent, input.current().pos)
+        input.ahead()
+        
+        return identifier
+    return None
+
+def parseIdentifierOrFunctionCallOrAssignment(input, parent):
+    identifier = parseIdentifier(input, parent)
+    if identifier is not None and input.hasCurrent():
+        if input.current().type == TokenType.ASSIGN:
+            token = input.current()
+            input.ahead()
+            
+            expr = parseExpression(input, parent)
+            
+            assignment = AssignmentNode(identifier, expr, parent, token.pos)
+            identifier.parent = assignment
+            expr.parent = assignment
+                        
+            return assignment
+        
+        args = parseList(input, parent)
+        if args is not None:
+            functionCall = FunctionCallNode(identifier, args, parent, identifier.pos)
+            args.parent = functionCall
+            identifier.parent = functionCall
+            return functionCall
+        
+    return identifier
+
 # note -> NOTE
 def parseNote(input, parent):    
     if input.current().type == TokenType.NOTE:   
@@ -236,7 +269,8 @@ def parseExpression(input, parent):
         parseMinus,
         parseString,
         parseNote,        
-        parseList,               
+        parseList, 
+        parseIdentifierOrFunctionCallOrAssignment,
     ])    
     
     colon = parseColon(expr, input, parent)
