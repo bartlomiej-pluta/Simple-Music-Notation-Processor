@@ -86,7 +86,7 @@ def interval(args, env):
         return intervalList(args[0])
     return intervalList(args)
 
-def transposeTo(args, env):
+def transposeTo(args, env):    
     if len(args) > 1 and isinstance(args[0], Note) and all(isinstance(x, list) for i, x in enumerate(args) if i != 0):        
         target = args[0]        
         result = []
@@ -95,7 +95,7 @@ def transposeTo(args, env):
                 continue
             if len(notes) > 0:
                 first = notes[0]
-                semitones = semitonesList([first, target])
+                semitones = semitonesList([first, target])[0]
                 result.append([note.transpose(semitones) for note in notes if isinstance(note, Note)])
             else:
                 result.append([])
