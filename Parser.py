@@ -4,7 +4,9 @@ from Error import SyntaxException
 from Note import Note, NotePitch
 import re
 
-def assertToken(expected, input):
+def assertToken(expected, input):    
+    if not input.hasCurrent():
+        raise SyntaxException(None, f"Expected '{expected}'")    
     if expected != input.current().type:
         raise SyntaxException(input.current().pos, f"Expected '{expected}', found '{input.current().value}'")
 
@@ -21,19 +23,24 @@ def returnAndGoAhead(input, getValue):
     return value
 
 # int -> INTEGER
-# percent -> int '%'
-def parseIntegerAndPercent(input, parent):    
+def parseInteger(input, parent):
     if input.current().type == TokenType.INTEGER:
-        integer = IntegerLiteralNode(input.current().value, parent, input.current().pos)
+        integer = IntegerLiteralNode(int(input.current().value), parent, input.current().pos)
         input.ahead()
         
-        if input.hasMore() and input.current().type == TokenType.PERCENT:
-            percent = PercentNode(input.current().value, parent, input.current().pos)
-            integer.parent = percent
-            input.ahead()
-            return percent
         return integer
     return None
+
+# percent -> int '%'
+def parseIntegerAndPercent(input, parent):       
+    integer = parseInteger(input, parent)        
+    if integer is not None and input.hasCurrent() and input.current().type == TokenType.PERCENT:
+        percent = PercentNode(integer, parent, input.current().pos)
+        integer.parent = percent
+        input.ahead()
+        
+        return percent
+    return integer
 
 # string -> STRING
 def parseString(input, parent):
@@ -83,48 +90,51 @@ def parseList(input, parent):
         input.ahead()
         
         # list -> CLOSE_PAREN (end of list)
-        if input.current().type == TokenType.CLOSE_PAREN:
+        if input.hasCurrent() and input.current().type == TokenType.CLOSE_PAREN:
             close = CloseListNode(node, input.current().pos)
             node.append(close)
             input.ahead()
             return node                
         
         # list -> expr listTail
-        token = input.current()
-        expr = parseExpression(input, node)
-        item = ListItemNode(expr, node, token.pos)
-        expr.parent = item
-        node.append(item)
-        listTail = parseListTail(input, item)
-        item.append(listTail)        
-        return node
+        if input.hasCurrent():
+            token = input.current()
+            expr = rollup(parseExpression)(input, node)
+            item = ListItemNode(expr, node, token.pos)
+            expr.parent = item
+            node.append(item)
+            listTail = parseListTail(input, item)
+            item.append(listTail)        
+            return node
     return None
             
 
 # listTail -> COMMA expr listTail | CLOSE_PAREN
 def parseListTail(input, parent):         
     # listTail -> CLOSE_PAREN
-    if input.current().type == TokenType.CLOSE_PAREN:   
+    if input.hasCurrent() and input.current().type == TokenType.CLOSE_PAREN:   
         close = CloseListNode(parent, input.current().pos)
         input.ahead()
         return close
     
     # listTail -> COMMA expr listTail
-    assertToken(TokenType.COMMA, input)
-    input.ahead()
-    expr = parseExpression(input, parent)        
-    if expr is not None: 
-        item = ListItemNode(expr, parent, expr.pos)            
-        expr.parent = item           
-        listTail = parseListTail(input, item)
-        item.append(listTail)        
-        listTail.parent = item        
-        return item
+    if input.hasCurrent() and input.hasMore():        
+        assertToken(TokenType.COMMA, input)
+        input.ahead()
+        expr = rollup(parseExpression)(input, parent)        
+        if expr is not None: 
+            item = ListItemNode(expr, parent, expr.pos)            
+            expr.parent = item           
+            listTail = parseListTail(input, item)
+            item.append(listTail)        
+            listTail.parent = item        
+            return item
     
     return None
 
+# colon -> expr ':' expr
 def parseColon(input, parent):          
-    if input.hasMore(1) and input.current().type == TokenType.COLON:
+    if input.hasMore() and input.current().type == TokenType.COLON:
         expr1 = parent.pop(-1)
         
         token = input.current()
@@ -138,49 +148,143 @@ def parseColon(input, parent):
         return colon
     return None
 
-def parseAsterisk(input, parent):
-    if input.hasMore(1) and input.current().type == TokenType.ASTERISK:
-        expr1 = parent.pop(-1)
-        
+# minus -> '-' int
+def parseMinus(input, parent):
+    if input.current().type == TokenType.MINUS:
         token = input.current()
         input.ahead()
         
-        expr2 = parseExpression(input, parent)
+        expr = parseInteger(input, parent)        
         
-        asterisk = AsteriskNode(expr1, expr2, parent, token.pos)
-        expr1.parent = asterisk
-        expr2.parent = asterisk
+        return IntegerLiteralNode(-expr.value, parent, token.pos)
+
+
+# block -> '{' '}' | '{' blockItem
+def parseBlock(input, parent):      
+    # '{'
+    if input.current().type == TokenType.OPEN_BRACKET:
+        token = input.current()
+        input.ahead()
+        
+        node = BlockNode(parent, token.pos)        
+        
+        # '}'
+        if input.hasCurrent() and input.current().type == TokenType.CLOSE_BRACKET:
+            input.ahead()
+            return node
+        
+        # blockItem
+        if input.hasCurrent():
+            item = parseBlockItem(input, node)
+            node.append(item)
+            return node
+        
+    return None
+          
+# blockItem -> stmt | '}'          
+def parseBlockItem(input, parent):      
+    # '}'    
+    if input.hasCurrent() and input.current().type == TokenType.CLOSE_BRACKET:
+        close = CloseBlockNode(parent, input.current().pos)
+        input.ahead()
+        return close
+    
+    if input.hasCurrent():        
+        stmt = parseStatement(input, parent)
+        
+        if stmt is not None:
+            item = BlockItemNode(stmt, parent, stmt.pos)
+            stmt.parent = item
+            nextBlockItem = parseBlockItem(input, item)
+            if nextBlockItem != None:
+                item.append(nextBlockItem)
+            return item
+        
+    return None
+
+def rollup(parser):
+    def _rollup(input, parent):
+        node = Node(None, (-1, -1))
+        elem = parser(input, node)
+        while elem is not None:
+            node.append(elem)            
+            elem = parser(input, node)
+        return node.children[0] if len(node.children) > 0 else None
+    return _rollup
+
+def rollStatement(input, parent):
+    node = Node(None, (-1, -1))
+    stmt = parseStatement(input, node)    
+    while stmt is not None:
+        node.append(stmt)
+        stmt = parseStatement(input, node)                
+    return node.children[0]
+    
+
+
+def parseStatement(input, parent):
+    value = runParsers(input, parent, [        
+        parseBlock,
+        parseExpression,
+    ])        
+
+    return value
+
+def parseExpression(input, parent):
+    expr = runParsers(input, parent, [
+        parseIntegerAndPercent,
+        parseMinus,
+        parseString,
+        parseNote,        
+        parseList,               
+    ])    
+    
+    colon = parseColon(expr, input, parent)
+    if colon is not None:
+        return colon
+    
+    asterisk = parseAsterisk(expr, input, parent)
+    if asterisk is not None:
+        return asterisk
+    
+    return expr
+
+# asterisk -> expr '*' stmt
+def parseAsterisk(expr, input, parent):
+    if input.hasMore() and input.current().type == TokenType.ASTERISK:                
+        token = input.current()
+        input.ahead()
+        
+        stmt = parseStatement(input, parent)
+        
+        asterisk = AsteriskNode(expr, stmt, parent, token.pos)
+        expr.parent = asterisk
+        stmt.parent = asterisk
         return asterisk
     return None
 
-def parseStatement(input, parent):
-    return runParsers(input, parent, [
-        parseAsterisk,
-        parseExpression,
-    ])
+# colon -> expr ':' expr
+def parseColon(expr1, input, parent):
+    if input.hasCurrent() and input.current().type == TokenType.COLON:
+        token = input.current()
+        input.ahead()
+        expr2 = parseExpression(input, parent)
+        
+        if expr2 is None:
+            raise SyntaxException(input.current().pos, f"Expected expression '{input.current().value}'")
+        colon = ColonNode(expr1, expr2, parent, token.pos)
+        expr1.parent = colon
+        expr2.parent = colon
+        return colon
+    return None
 
-def parseExpression(input, parent):
-    value = runParsers(input, parent, [
-        parseIntegerAndPercent,
-        parseString,
-        parseNote,        
-        parseList,      
-        parseColon,        
-    ])
-    
-    if value is None:
-        raise SyntaxException(input.current().pos, f"Expression expected")
-    
-    return value
-    
-
-def parseToken(input, parent):
+def parseToken(input, parent):    
     value = runParsers(input, parent, [
         parseStatement        
-    ])
-    
+    ])        
+       
     if value is None:
-        raise SyntaxException(input.current().pos, "Unknown statement")
+        raise SyntaxException(None, "Unknown statement") #TODO
     
     return value
 

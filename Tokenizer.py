@@ -27,8 +27,11 @@ class Tokens:
     def prev(self, number=1):
         return self.tokens[self.cursor - number]        
     
-    def hasMore(self, count=0):
+    def hasMore(self, count=1):
         return self.cursor + count < len(self.tokens)
+    
+    def hasCurrent(self):
+        return self.cursor < len(self.tokens)
     
     def ahead(self):
         self.cursor += 1        
@@ -66,7 +69,7 @@ class TokenType(Enum):
     PERCENT = 14
     MINUS = 15
     FUNCTION = 16
-    RETURN = 17
+    RETURN = 17    
 
 class Token:
     def __init__(self, type, value, pos):
@@ -226,7 +229,7 @@ tokenizers = (
     tokenizeOpenBracket,
     tokenizeCloseBracket,
     tokenizeAssign,
-    tokenizeColon,
+    tokenizeColon,    
     tokenizePercent,
     tokenizeMinus,
     tokenizeComment,

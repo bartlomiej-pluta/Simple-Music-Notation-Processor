@@ -6,6 +6,8 @@ class Node:
         self.children = []
         self.parent = parent
         self.pos = pos
+        for child in self.children:
+            child.parent = self
         
     def __repr__(self):
         return self.__str__()
@@ -17,6 +19,7 @@ class Node:
         return self.children[index]        
     
     def append(self, node):
+        node.parent = self
         self.children.append(node)
         
     def pop(self, index):
@@ -54,6 +57,15 @@ class BlockNode(Node):
     #def __str__(self):
         #return "B{\n" + "\n".join([str(e) for e in self.children]) + "\n}"
 
+class BlockItemNode(Node):
+    def __init__(self, statement, parent, pos):
+        Node.__init__(self, parent, pos)
+        self.children.append(statement)
+        self.statement = self.children[0]
+
+class CloseBlockNode(Node):
+    def __init__(self, parent, pos):
+        Node.__init__(self, parent, pos)
 
 class ListNode(Node):
     def __init__(self, parent, pos):
