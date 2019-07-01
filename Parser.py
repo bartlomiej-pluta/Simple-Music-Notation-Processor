@@ -1,6 +1,8 @@
 from AST import *
 from Tokenizer import TokenType
 from Error import SyntaxException
+from Note import Note, NotePitch
+import re
 
 def assertToken(expected, input):
     if expected != input.current().type:
@@ -27,8 +29,48 @@ def parseInteger(input, parent):
         return integer
     return None
 
+# string -> STRING
+def parseString(input, parent):
+    if input.current().type == TokenType.STRING:
+        string = StringLiteralNode(input.current().value[1:len(input.current().value)-1], parent, input.current().pos)
+        input.ahead()
+        
+        return string
+    return None
+
+# note -> NOTE
+def parseNote(input, parent):    
+    if input.current().type == TokenType.NOTE:        
+        value = input.current().value
+        consumedChars = 1
+        notePitch = value[consumedChars]
+        consumedChars += 1
+        octave = 4
+        duration = 4
+        dot = False
+        if consumedChars < len(value) and value[consumedChars] in ('b', '#'):
+            notePitch += value[consumedChars]
+            consumedChars += 1
+        if consumedChars < len(value) and re.match(r'\d', value[consumedChars]):
+            octave = int(value[consumedChars])
+            consumedChars += 1
+        if consumedChars < len(value) and value[consumedChars] == '.':
+            consumedChars += 1
+            durationString = ''            
+            while consumedChars < len(value) and re.match(r'\d', value[consumedChars]):
+                durationString += value[consumedChars]      
+                consumedChars += 1  
+                duration = int(durationString)
+            if consumedChars < len(value) and value[consumedChars] == '.':
+                dot = True
+                consumedChars += 1
+        
+        input.ahead()
+        return NoteLiteralNode(Note(notePitch, octave, duration, dot), parent, input.current().pos)
+    return None
+
 # list -> CLOSE_PAREN | expr listTail
-def parseList(input, parent):      
+def parseList(input, parent):          
     if input.current().type == TokenType.OPEN_PAREN:
         node = ListNode(parent, input.current().pos)                
         input.ahead()
@@ -44,38 +86,32 @@ def parseList(input, parent):
         token = input.current()
         expr = parseExpression(input, node)
         item = ListItemNode(expr, node, token.pos)
+        expr.parent = item
         node.append(item)
         listTail = parseListTail(input, item)
-        item.append(listTail)
-        
-        #while input.current().type != TokenType.CLOSE_PAREN:                        
-            #elem = parseListTail(input, node)            
-            #if elem is None:
-                #raise SyntaxException(input.current().pos, f"Invalid element '{input.current().value}'")
-            #node.append(elem)
+        item.append(listTail)        
         return node
     return None
             
 
 # listTail -> COMMA expr listTail | CLOSE_PAREN
-def parseListTail(input, parent):        
+def parseListTail(input, parent):         
     # listTail -> CLOSE_PAREN
     if input.current().type == TokenType.CLOSE_PAREN:   
         close = CloseListNode(parent, input.current().pos)
         input.ahead()
         return close
     
+    # listTail -> COMMA expr listTail
     assertToken(TokenType.COMMA, input)
     input.ahead()
-        
     expr = parseExpression(input, parent)        
     if expr is not None: 
         item = ListItemNode(expr, parent, expr.pos)            
         expr.parent = item           
         listTail = parseListTail(input, item)
-        item.append(listTail)
-        listTail.parent = item
-        input.ahead()
+        item.append(listTail)        
+        listTail.parent = item        
         return item
     
     return None
@@ -83,6 +119,8 @@ def parseListTail(input, parent):
 def parseExpression(input, parent):
     value = runParsers(input, parent, [
         parseInteger,
+        parseString,
+        parseNote,
         parseList        
     ])
     
@@ -107,11 +145,3 @@ def parse(input):
     while input.notParsedTokensRemain():
         root.append(parseToken(input, root))    
     return root
-
-
-
-
-
-
-def parseNote(input, parent):
-    pass
