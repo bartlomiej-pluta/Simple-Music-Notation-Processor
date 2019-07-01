@@ -43,9 +43,6 @@ class Tokens:
         self.cursor = self.snapshot
         return self.tokens[self.cursor]
     
-    def notParsedTokensRemain(self):
-        return self.cursor < len(self.tokens)
-    
     def __str__(self):
         return f"[Cursor: {self.cursor}\n{', '.join([str(token) for token in self.tokens])}]"
     

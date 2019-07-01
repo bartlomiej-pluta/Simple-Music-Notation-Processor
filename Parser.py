@@ -244,21 +244,48 @@ def rollup(parser):
             elem = parser(input, node)
         return node.children[0] if len(node.children) > 0 else None
     return _rollup
-
-def rollStatement(input, parent):
-    node = Node(None, (-1, -1))
-    stmt = parseStatement(input, node)    
-    while stmt is not None:
-        node.append(stmt)
-        stmt = parseStatement(input, node)                
-    return node.children[0]
     
+def parseFunctionDefinition(input, parent):
+    if input.current().type == TokenType.FUNCTION:
+        token = input.current()
+        input.ahead()
+        
+        assertToken(TokenType.IDENTIFIER, input)
+        identifier = parseIdentifier(input, parent)
+        
+        assertToken(TokenType.OPEN_PAREN, input)
+        args = parseList(input, parent)
+        
+        assertToken(TokenType.OPEN_BRACKET, input)
+        body = parseBlock(input, parent)
+        
+        function = FunctionDefinitionNode(identifier, args, body, parent, token.pos)
+        identifier.parent = function
+        args.parent = function
+        body.parent = function
+        
+        return function
+    return None
 
+def parseReturn(input, parent):
+    if input.current().type == TokenType.RETURN:
+        token = input.current()
+        input.ahead()
+        
+        expr = parseExpression(input, parent)
+        
+        node = ReturnNode(expr, parent, token.pos)
+        expr.parent = node
+        
+        return node
+    return None
 
 def parseStatement(input, parent):
     value = runParsers(input, parent, [        
         parseBlock,
         parseExpression,
+        parseFunctionDefinition,
+        parseReturn
     ])        
 
     return value
@@ -324,6 +351,6 @@ def parseToken(input, parent):
 
 def parse(input):
     root = Program()
-    while input.notParsedTokensRemain():
+    while input.hasCurrent():
         root.append(parseToken(input, root))    
     return root
