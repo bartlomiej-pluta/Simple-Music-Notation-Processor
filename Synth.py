@@ -38,6 +38,6 @@ def doPause(value, bpm):
     time.sleep(60 * 4 / value / bpm)
     
 def pause(args, env):
-    bpm = findVariable("bpm", env)
+    bpm = env.findVariable("bpm")
     value = args[0]
     doPause(value, bpm)
