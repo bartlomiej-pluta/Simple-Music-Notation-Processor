@@ -210,6 +210,14 @@ class ListItemNode(Node):
         self.children.append(value)
         
         self.value = self.children[0]
+
+class AccessNode(Node):
+    def __init__(self, element, property, parent, pos):
+        Node.__init__(self, parent, pos)
+        self.children.extend([element, property])
+        
+        self.element = self.children[0]
+        self.property = self.children[1]
         
 class CloseListNode(Node):
     pass

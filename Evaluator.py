@@ -76,6 +76,35 @@ def _flatListNode(listItemNode, list = []):
         _flatListNode(child2, list)    
     return list
 
+def evaluateAccess(access, environment):
+    
+    element = evaluate(access.element, environment)
+    #TODO: narazie tylko metody działają        
+    e = evaluateMethodCall(element, access.property, environment)
+    return e
+    
+def evaluateMethodCall(element, functionCall, environment):
+    funcName = functionCall.identifier.identifier
+    arguments = evaluateList(functionCall.arguments, environment)
+    arguments.insert(0, element)    
+    #for name, function in environment.customFunctions.items():
+        #if funcName == name:
+            #if len(function['params']) != len(arguments):
+                #raise RuntimeException(functionCall.pos, f"Calling '{funcName}' requires {len(function['params'])} and {len(arguments)} was passed")
+            #environment.scopes.append({ function['params'][i].identifier: v for i, v in enumerate(arguments) })                      
+            #returnValue = None            
+            #for node in function['body']:                   
+                #if not isinstance(node, ReturnNode):
+                    #evaluate(node, environment)     
+                #else:                    
+                    #returnValue = evaluateReturn(node, environment)
+            #environment.scopes.pop(-1)
+            #return returnValue    
+    for name, definition in environment.methods[type(element)].items():        
+        if name == funcName:            
+            return definition(arguments, environment)
+    raise RuntimeException(functionCall.pos, f"Method '{funcName}' does not exist")
+
 def evaluateFunctionCall(functionCall, environment):         
     funcName = functionCall.identifier.identifier
     arguments = evaluateList(functionCall.arguments, environment)       
@@ -157,7 +186,7 @@ def evaluateColon(colon, environment):
         return list(range(colon.a.value, colon.b.value+1))
     raise RuntimeException(colon.pos, "Invalid colon arguments")
 
-def evaluate(input, environment):    
+def evaluate(input, environment):     
     if isinstance(input, Program):
         return evaluateProgram(input, environment)
     if isinstance(input, IntegerLiteralNode):
@@ -172,7 +201,9 @@ def evaluate(input, environment):
         return evaluateFunctionDefinition(input, environment)
     if isinstance(input, FunctionCallNode):
         return evaluateFunctionCall(input, environment)
-    if isinstance(input, CommaNode):
+    if isinstance(input, AccessNode):
+        return evaluateAccess(input, environment)
+    if isinstance(input, CommaNode):    
         return evaluateComma(input, environment)
     if isinstance(input, BlockNode):
         return evaluateBlock(input, environment)

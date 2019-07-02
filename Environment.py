@@ -8,6 +8,7 @@ from Error import RuntimeException
 from NoiseDetector import waitForSound
 from Parser import parseNote
 from Tokenizer import Token, TokenType, tokenizeNote
+from functools import reduce
 
 types = {
     int: 'integer',
@@ -19,9 +20,10 @@ types = {
 }
 
 class Environment():
-    def __init__(self, scopes, functions):
+    def __init__(self, scopes, functions, methods):
         self.scopes = scopes
         self.functions = functions
+        self.methods = methods
         self.customFunctions = {}
         self.callStack = []        
     
@@ -188,6 +190,37 @@ def changeOctave(args, env):
         return args[0].withOctave(args[1])
     return # invalid signature
 
+def tupletList(n, m, list):    
+    return [note.withDuration(note.duration * n / m) for note in list]
+
+def tuplet(args, env):
+    if len(args) > 2 and type(args[0]) == int and type(args[1]) == int and all(type(x) == Note for x in args[2:]):
+        n = args[0] # how many notes
+        m = args[1] # instead of number of notes (3-tuplet: 3 instead 2; 5-tuplet: 5 instead 4 etc.)
+        return returnElementOrList(tupletList(n, m, args[2:]))            
+    elif len(args) == 3 and type(args[0]) == int and type(args[1]) == int and type(args[2]) == list and all(type(x) == Note for x in args[2]):
+        n = args[0]
+        m = args[1]
+        l = args[2]
+        return returnElementOrList(tupletList(n, m, l))
+    else:
+        pass # not valid signature
+
+def combine(args, env):
+    if all(type(x) == list for x in args):
+        return reduce((lambda x, y: x + y), args)
+
+def flat(args, env):
+    return _flat(args, [])
+
+def _flat(input, output = []):
+    for item in input:
+        if type(item) == list:
+            _flat(item, output)
+        else:
+            output.append(item)
+    return output
+
 def createEnvironment():
     functions = {
         'print': doPrint,
@@ -206,13 +239,26 @@ def createEnvironment():
         'wait': waitForSound,
         'read': read,
         'debug': lambda args, env: print(args),
+        'tuplet': tuplet,
+        'combine': combine,
+        'flat': flat,
         'exit': exit
         
+    }
+    
+    methods = {
+        str: {},
+        list: {},
+        float: {},        
+        Note: {
+            'synth': Synth.play
+        },
+        type(None): {},
     }
     
     variables = {
         "bpm": 120
     }
     
-    return Environment([ variables ], functions)
+    return Environment([ variables ], functions, methods)
  

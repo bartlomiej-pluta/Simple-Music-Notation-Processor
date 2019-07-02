@@ -67,6 +67,7 @@ class TokenType(Enum):
     MINUS = 15
     FUNCTION = 16
     RETURN = 17    
+    DOT = 18
 
 class Token:
     def __init__(self, type, value, pos):
@@ -79,19 +80,18 @@ class Token:
         return self.__str__()
 
 def tokenizeOpenParen(input, current, line):
-    if input[current] == '(':
-        return (1, Token(TokenType.OPEN_PAREN, input[current], (line, current)))
+    return tokenizeChar(TokenType.OPEN_PAREN, '(', input, current, line)
+   
+def tokenizeChar(type, char, input, current, line):
+    if input[current] == char:
+        return (1, Token(type, input[current], (line, current)))
     return (0, None)
 
 def tokenizeCloseParen(input, current, line):
-    if input[current] == ')':
-        return (1, Token(TokenType.CLOSE_PAREN, input[current], (line, current)))
-    return (0, None)
+    return tokenizeChar(TokenType.CLOSE_PAREN, ')', input, current, line)
 
 def tokenizeAsterisk(input, current, line):
-    if input[current] == '*':
-        return (1, Token(TokenType.ASTERISK, input[current], (line, current)))
-    return (0, None)
+    return tokenizeChar(TokenType.ASTERISK, '*', input, current, line)
 
 def tokenizeString(input, current, line):
     if input[current] == '"':
@@ -99,7 +99,7 @@ def tokenizeString(input, current, line):
         char = ''
         consumedChars = 1
         while char != '"':
-            if char is None:
+            if char is None: #TODO!!!
                 print("String not terminated")
             char = input[current + consumedChars]
             value += char
@@ -123,32 +123,22 @@ def tokenizeIdentifier(input, current, line):
     return tokenizeRegexPattern(TokenType.IDENTIFIER, r'\w', input, current, line)
 
 def tokenizeComma(input, current, line):
-    if input[current] == ',':
-        return (1, Token(TokenType.COMMA, input[current], (line, current)))
-    return (0, None)
+    return tokenizeChar(TokenType.COMMA, ',', input, current, line)
 
 def tokenizeInteger(input, current, line):    
     return tokenizeRegexPattern(TokenType.INTEGER, r'\d', input, current, line)
 
 def tokenizeOpenBracket(input, current, line):
-    if input[current] == '{':
-        return (1, Token(TokenType.OPEN_BRACKET, input[current], (line, current)))
-    return (0, None)
+    return tokenizeChar(TokenType.OPEN_BRACKET, '{', input, current, line)
 
 def tokenizeCloseBracket(input, current, line):
-    if input[current] == '}':
-        return (1, Token(TokenType.CLOSE_BRACKET, input[current], (line, current)))
-    return (0, None)
+    return tokenizeChar(TokenType.CLOSE_BRACKET, '}', input, current, line)
 
 def tokenizeAssign(input, current, line):
-    if input[current] == '=':
-        return (1, Token(TokenType.ASSIGN, input[current], (line, current)))
-    return (0, None)
+    return tokenizeChar(TokenType.ASSIGN, '=', input, current, line)
 
 def tokenizeColon(input, current, line):
-    if input[current] == ':':
-        return (1, Token(TokenType.COLON, input[current], (line, current)))
-    return (0, None)
+    return tokenizeChar(TokenType.COLON, ':', input, current, line)
 
 def tokenizeComment(input, current, line):
     if input[current] == '#':
@@ -180,26 +170,26 @@ def tokenizeNote(input, current, line):
                 consumedChars += 1
                 
             if current+consumedChars < len(input) and input[current+consumedChars] == '.':            
-                value += input[current+consumedChars]
+                duration = input[current+consumedChars]
                 consumedChars += 1
                 while current+consumedChars < len(input) and re.match(r'\d', input[current+consumedChars]):
-                    value += input[current+consumedChars]        
+                    duration += input[current+consumedChars]        
                     consumedChars += 1  
-                if current+consumedChars < len(input) and input[current+consumedChars] == '.':
-                    value += input[current+consumedChars]
+                if current+consumedChars < len(input) and input[current+consumedChars] == 'd':
+                    duration += input[current+consumedChars]
                     consumedChars += 1
+                if len(duration) > 1:
+                    value += duration
+                else:
+                    consumedChars -= 1
             return (consumedChars, Token(TokenType.NOTE, value, (line, current)))
     return (0, None)
 
 def tokenizePercent(input, current, line):
-    if input[current] == '%':
-        return (1, Token(TokenType.PERCENT, input[current], (line, current)))
-    return (0, None)
+    return tokenizeChar(TokenType.PERCENT, '%', input, current, line)
 
 def tokenizeMinus(input, current, line):
-    if input[current] == '-':
-        return (1, Token(TokenType.MINUS, input[current], (line, current)))
-    return (0, None)
+    return tokenizeChar(TokenType.MINUS, '-', input, current, line)
 
 def tokenizeFunction(input, current, line):
     return tokenizeKeyword(TokenType.FUNCTION, 'function', input, current, line)
@@ -211,6 +201,9 @@ def tokenizeKeyword(type, keyword, input, current, line):
 
 def tokenizeReturn(input, current, line):
     return tokenizeKeyword(TokenType.RETURN, 'return', input, current, line)
+
+def tokenizeDot(input, current, line):
+    return tokenizeChar(TokenType.DOT, '.', input, current, line)
 
 tokenizers = (
     tokenizeOpenParen, 
@@ -229,8 +222,9 @@ tokenizers = (
     tokenizeColon,    
     tokenizePercent,
     tokenizeMinus,
+    tokenizeDot,
     tokenizeComment,
-    tokenizeWhitespaces
+    tokenizeWhitespaces,
 )
 
 def doTokenize(lines):    

@@ -108,7 +108,7 @@ def parseNote(input, parent):
                 durationString += value[consumedChars]      
                 consumedChars += 1  
                 duration = int(durationString)
-            if consumedChars < len(value) and value[consumedChars] == '.':
+            if consumedChars < len(value) and value[consumedChars] == 'd':
                 dot = True
                 consumedChars += 1
         
@@ -280,6 +280,26 @@ def parseReturn(input, parent):
         return node
     return None
 
+# access -> expr '.' expr
+#TODO: dodać dziedziczenie wszystkich expressions po jednym typie ExpressionNode
+# i potem sprawdzać przy wszystkich parent.pop(-1) czy pobrany z parenta element
+# jest rzeczywiście wyrażeniem, bo teraz możliwe jest np. {}.fun()
+def parseAccess(input, parent):
+    if input.current().type == TokenType.DOT:
+        token = input.current()
+        input.ahead()
+        
+        element = parent.pop(-1)
+        
+        property = parseExpression(input, parent)
+        
+        node = AccessNode(element, property, parent, token.pos)
+        element.parent = node
+        property.parent = node
+        
+        return node
+    return None
+
 def parseStatement(input, parent):
     stmt = runParsers(input, parent, [        
         parseBlock,
@@ -316,6 +336,7 @@ def parseExpression(input, parent):
         parseNote,        
         parseList, 
         parseIdentifierOrFunctionCallOrAssignment,
+        parseAccess,
     ])    
     
     colon = parseColon(expr, input, parent)
