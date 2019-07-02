@@ -1,5 +1,5 @@
 import sys
-from Evaluator import objectString
+from parser.Environment import objectString
 from Note import *
 import random
 import Synth
@@ -46,19 +46,6 @@ class Environment():
                         return scope         
                 else:
                     return scope        
-
-def sample(args, env):
-    if len(args) == 1 and isinstance(args[0], list):
-        return _sample(args[0])
-    elif len(args) == 0:
-        return _sample(Note.range(Note(NotePitch.C), Note(NotePitch.H)))
-    elif all(isinstance(x, Note) for x in args):
-        return _sample(args)
-    else:
-        pass # not valid signature
- 
-def _sample(list):
-    return list[int(random.uniform(0, len(list)))]
  
 def doPrint(args, env):    
     print("".join([objectString(arg) for arg in args]))
