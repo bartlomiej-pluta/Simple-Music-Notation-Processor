@@ -24,6 +24,9 @@ class Node:
     def pop(self, index):
         return self.children.pop(index)
 
+    def print(self):
+        print(self._print(0))
+
     def _print(self, level):
         string = f"{pad(level)}{self.__class__.__name__}({self.parent.__class__.__name__}):\n"
         for child in self.children:
@@ -38,4 +41,4 @@ class Node:
 
 
 def pad(level):
-    return ("   " * level)
+    return "   " * level

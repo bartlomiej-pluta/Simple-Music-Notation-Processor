@@ -8,6 +8,7 @@ class Token:
     def __repr__(self):
         return self.__str__()
 
+
 class TokenList:
     def __init__(self, tokens = []):
         self.tokens = tokens

@@ -65,6 +65,7 @@ def tokenize(lines):
             
     return TokenList(filterTokens(filters, tokens))
 
+
 def combinedTokenizer(line, current, lineNumber):
     for tokenizer in tokenizers:
         consumedChars, token = tokenizer(line, current, lineNumber)
@@ -72,10 +73,12 @@ def combinedTokenizer(line, current, lineNumber):
             return (consumedChars, token)
     return (0, None)
 
+
 def filterTokens(filters, tokens):    
     if not filters:
         return tokens
     
-    return filterTokens(filters[1:], (token for token in tokens if filters[0](token)))
+    return list(filterTokens(filters[1:], (token for token in tokens if filters[0](token))))
+
 
 __all__ = ["tokenize"]
