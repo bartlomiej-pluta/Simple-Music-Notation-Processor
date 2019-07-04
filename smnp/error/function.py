@@ -9,3 +9,8 @@ class IllegalFunctionInvocationException(SmnpException):
 class FunctionNotFoundException(SmnpException):
     def __init__(self, function):
         self.msg = f"Function '{function}' not found"
+
+
+class MethodNotFoundException(SmnpException):
+    def __init__(self, object, method):
+        self.msg = f"Method '{method}' of type '{object}' not found"
