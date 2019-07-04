@@ -1,8 +1,9 @@
+from collections import deque
+from statistics import mean
+
 import numpy as np
 import sounddevice as sd
-import os
-from collections import deque
-from statistics import mean 
+
 
 class NoiseDetector:
     def __init__(self, noiseTreshold=300, silenceTreshold=10, bufferSize=20):
@@ -42,7 +43,8 @@ class NoiseDetector:
                 print(f"Mic level: {self.mean}", end="\r")                 
                 sd.sleep(200)                
 
-                
+
+#TODO: do environment
 def waitForSound(args, env):
     noiseTreshold = 300
     silenceTreshold = 10

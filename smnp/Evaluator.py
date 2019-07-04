@@ -1,5 +1,3 @@
-from Tokenizer import tokenize, TokenType
-from Parser import parse
 from AST import *
 from Note import Note
 from Error import RuntimeException
@@ -25,20 +23,7 @@ def evaluateString(string, environment):
             value = value.replace('{' + k + '}', objectString(v)) #TODO: poprawic
     return value
 
-def objectString(obj):    
-    if isinstance(obj, str):
-        return obj
-    if isinstance(obj, int):       
-        return str(obj)
-    if isinstance(obj, Note):
-        return obj.note.name
-    if isinstance(obj, list):
-        return "(" + ", ".join([objectString(v) for v in obj]) + ")"
-    if isinstance(obj, float):
-        return f"{int(obj*100)}%"
-    if obj is None:
-        raise RuntimeException(None, f"Trying to interpret void")
-    raise RuntimeException(None, f"Don't know how to interpret {str(obj)}")
+
 
 def evaluateNote(note, environment):
     return note.value
