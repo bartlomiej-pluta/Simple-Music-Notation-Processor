@@ -4,9 +4,10 @@ from smnp.type.model import Type
 
 
 class Matcher:
-    def __init__(self, objectType, matcher):
+    def __init__(self, objectType, matcher, string):
         self.type = objectType
         self.matcher = matcher
+        self.string = string
 
     def match(self, value):
         if self.type is not None and self.type != value.type:
@@ -16,7 +17,26 @@ class Matcher:
     def andWith(self, matcher):
         if self.type != matcher.type:
             raise RuntimeError("Support types of matches are not the same")
-        return Matcher(self.type, lambda x: self.matcher(x) and matcher.matcher(x))
+        string = f"[{self.string} and {matcher.string}]"
+        return Matcher(self.type, lambda x: self.match(x) and matcher.match(x), string)
+
+    def orWith(self, matcher):
+        string = f"[{self.string} or {matcher.string}]"
+        return Matcher(None, lambda x: self.match(x) or matcher.match(x), string)
+
+
+
+    def __str__(self):
+        return self.string
+
+    def __repr__(self):
+        return self.__str__()
+
+
+class Signature:
+    def __init__(self, check, string):
+        self.check = check
+        self.string = string
 
 
 def varargSignature(varargMatcher, *basicSignature):
@@ -33,7 +53,10 @@ def varargSignature(varargMatcher, *basicSignature):
                 return doesNotMatchVararg(basicSignature)
 
         return True, (*args[:len(basicSignature)]), args[len(basicSignature):]
-    return check
+
+    string = f"({', '.join([str(m) for m in basicSignature])}{', ' if len(basicSignature) > 0 else ''}{str(varargMatcher)}...)"
+
+    return Signature(check, string)
 
 
 def doesNotMatchVararg(basicSignature):
@@ -52,7 +75,9 @@ def signature(*signature):
 
         return (True, *args)
 
-    return check
+    string = f"({', '.join([str(m) for m in signature])})"
+
+    return Signature(check, string)
 
 
 def doesNotMatch(sign):
@@ -62,21 +87,21 @@ def doesNotMatch(sign):
 def ofTypes(*types):
     def check(value):
         return value.type in types
-    return Matcher(None, check)
+    return Matcher(None, check, f"<{'|'.join([t.name for t in types])}>")
 
 
 def listOf(*types):
     def check(value):
         return len([item for item in value.value if not item.type in types]) == 0
 
-    return Matcher(Type.LIST, check)
+    return Matcher(Type.LIST, check, f"{Type.LIST.name}<{'|'.join([t.name for t in types])}>")
 
 
 def listMatches(*pattern):
     def check(value):
-        return signature(pattern)(value.value)[0]
+        return signature(*pattern).check(value.value)[0]
 
-    return Matcher(Type.LIST, check)
+    return Matcher(Type.LIST, check, f"({', '.join([str(m) for m in pattern])})")
 
 
 def recursiveListMatcher(matcher):
@@ -89,5 +114,5 @@ def recursiveListMatcher(matcher):
         for item in value.value:
             return check(item)
 
-    return Matcher(Type.LIST, check)
+    return Matcher(Type.LIST, check, f"[LISTS OF {str(matcher)}]")
 

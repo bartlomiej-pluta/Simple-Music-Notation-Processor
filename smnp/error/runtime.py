@@ -1,4 +1,7 @@
-class RuntimeException(Exception):
+from smnp.error.base import SmnpException
+
+
+class RuntimeException(SmnpException):
     def __init__(self, pos, msg):
         posStr = "" if pos is None else f" [line {pos[0]+1}, col {pos[1]+1}]"
         self.msg = f"Runtime error{posStr}:\n{msg}"

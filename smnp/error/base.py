@@ -1,0 +1,2 @@
+class SmnpException(Exception):
+    pass
