@@ -4,6 +4,7 @@ from smnp.library.function.display import display
 from smnp.library.function.exit import exit
 from smnp.library.function.flat import flat
 from smnp.library.function.interval import interval
+from smnp.library.function.mic import wait
 from smnp.library.function.semitones import semitones
 from smnp.library.function.sleep import sleep
 from smnp.library.function.type import objectType
@@ -18,7 +19,8 @@ def createEnvironment():
         semitones,
         interval,
         combine,
-        flat
+        flat,
+        wait
     ]
 
     methods = [
