@@ -12,6 +12,7 @@ from smnp.library.function.rand import random
 from smnp.library.function.semitones import semitones
 from smnp.library.function.sleep import sleep
 from smnp.library.function.synth import synth
+from smnp.library.function.transpose import transpose
 from smnp.library.function.tuplet import tuplet
 from smnp.library.function.type import objectType
 
@@ -30,7 +31,8 @@ def createEnvironment():
         random,
         tuplet,
         synth,
-        pause
+        pause,
+        transpose
     ]
 
     methods = [
