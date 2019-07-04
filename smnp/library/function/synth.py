@@ -4,25 +4,21 @@ from smnp.synth.player import playNotes
 from smnp.type.model import Type
 
 
-def _synth1(env, vararg):
+_signature1 = varargSignature(ofTypes(Type.NOTE, Type.INTEGER))
+def _function1(env, vararg):
     notes = [arg.value for arg in vararg]
     bpm = env.findVariable('bpm')
     playNotes(notes, bpm)
 
 
-_sign1 = varargSignature(ofTypes(Type.NOTE, Type.INTEGER))
-
-
-def _synth2(env, vararg):
+_signature2 = varargSignature(listOf(Type.NOTE, Type.INTEGER))
+def _function2(env, vararg):
     for arg in vararg:
-        _synth1(env, arg.value)
+        _function1(env, arg.value)
 
 
-_sign2 = varargSignature(listOf(Type.NOTE, Type.INTEGER))
-
-
-synth = CombinedFunction(
+function = CombinedFunction(
     'synth',
-    Function(_sign1, _synth1),
-    Function(_sign2, _synth2)
+    Function(_signature1, _function1),
+    Function(_signature2, _function2)
 )

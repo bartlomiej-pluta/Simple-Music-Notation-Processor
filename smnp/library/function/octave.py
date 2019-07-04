@@ -4,11 +4,9 @@ from smnp.type.model import Type
 from smnp.type.value import Value
 
 
-def _withOctave(env, note, octave):
+_signature = signature(ofTypes(Type.NOTE), ofTypes(Type.INTEGER))
+def _function(env, note, octave):
     return Value(Type.NOTE, note.value.withOctave(octave.value))
 
 
-_sign = signature(ofTypes(Type.NOTE), ofTypes(Type.INTEGER))
-
-
-withOctave = Function(_sign, _withOctave, 'withOctave')
+function = Function(_signature, _function, 'withOctave')

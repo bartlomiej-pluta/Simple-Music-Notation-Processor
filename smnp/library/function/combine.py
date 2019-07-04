@@ -5,8 +5,8 @@ from smnp.library.signature import varargSignature, ofTypes
 from smnp.type.model import Type
 from smnp.type.value import Value
 
-
-def _combine(env, vararg):
+_signature = varargSignature(ofTypes(Type.LIST))
+def _function(env, vararg):
     if len(vararg) == 1:
         return vararg[0]
 
@@ -14,9 +14,5 @@ def _combine(env, vararg):
     return Value(Type.LIST, combined)
 
 
-
-_sign = varargSignature(ofTypes(Type.LIST))
-
-
-combine = Function(_sign, _combine, 'combine')
+function = Function(_signature, _function, 'combine')
 

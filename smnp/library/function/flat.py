@@ -4,8 +4,10 @@ from smnp.type.model import Type
 from smnp.type.value import Value
 
 
-def _flat(env, vararg):
+_signature = varargSignature(allTypes())
+def _function(env, vararg):
     return Value(Type.LIST, doFlat(vararg, [])).decompose()
+
 
 def doFlat(input, output=[]):
     for item in input:
@@ -16,6 +18,4 @@ def doFlat(input, output=[]):
     return output
 
 
-_sign = varargSignature(allTypes())
-
-flat = Function(_sign, _flat, 'flat')
+function = Function(_signature, _function, 'flat')

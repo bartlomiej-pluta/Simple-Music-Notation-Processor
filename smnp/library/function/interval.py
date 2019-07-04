@@ -6,7 +6,8 @@ from smnp.type.model import Type
 from smnp.type.value import Value
 
 
-def _interval1(env, vararg):
+_signature1 = varargSignature(ofTypes(Type.NOTE, Type.INTEGER))
+def _function1(env, vararg):
     withoutPauses = [note.value for note in vararg if note.type == Type.NOTE]
     if len(withoutPauses) < 2:
         return Value(Type.LIST, [])
@@ -14,17 +15,13 @@ def _interval1(env, vararg):
     return Value(Type.LIST, [Value(Type.STRING, intervalToString(s)) for s in semitones]).decompose()
 
 
-_sign1 = varargSignature(ofTypes(Type.NOTE, Type.INTEGER))
+_signature2 = varargSignature(listOf(Type.NOTE, Type.INTEGER))
+def _function2(env, vararg):
+    return Value(Type.LIST, [_function1(env, arg.value) for arg in vararg]).decompose()
 
 
-def _interval2(env, vararg):
-    return Value(Type.LIST, [_interval1(env, arg.value) for arg in vararg]).decompose()
-
-_sign2 = varargSignature(listOf(Type.NOTE, Type.INTEGER))
-
-
-interval = CombinedFunction(
+function = CombinedFunction(
     'interval',
-    Function(_sign1, _interval1),
-    Function(_sign2, _interval2)
+    Function(_signature1, _function1),
+    Function(_signature2, _function2)
 )

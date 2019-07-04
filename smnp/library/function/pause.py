@@ -4,12 +4,10 @@ from smnp.synth import player
 from smnp.type.model import Type
 
 
-def _pause(env, value):
+_signature = signature(ofTypes(Type.INTEGER))
+def _function(env, value):
     bpm = env.findVariable('bpm')
     player.pause(value.value, bpm)
 
 
-_sign = signature(ofTypes(Type.INTEGER))
-
-
-pause = Function(_sign, _pause, 'pause')
+function = Function(_signature, _function, 'pause')

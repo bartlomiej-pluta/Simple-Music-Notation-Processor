@@ -7,7 +7,8 @@ from smnp.type.model import Type
 
 
 def forType(t):
-    def _random(env, vararg):
+    _signature = varargSignature(listMatches(ofTypes(Type.PERCENT), ofTypes(t)))
+    def _function(env, vararg):
         choice = r.random()
         acc = 0
         if sum(arg.value[0].value for arg in vararg) != 1.0:
@@ -18,24 +19,9 @@ def forType(t):
             if choice <= acc:
                 return item
 
-    _sign = varargSignature(listMatches(ofTypes(Type.PERCENT), ofTypes(t)))
-
-    return Function(_sign, _random)
+    return Function(_signature, _function)
 
 
-random = CombinedFunction('random', *[ forType(t) for t in Type if t != Type.VOID ])
-#
-# def random(args, env):
-#     if not all(isinstance(x, list) and len(x) == 2 and isinstance(x[0], float) for x in args):
-#         return # not valid signature
-#     if sum([x[0] for x in args]) != 1.0:
-#         return # not sums to 100%
-#     choice = r.random()
-#     acc = 0
-#     for e in args:
-#         acc += e[0]
-#         if choice <= acc:
-#             return e[1]
-#
+function = CombinedFunction('random', *[ forType(t) for t in Type if t != Type.VOID ])
 
 #TODO: sample
