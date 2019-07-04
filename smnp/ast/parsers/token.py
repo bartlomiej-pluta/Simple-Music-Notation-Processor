@@ -7,6 +7,6 @@ def parseToken(input, parent):
     value = combineParsers([ parseStatement ])(input, parent)
 
     if value is None:
-        raise SyntaxException(None, "Unknown statement")  # TODO
+        raise SyntaxException("Unknown statement")  # TODO
 
     return value

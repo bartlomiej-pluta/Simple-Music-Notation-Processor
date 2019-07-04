@@ -36,8 +36,8 @@ class Environment():
                         return value
                 else:
                     return value
-        raise RuntimeException(pos, f"Variable '{name}' is not declared" + (
-            "" if type is None else f" (expected type: {type})"))
+        raise RuntimeException(f"Variable '{name}' is not declared" + (
+            "" if type is None else f" (expected type: {type})"), pos)
 
     def findVariableScope(self, name, type=None):
         for scope in reversed(self.scopes):
@@ -47,3 +47,19 @@ class Environment():
                         return scope
                 else:
                     return scope
+
+    def scopesToString(self):
+        return "Scopes:\n" + ("\n".join([ f"  [{i}]: {scope}" for i, scope in enumerate(self.scopes) ]))
+
+    def functionsToString(self):
+        return "Functions:\n" + ("\n".join([ f"  {function.name}(...)" for function in self.functions ]))
+
+    def methodsToString(self):
+        return "Methods:\n" + ("\n".join([f"  {function.name}(...)" for function in self.methods]))
+
+
+    def __str__(self):
+        return self.scopesToString() + self.functionsToString() + self.methodsToString()
+
+    def __repr__(self):
+        return self.__str__()

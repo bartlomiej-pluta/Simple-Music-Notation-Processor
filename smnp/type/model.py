@@ -17,7 +17,7 @@ class Type(Enum):
 
 
 def _failStringify(t):
-    raise RuntimeException(None, f"Not able to interpret {t.name}'")
+    raise RuntimeException(f"Not able to interpret {t.name}'")
 
 
 

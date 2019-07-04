@@ -15,9 +15,9 @@ def rollup(parser):
 
 def assertToken(expected, input):    
     if not input.hasCurrent():
-        raise SyntaxException(None, f"Expected '{expected}'")    
+        raise SyntaxException(f"Expected '{expected}'")
     if expected != input.current().type:
-        raise SyntaxException(input.current().pos, f"Expected '{expected}', found '{input.current().value}'")
+        raise SyntaxException(f"Expected '{expected}', found '{input.current().value}'", input.current().pos)
 
 
 def combineParsers(parsers):

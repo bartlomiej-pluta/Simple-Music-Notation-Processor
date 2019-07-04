@@ -1,5 +1,7 @@
 from enum import Enum
+
 from smnp.error.syntax import SyntaxException
+
 
 class NotePitch(Enum):
     C = 0
@@ -46,7 +48,7 @@ class NotePitch(Enum):
         try:            
             return stringToPitch[string.lower()]
         except KeyError as e:
-            raise SyntaxException(None, f"Note '{string}' does not exist")
+            raise SyntaxException(f"Note '{string}' does not exist") #TODO jakis inny exception
 
 stringToPitch = {
     'c': NotePitch.C,

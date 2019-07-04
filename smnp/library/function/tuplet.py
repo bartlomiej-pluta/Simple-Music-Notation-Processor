@@ -18,6 +18,6 @@ def _function2(env, n, m, notes):
 
 function = CombinedFunction(
     'tuplet',
-    Function(_function1, _function1),
-    Function(_function2, _function2)
+    Function(_signature1, _function1),
+    Function(_signature2, _function2)
 )

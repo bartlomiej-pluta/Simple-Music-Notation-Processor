@@ -8,7 +8,7 @@ _signature1 = varargSignature(ofTypes(Type.NOTE, Type.INTEGER))
 def _function1(env, vararg):
     notes = [arg.value for arg in vararg]
     bpm = env.findVariable('bpm')
-    playNotes(notes, bpm)
+    playNotes(notes, bpm.value)
 
 
 _signature2 = varargSignature(listOf(Type.NOTE, Type.INTEGER))

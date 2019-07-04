@@ -1,4 +1,5 @@
 from smnp.ast.node.block import BlockNode, CloseBlockNode, BlockItemNode
+from smnp.ast.parsers.statement import parseStatement
 from smnp.token.type import TokenType
 
 
