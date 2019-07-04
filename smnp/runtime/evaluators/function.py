@@ -1,5 +1,6 @@
 from smnp.ast.node.identifier import IdentifierNode
 from smnp.ast.node.program import Program
+from smnp.error.base import SmnpException
 from smnp.error.runtime import RuntimeException
 from smnp.runtime.evaluators.list import evaluateList
 from smnp.runtime.tools import flatListNode
@@ -27,9 +28,13 @@ def evaluateFunctionDefinition(definition, environment):
 
 
 def evaluateFunctionCall(functionCall, environment):
-    functionName = functionCall.identifier.identifier
-    arguments = evaluateList(functionCall.arguments, environment).value
-    return environment.invokeFunction(functionName, arguments)
+    try:
+        functionName = functionCall.identifier.identifier
+        arguments = evaluateList(functionCall.arguments, environment).value
+        return environment.invokeFunction(functionName, arguments)
+    except SmnpException as e:
+        e.pos = functionCall.pos
+        raise e
 
 
 # def evaluateFunctionCall(functionCall, environment):

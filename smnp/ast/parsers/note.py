@@ -35,4 +35,5 @@ def parseNote(input, parent):
 
         input.ahead()
         return NoteLiteralNode(Note(notePitch, octave, duration, dot), parent, token.pos)
+
     return None

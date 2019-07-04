@@ -1,6 +1,6 @@
 from enum import Enum
 
-from smnp.error.syntax import SyntaxException
+from smnp.error.note import NoteException
 
 
 class NotePitch(Enum):
@@ -37,18 +37,14 @@ class NotePitch(Enum):
         return self.name
     
     def __repr__(self):
-        return self.__str__()    
-    
-    #@staticmethod
-    #def checkInterval(a, b):
-        #return a.value - b.value
+        return self.__str__()
     
     @staticmethod
-    def toPitch(string): #TODO: token zamiast stringa, żeby można było wziąć pos
+    def toPitch(string):
         try:            
             return stringToPitch[string.lower()]
         except KeyError as e:
-            raise SyntaxException(f"Note '{string}' does not exist") #TODO jakis inny exception
+            raise NoteException(f"Note '{string}' does not exist")
 
 stringToPitch = {
     'c': NotePitch.C,
