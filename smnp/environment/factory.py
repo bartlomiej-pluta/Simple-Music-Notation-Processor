@@ -1,12 +1,16 @@
 from smnp.environment.environment import Environment
 from smnp.library.function.combine import combine
 from smnp.library.function.display import display
+from smnp.library.function.duration import withDuration
 from smnp.library.function.exit import exit
 from smnp.library.function.flat import flat
 from smnp.library.function.interval import interval
 from smnp.library.function.mic import wait
+from smnp.library.function.octave import withOctave
+from smnp.library.function.rand import random
 from smnp.library.function.semitones import semitones
 from smnp.library.function.sleep import sleep
+from smnp.library.function.tuplet import tuplet
 from smnp.library.function.type import objectType
 
 
@@ -20,11 +24,14 @@ def createEnvironment():
         interval,
         combine,
         flat,
-        wait
+        wait,
+        random,
+        tuplet
     ]
 
     methods = [
-
+        withDuration,
+        withOctave
     ]
         # 'exit': Function(base.exit, ONLY_FUNCTION),
         # 'print': Function(base.display, ONLY_FUNCTION),

@@ -14,3 +14,8 @@ class FunctionNotFoundException(SmnpException):
 class MethodNotFoundException(SmnpException):
     def __init__(self, object, method):
         self.msg = f"Method '{method}' of type '{object}' not found"
+
+
+class IllegalArgumentException(SmnpException):
+    def __init__(self, msg):
+        self.msg = msg
