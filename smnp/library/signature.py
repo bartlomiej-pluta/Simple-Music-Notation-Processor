@@ -84,6 +84,11 @@ def doesNotMatch(sign):
     return (False, *[None for n in sign])
 
 
+def allTypes():
+    allowedTypes = [t for t in Type if t != Type.VOID]
+    return ofTypes(*allowedTypes)
+
+
 def ofTypes(*types):
     def check(value):
         return value.type in types
@@ -102,7 +107,6 @@ def listMatches(*pattern):
         return signature(*pattern).check(value.value)[0]
 
     return Matcher(Type.LIST, check, f"({', '.join([str(m) for m in pattern])})")
-
 
 def recursiveListMatcher(matcher):
     if matcher.type == Type.LIST:

@@ -11,7 +11,7 @@ class FunctionType(Enum):
 
 
 class Function:
-    def __init__(self, name, signature, function):
+    def __init__(self, signature, function, name=None):
         self.name = name
         self.signature = signature
         self.function = function
@@ -25,6 +25,7 @@ class Function:
             ret = self.function(env, *result[1:])
             if ret is None:
                 return Value(Type.VOID, None)
+            return ret
         raise IllegalFunctionInvocationException(self.stringSignature(), f"{self.name}{types(args)}") #TODO: argumenty do typów, nie wartości
 
 
@@ -44,6 +45,7 @@ class CombinedFunction(Function):
                 ret = function.function(env, *result[1:])
                 if ret is None:
                     return Value(Type.VOID, None)
+                return ret
         raise IllegalFunctionInvocationException(self.stringSignature(), f"{self.name}{types(args)}")
 
 
