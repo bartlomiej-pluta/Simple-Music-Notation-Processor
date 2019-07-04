@@ -7,6 +7,7 @@ from smnp.library.function.flat import flat
 from smnp.library.function.interval import interval
 from smnp.library.function.mic import wait
 from smnp.library.function.octave import withOctave
+from smnp.library.function.pause import pause
 from smnp.library.function.rand import random
 from smnp.library.function.semitones import semitones
 from smnp.library.function.sleep import sleep
@@ -28,7 +29,8 @@ def createEnvironment():
         wait,
         random,
         tuplet,
-        synth
+        synth,
+        pause
     ]
 
     methods = [
