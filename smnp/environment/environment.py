@@ -1,3 +1,4 @@
+from smnp.error.function import FunctionNotFoundException
 from smnp.error.runtime import RuntimeException
 
 
@@ -8,6 +9,15 @@ class Environment():
         self.methods = methods
         self.customFunctions = {}
         self.callStack = [] #TODO remove
+
+    def invokeFunction(self, name, args):
+        for function in self.functions: # TODO to działa tylko dla wbudowanych funkcji
+            if function.name == name:
+                ret = function.call(self, args)
+                if ret is not None:
+                    return ret
+        raise FunctionNotFoundException(name)
+        # TODO raise nie znaleziono funkcji
 
     def findVariable(self, name, type=None, pos=None):
         for scope in reversed(self.scopes):

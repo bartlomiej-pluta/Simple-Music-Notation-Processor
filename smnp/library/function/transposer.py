@@ -1,5 +1,5 @@
-from smnp.environment.function.interval import semitonesList
-from smnp.environment.function.tools import returnElementOrList
+from smnp.library.function.interval import semitonesList
+from smnp.library.tools import returnElementOrList
 from smnp.note.model import Note
 
 

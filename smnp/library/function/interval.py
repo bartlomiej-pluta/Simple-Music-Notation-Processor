@@ -1,4 +1,4 @@
-from smnp.environment.function.tools import returnElementOrList
+from smnp.library.tools import returnElementOrList
 from smnp.note.interval import intervalToString
 from smnp.note.model import Note
 
