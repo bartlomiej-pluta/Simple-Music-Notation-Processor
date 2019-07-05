@@ -97,8 +97,21 @@ class Parser:
         return parse
 
     @staticmethod
-    def epsilon():
-        def parser(input):
-            return ParseResult.OK(IgnoredNode((-1, -1)))
+    def loop(startParser, itemParser, endParser, createNode):
+        def parse(input):
+            items = []
+            start = startParser(input)
+            if start.result:
+                while True:
+                    end = endParser(input)
+                    if end.result:
+                        return ParseResult.OK(createNode(start.node, items, end.node))
+                    item = itemParser(input)
+                    if not item.result:
+                        return ParseResult.FAIL()
+                    items.append(item.node)
 
-        return parser
+            return ParseResult.FAIL()
+
+        return parse
+

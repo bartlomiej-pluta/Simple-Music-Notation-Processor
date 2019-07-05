@@ -1,6 +1,7 @@
 from smnp.error.syntax import SyntaxException
 from smnp.newast.node.expression import ExpressionNode
 from smnp.newast.node.model import Node, ParseResult
+from smnp.newast.node.statement import StatementNode
 from smnp.newast.parser import Parser
 
 
@@ -13,6 +14,7 @@ class Program(Node):
         def parseToken(input):
             return Parser.oneOf(
                 ExpressionNode.parse,
+                StatementNode.parse,
                 exception = SyntaxException("Unknown statement")
             )(input)
 
