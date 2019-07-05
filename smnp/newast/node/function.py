@@ -16,7 +16,7 @@ class ArgumentsDeclarationNode(Node):
         raise RuntimeError("This class is not supposed to be automatically called")
 
 
-class FunctionDefinition(StatementNode):
+class FunctionDefinitionNode(StatementNode):
     def __init__(self, pos):
         super().__init__(pos)
         self.children = [NoneNode(), NoneNode(), NoneNode()]
@@ -48,7 +48,7 @@ class FunctionDefinition(StatementNode):
     @classmethod
     def _parse(cls, input):
         def createNode(function, name, arguments, body):
-            node = FunctionDefinition(function.pos)
+            node = FunctionDefinitionNode(function.pos)
             node.name = name
             node.arguments = arguments
             node.body = body

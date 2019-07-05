@@ -1,5 +1,7 @@
 from smnp.error.syntax import SyntaxException
 from smnp.newast.node.expression import ExpressionNode
+from smnp.newast.node.extend import ExtendNode
+from smnp.newast.node.function import FunctionDefinitionNode
 from smnp.newast.node.model import Node, ParseResult
 from smnp.newast.node.statement import StatementNode
 from smnp.newast.parser import Parser
@@ -13,9 +15,11 @@ class Program(Node):
     def _parse(cls, input):
         def parseToken(input):
             return Parser.oneOf(
+                FunctionDefinitionNode.parse,
+                ExtendNode.parse,
                 ExpressionNode.parse,
                 StatementNode.parse,
-                exception = SyntaxException("Unknown statement")
+                exception = SyntaxException(f"Unknown statement: {input.current().pos}")
             )(input)
 
         root = Program()

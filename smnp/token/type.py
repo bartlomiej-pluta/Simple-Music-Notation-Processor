@@ -22,3 +22,4 @@ class TokenType(Enum):
     OPEN_SQUARE = auto()
     CLOSE_SQUARE = auto()
     TYPE = auto()
+    EXTEND = auto()

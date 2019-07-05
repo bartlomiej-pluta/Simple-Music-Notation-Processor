@@ -6,6 +6,7 @@ from smnp.token.tokenizers.bracket import tokenizeOpenBracket, tokenizeCloseBrac
 from smnp.token.tokenizers.comma import tokenizeComma
 from smnp.token.tokenizers.comment import tokenizeComment
 from smnp.token.tokenizers.dot import tokenizeDot
+from smnp.token.tokenizers.extend import tokenizeExtend
 from smnp.token.tokenizers.function import tokenizeFunction
 from smnp.token.tokenizers.identifier import tokenizeIdentifier
 from smnp.token.tokenizers.integer import tokenizeInteger
@@ -30,6 +31,7 @@ tokenizers = (
     tokenizeString, 
     tokenizeFunction,
     tokenizeReturn,
+    tokenizeExtend,
     tokenizeInteger,
     tokenizeNote,
     tokenizeIdentifier, 
