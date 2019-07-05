@@ -3,7 +3,6 @@ from smnp.token.model import TokenList
 from smnp.token.tokenizers.assign import tokenizeAssign
 from smnp.token.tokenizers.asterisk import tokenizeAsterisk
 from smnp.token.tokenizers.bracket import tokenizeOpenBracket, tokenizeCloseBracket
-from smnp.token.tokenizers.colon import tokenizeColon
 from smnp.token.tokenizers.comma import tokenizeComma
 from smnp.token.tokenizers.comment import tokenizeComment
 from smnp.token.tokenizers.dot import tokenizeDot
@@ -17,6 +16,7 @@ from smnp.token.tokenizers.percent import tokenizePercent
 from smnp.token.tokenizers.ret import tokenizeReturn
 from smnp.token.tokenizers.square import tokenizeOpenSquare, tokenizeCloseSquare
 from smnp.token.tokenizers.string import tokenizeString
+from smnp.token.tokenizers.type import tokenizeType
 from smnp.token.tokenizers.whitespace import tokenizeWhitespaces
 from smnp.token.type import TokenType
 
@@ -25,7 +25,8 @@ tokenizers = (
     tokenizeCloseParen,
     tokenizeOpenSquare,
     tokenizeCloseSquare,
-    tokenizeAsterisk, 
+    tokenizeAsterisk,
+    tokenizeType,
     tokenizeString, 
     tokenizeFunction,
     tokenizeReturn,
@@ -36,7 +37,6 @@ tokenizers = (
     tokenizeOpenBracket,
     tokenizeCloseBracket,
     tokenizeAssign,
-    tokenizeColon,    
     tokenizePercent,
     tokenizeMinus,
     tokenizeDot,
