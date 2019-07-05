@@ -13,7 +13,7 @@ def main():
             lines = [line.rstrip('\n') for line in source.readlines()]
 
         tokens = tokenize(lines)
-
+        print(tokens)
         ast = Program.parse(tokens)
         ast.node.print()
 

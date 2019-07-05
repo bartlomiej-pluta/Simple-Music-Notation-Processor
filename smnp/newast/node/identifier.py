@@ -17,7 +17,7 @@ class IdentifierNode(AccessNode):
         return Parser.oneOf(
             IdentifierNode._functionCallParser(),
             IdentifierNode._assignmentParser(),
-            IdentifierNode._identifierParser()
+            IdentifierNode.identifierParser()
         )
 
     @staticmethod
@@ -29,7 +29,7 @@ class IdentifierNode(AccessNode):
             return node
 
         return Parser.allOf(
-            IdentifierNode._identifierParser(),
+            IdentifierNode.identifierParser(),
             Parser.terminalParser(TokenType.ASSIGN),
             ExpressionNode.parse,
             createNode=createNode
@@ -44,11 +44,11 @@ class IdentifierNode(AccessNode):
             return node
 
         return Parser.allOf(
-            IdentifierNode._identifierParser(),
+            IdentifierNode.identifierParser(),
             ArgumentsListNode.parse,
             createNode=createNode
         )
 
     @staticmethod
-    def _identifierParser():
+    def identifierParser():
         return Parser.terminalParser(TokenType.IDENTIFIER, lambda val, pos: IdentifierNode.withValue(val, pos))
