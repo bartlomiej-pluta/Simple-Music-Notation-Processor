@@ -7,5 +7,5 @@ class IntegerLiteralNode(ExpressionNode):
 
     @classmethod
     def _parse(cls, input):
-        createNode = lambda v, pos: IntegerLiteralNode.withValue(pos, v)
+        createNode = lambda v, pos: IntegerLiteralNode.withValue(v, pos)
         return Parser.terminalParser(TokenType.INTEGER, createNode)(input)

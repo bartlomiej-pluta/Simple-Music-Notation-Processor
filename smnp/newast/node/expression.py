@@ -18,7 +18,7 @@ class ExpressionNode(Node):
 
 
     @classmethod
-    def withValue(cls, pos, v):
+    def withValue(cls, v, pos):
         node = cls(pos)
         node.value = v
         return node
@@ -28,10 +28,12 @@ class ExpressionNode(Node):
     def _parse(cls, input):
         from smnp.newast.node.integer import IntegerLiteralNode
         from smnp.newast.node.string import StringLiteralNode
+        from smnp.newast.node.note import NoteLiteralNode
         from smnp.newast.node.list import ListNode
 
         return Parser.oneOf(
             IntegerLiteralNode.parse,
             StringLiteralNode.parse,
+            NoteLiteralNode.parse,
             ListNode.parse
         )(input)
