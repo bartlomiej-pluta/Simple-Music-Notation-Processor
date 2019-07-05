@@ -8,7 +8,7 @@ class BlockNode(StatementNode):
     @classmethod
     def _parse(cls, input):
         def createNode(start, items, end):
-            node = StatementNode(start.pos)
+            node = BlockNode(start.pos)
             node.children = items
             return node
 
