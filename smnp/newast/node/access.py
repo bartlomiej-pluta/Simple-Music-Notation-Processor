@@ -46,6 +46,9 @@ class AccessNode(ExpressionNode):
 
     @staticmethod
     def _parseAccessingProperty():
-        from smnp.newast.node.integer import IntegerLiteralNode
-        # TODO: Just for example. It is supposed to be functionCall (and identifier there)
-        return IntegerLiteralNode._literalParser()
+        from smnp.newast.node.identifier import IdentifierNode
+
+        return Parser.oneOf(
+            IdentifierNode._literalParser(),
+            IdentifierNode._functionCallParser()
+        )
