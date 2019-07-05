@@ -25,7 +25,7 @@ def tokenizeNote(input, current, line):
                 octave = input[current+consumedChars]
                 consumedChars += 1
                 
-            if current+consumedChars < len(input) and input[current+consumedChars] == '.':
+            if current+consumedChars < len(input) and input[current+consumedChars] == '^':
                 duration = ''
                 consumedChars += 1
                 while current+consumedChars < len(input) and re.match(r'\d', input[current+consumedChars]):
@@ -34,7 +34,8 @@ def tokenizeNote(input, current, line):
                 if len(duration) == 0:
                     return (0, None)
                 dot = (current+consumedChars) < len(input) and input[current+consumedChars] == 'd'
-                consumedChars += 1
+                if dot:
+                    consumedChars += 1
 
             octave = int(octave) if octave is not None else None
             duration = int(duration) if duration is not None else None
