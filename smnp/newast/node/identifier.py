@@ -1,5 +1,7 @@
 from smnp.newast.node.access import AccessNode
 from smnp.newast.node.args import ArgumentsListNode
+from smnp.newast.node.assignment import AssignmentNode
+from smnp.newast.node.expression import ExpressionNode
 from smnp.newast.node.invocation import FunctionCall
 from smnp.newast.parser import Parser
 from smnp.token.type import TokenType
@@ -14,7 +16,23 @@ class IdentifierNode(AccessNode):
     def _literalParser(cls):
         return Parser.oneOf(
             IdentifierNode._functionCallParser(),
+            IdentifierNode._assignmentParser(),
             IdentifierNode._identifierParser()
+        )
+
+    @staticmethod
+    def _assignmentParser():
+        def createNode(target, assignment, value):
+            node = AssignmentNode(assignment.pos)
+            node.target = target
+            node.value = value
+            return node
+
+        return Parser.allOf(
+            IdentifierNode._identifierParser(),
+            Parser.terminalParser(TokenType.ASSIGN),
+            ExpressionNode.parse,
+            createNode=createNode
         )
 
     @staticmethod
