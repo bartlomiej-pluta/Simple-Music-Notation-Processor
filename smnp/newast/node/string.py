@@ -1,11 +1,13 @@
-from smnp.newast.node.expression import ExpressionNode
-from smnp.newast.parser import Parser
+from smnp.newast.node.access import AccessNode
+from smnp.newast.node.literal import LiteralNode
 from smnp.token.type import TokenType
 
 
-class StringLiteralNode(ExpressionNode):
+class StringLiteralNode(LiteralNode, AccessNode):
+    def __init__(self, pos):
+        super().__init__(pos)
+        del self.children[1]
 
     @classmethod
-    def _parse(cls, input):
-        createNode = lambda v, pos: StringLiteralNode.withValue(pos, v[1:len(v)-1])
-        return Parser.terminalParser(TokenType.STRING, createNode)(input)
+    def _getTokenType(cls):
+        return TokenType.STRING
