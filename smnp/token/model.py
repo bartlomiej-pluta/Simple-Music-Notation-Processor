@@ -4,7 +4,7 @@ class Token:
         self.value = value    
         self.pos = pos
     def __str__(self):
-        return "Token(" + str(self.type) + ", '" + self.value + "', " + str(self.pos) + ")"
+        return "Token(" + str(self.type) + ", '" + str(self.value) + "', " + str(self.pos) + ")"
     def __repr__(self):
         return self.__str__()
 

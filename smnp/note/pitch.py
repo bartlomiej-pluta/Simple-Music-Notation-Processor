@@ -47,6 +47,7 @@ class NotePitch(Enum):
             raise NoteException(f"Note '{string}' does not exist")
 
 stringToPitch = {
+    'cb': NotePitch.H,
     'c': NotePitch.C,
     'c#': NotePitch.CIS,
     'db': NotePitch.CIS,

@@ -1,7 +1,4 @@
-from smnp.error.base import SmnpException
-
-
-class NoteException(SmnpException):
+class NoteException(Exception):
     def __init__(self, msg):
         super().__init__(msg)
 

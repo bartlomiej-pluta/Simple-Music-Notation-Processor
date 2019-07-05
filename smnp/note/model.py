@@ -1,7 +1,13 @@
 from smnp.note.pitch import NotePitch
 
 class Note:
-    def __init__(self, note, octave = 4, duration = 4, dot = False):        
+    def __init__(self, note, octave, duration, dot = False):
+        if octave is None:
+            octave = 4
+
+        if duration is None:
+            duration = 4
+
         if type(note) == str:            
             self.note = NotePitch.toPitch(note)
         else:

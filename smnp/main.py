@@ -17,7 +17,7 @@ def main():
         ast = Program.parse(tokens)
         ast.node.print()
 
-        sys.exit(0)
+
         env = createEnvironment()
 
         evaluate(ast, env)
