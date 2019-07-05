@@ -1,4 +1,5 @@
 from smnp.newast.node.expression import ExpressionNode
+from smnp.newast.node.ignore import IgnoredNode
 from smnp.newast.node.model import Node, ParseResult
 from smnp.newast.node.none import NoneNode
 from smnp.newast.parser import Parser
@@ -26,11 +27,11 @@ def abstractIterableParser(iterableNodeType, openTokenType, closeTokenType, item
                 AbstractIterableTailNode._parser1(),
                 AbstractIterableTailNode._parser2(),
             )(input)
-        
+
         @staticmethod
         def _parser1():
             return Parser.terminalParser(closeTokenType)
-        
+
         @staticmethod
         def _parser2():
             def createNode(comma, expr, iterableTail):
@@ -45,7 +46,6 @@ def abstractIterableParser(iterableNodeType, openTokenType, closeTokenType, item
                 AbstractIterableTailNode.parse,
                 createNode=createNode
             )
-
 
     class AbstractIterableNode(ExpressionNode):
         def __init__(self, pos):
@@ -67,7 +67,7 @@ def abstractIterableParser(iterableNodeType, openTokenType, closeTokenType, item
                 AbstractIterableNode._parser1(),
                 AbstractIterableNode._parser2()
             )(input)
-        
+
         @staticmethod
         def _parser1():
             def emptyIterable(openToken, closeToken):
@@ -81,7 +81,6 @@ def abstractIterableParser(iterableNodeType, openTokenType, closeTokenType, item
                 Parser.terminalParser(closeTokenType),
                 createNode=emptyIterable
             )
-
 
         @staticmethod
         def _parser2():
@@ -98,17 +97,34 @@ def abstractIterableParser(iterableNodeType, openTokenType, closeTokenType, item
                 createNode=createNode
             )
 
-    def toDesiredType(parser):
-        def parse(input):
-            result = parser(input)
-            if result.result:
-                node = iterableNodeType(result.node.pos)
-                node.children.clear()
-                node.children.extend([ result.node.value, result.node.next ])
-                return ParseResult.OK(node)
+    return toFlatDesiredNode(iterableNodeType, AbstractIterableNode.parse)
 
-            return ParseResult.FAIL()
 
-        return parse
+def toFlatDesiredNode(iterableNodeType, parser):
+    def parse(input):
+        result = parser(input)
 
-    return toDesiredType(AbstractIterableNode.parse)
+        if result.result:
+            value = flattenList(result.node)
+            node = iterableNodeType(result.node.pos)
+            node.children.clear()
+            for v in value:
+                node.append(v)
+            return ParseResult.OK(node)
+
+        return ParseResult.FAIL()
+
+    return parse
+
+
+def flattenList(node, output=None):
+    if output is None:
+        output = []
+
+    if type(node.value) != IgnoredNode:
+        output.append(node.value)
+
+    if type(node.next) != IgnoredNode:
+        flattenList(node.next, output)
+
+    return output

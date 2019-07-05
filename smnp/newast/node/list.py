@@ -7,4 +7,4 @@ class ListNode(ExpressionNode):
 
     @classmethod
     def _parse(cls, input):
-        return abstractIterableParser(ListNode, TokenType.OPEN_PAREN, TokenType.CLOSE_PAREN, ExpressionNode.parse)(input)
+        return abstractIterableParser(ListNode, TokenType.OPEN_SQUARE, TokenType.CLOSE_SQUARE, ExpressionNode.parse)(input)

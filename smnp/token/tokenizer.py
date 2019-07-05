@@ -1,5 +1,4 @@
 from smnp.error.syntax import SyntaxException
-from smnp.error.syntax import SyntaxException
 from smnp.token.model import TokenList
 from smnp.token.tokenizers.assign import tokenizeAssign
 from smnp.token.tokenizers.asterisk import tokenizeAsterisk
@@ -16,13 +15,16 @@ from smnp.token.tokenizers.note import tokenizeNote
 from smnp.token.tokenizers.paren import tokenizeOpenParen, tokenizeCloseParen
 from smnp.token.tokenizers.percent import tokenizePercent
 from smnp.token.tokenizers.ret import tokenizeReturn
+from smnp.token.tokenizers.square import tokenizeOpenSquare, tokenizeCloseSquare
 from smnp.token.tokenizers.string import tokenizeString
 from smnp.token.tokenizers.whitespace import tokenizeWhitespaces
 from smnp.token.type import TokenType
 
 tokenizers = (
     tokenizeOpenParen, 
-    tokenizeCloseParen, 
+    tokenizeCloseParen,
+    tokenizeOpenSquare,
+    tokenizeCloseSquare,
     tokenizeAsterisk, 
     tokenizeString, 
     tokenizeFunction,

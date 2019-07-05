@@ -19,3 +19,5 @@ class TokenType(Enum):
     FUNCTION = 16
     RETURN = 17    
     DOT = 18
+    OPEN_SQUARE = 19
+    CLOSE_SQUARE = 20
