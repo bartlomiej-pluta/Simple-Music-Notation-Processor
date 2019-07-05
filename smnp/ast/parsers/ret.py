@@ -4,7 +4,7 @@ from smnp.token.type import TokenType
 
 
 def parseReturn(input, parent):
-    if input.current().type == TokenType.RETURN:
+    if input.isCurrent(TokenType.RETURN):
         token = input.current()
         input.ahead()
 

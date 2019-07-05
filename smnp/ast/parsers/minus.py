@@ -5,10 +5,13 @@ from smnp.token.type import TokenType
 
 # minus -> '-' int
 def parseMinus(input, parent):
-    if input.current().type == TokenType.MINUS:
+    if input.isCurrent(TokenType.MINUS):
         token = input.current()
         input.ahead()
 
-        expr = parseInteger(input, parent)
+        if input.hasCurrent():
+            expr = parseInteger(input, parent)
 
-        return IntegerLiteralNode(-expr.value, parent, token.pos)
+            return IntegerLiteralNode(-expr.value, parent, token.pos)
+
+    return None

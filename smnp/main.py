@@ -1,8 +1,8 @@
 import sys
 
-from smnp.ast.parser import parse
 from smnp.environment.factory import createEnvironment
 from smnp.error.base import SmnpException
+from smnp.newast.node.program import Program
 from smnp.runtime.evaluator import evaluate
 from smnp.token.tokenizer import tokenize
 
@@ -14,8 +14,10 @@ def main():
 
         tokens = tokenize(lines)
 
-        ast = parse(tokens)
+        ast = Program.parse(tokens)
+        ast.node.print()
 
+        sys.exit(0)
         env = createEnvironment()
 
         evaluate(ast, env)

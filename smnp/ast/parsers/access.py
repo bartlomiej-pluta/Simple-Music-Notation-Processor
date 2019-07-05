@@ -8,7 +8,7 @@ from smnp.token.type import TokenType
 # i potem sprawdzać przy wszystkich parent.pop(-1) czy pobrany z parenta element
 # jest rzeczywiście wyrażeniem, bo teraz możliwe jest np. {}.fun()
 def parseAccess(input, parent):
-    if input.current().type == TokenType.DOT:
+    if input.isCurrent(TokenType.DOT):
         token = input.current()
         input.ahead()
 

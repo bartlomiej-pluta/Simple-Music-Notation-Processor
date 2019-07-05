@@ -25,7 +25,10 @@ class TokenList:
         if self.cursor >= len(self.tokens):
             raise RuntimeError(f"Cursor points to not existing token! Cursor = {self.cursor}, len = {len(self.tokens)}")
         return self.tokens[self.cursor]
-    
+
+    def isCurrent(self, type):
+        return self.hasCurrent() and self.current().type == type
+
     def next(self, number=1):
         return self.tokens[self.cursor + number]
     
@@ -42,14 +45,13 @@ class TokenList:
         self.cursor += 1        
     
     def snapshot(self):
-        self.snapshot = self.cursor
+        return self.cursor
         
-    def reset(self):
-        self.cursor = self.snapshot
-        return self.tokens[self.cursor]
+    def reset(self, snap):
+        self.cursor = snap
     
     def __str__(self):
-        return f"[Cursor: {self.cursor}\n{', '.join([str(token) for token in self.tokens])}]"
+        return f"[Current({self.cursor}): {self.current() if self.hasCurrent() else 'out of tokens'}\n{', '.join([str(token) for token in self.tokens])}]"
     
     def __repr__(self):
         return self.__str__()

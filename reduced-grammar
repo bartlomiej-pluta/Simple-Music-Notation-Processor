@@ -1,0 +1,42 @@
+# Tokenizer
+DIGIT = [0-9]
+ID = [a-zA-Z_]
+CHAR = ... \ '"'
+PITCH = 'c' | 'd' | 'e' | 'f' | 'g' | 'a' | 'h'
+PITCH_MODIFIER = 'b' | '#'
+
+integer := '-' DIGIT+ | DIGIT+
+string := '"' CHAR* '"'
+note := '@' PITCH PITCH_MODIFIER? DIGIT? ['.' DIGIT+ 'd'?]?
+identifier := ID [ID|DIGIT]*
+percent := DIGIT+ '%'
+
+# Parser
+expr := integer accessTail | integer
+expr := percent accessTail | percent
+expr := string accessTail | string
+expr := note accessTail | note
+expr := identifier accessTail | identifier '=' expr | functionCall | identifier
+expr := list accessTail | list
+expr := functionCall accessTail | functionCall
+
+functionCall := identifier list
+
+accessTail := '.' expr accessTail | e
+
+list := '[' ']' | '[' expr listTail
+listTail := expr ', ' listTail | ']'
+
+argList := '(' ')' | '(' expr argListTail
+argListTail := expr ', ' argListTail | ')'
+
+block := '{' stmt* '}'
+
+stmt := expr asteriskTail | expr #nie wiem czy zamiast 'expr asteriskTail' nie powinno być wprost co może wyprodukować iterator dla asterisk
+asteriskTail := '*' stmt | e
+stmt := block
+stmt := 'return' expr
+stmt := 'function' identifier list block
+
+program := stmt*
+

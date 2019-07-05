@@ -7,7 +7,7 @@ from smnp.token.type import TokenType
 
 # note -> NOTE
 def parseNote(input, parent):
-    if input.current().type == TokenType.NOTE:
+    if input.isCurrent(TokenType.NOTE):
         token = input.current()
         value = token.value
         consumedChars = 1

@@ -7,7 +7,7 @@ from smnp.token.type import TokenType
 
 
 def parseFunctionDefinition(input, parent):
-    if input.current().type == TokenType.FUNCTION:
+    if input.isCurrent(TokenType.FUNCTION):
         token = input.current()
         input.ahead()
 

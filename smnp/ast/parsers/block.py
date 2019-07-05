@@ -12,7 +12,7 @@ def parseBlock(input, parent):
         node = BlockNode(parent, token.pos)
 
         # '}'
-        if input.hasCurrent() and input.current().type == TokenType.CLOSE_BRACKET:
+        if input.isCurrent(TokenType.CLOSE_BRACKET):
             input.ahead()
             return node
 
@@ -28,7 +28,7 @@ def parseBlock(input, parent):
 # blockItem -> stmt | '}'
 def parseBlockItem(input, parent):
     # '}'
-    if input.hasCurrent() and input.current().type == TokenType.CLOSE_BRACKET:
+    if input.isCurrent(TokenType.CLOSE_BRACKET):
         close = CloseBlockNode(parent, input.current().pos)
         input.ahead()
         return close

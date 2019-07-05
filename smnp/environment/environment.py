@@ -13,7 +13,7 @@ class Environment():
     def invokeMethod(self, name, object, args):
         for method in self.methods: # TODO to działa tylko dla wbudowanych funkcji
             if method.name == name:
-                ret = method.call(self, [object, *args])
+                ret = method.call(self, [object, *args.value])
                 if ret is not None:
                     return ret
         raise MethodNotFoundException(object.type, name) # TODO method not found

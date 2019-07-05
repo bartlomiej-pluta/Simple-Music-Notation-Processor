@@ -2,7 +2,7 @@ from smnp.ast.node.model import Node
 from smnp.error.syntax import SyntaxException
 
 
-def rollup(parser):
+def greedy(parser):
     def _rollup(input, parent):
         node = Node(None, (-1, -1))
         elem = parser(input, node)

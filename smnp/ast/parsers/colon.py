@@ -6,7 +6,7 @@ from smnp.token.type import TokenType
 
 # colon -> expr ':' expr
 def parseColon(expr1, input, parent):
-    if input.hasCurrent() and input.current().type == TokenType.COLON:
+    if input.isCurrent(TokenType.COLON):
         token = input.current()
         input.ahead()
         expr2 = parseExpression(input, parent)

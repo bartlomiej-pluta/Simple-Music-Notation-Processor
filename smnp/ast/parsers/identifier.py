@@ -3,12 +3,13 @@ from smnp.ast.node.function import FunctionCallNode
 from smnp.ast.node.identifier import IdentifierNode
 from smnp.ast.parsers.expression import parseExpression
 from smnp.ast.parsers.list import parseList
+from smnp.ast.tools import greedy
 from smnp.token.type import TokenType
 
 
 # id -> IDENTIFIER
 def parseIdentifier(input, parent):
-    if input.current().type == TokenType.IDENTIFIER:
+    if input.isCurrent(TokenType.IDENTIFIER):
         identifier = IdentifierNode(input.current().value, parent, input.current().pos)
         input.ahead()
 
@@ -28,7 +29,7 @@ def parseIdentifierOrFunctionCallOrAssignment(input, parent):
             token = input.current()
             input.ahead()
 
-            expr = parseExpression(input, parent)
+            expr = greedy(parseExpression)(input, parent)
 
             assignment = AssignmentNode(identifier, expr, parent, token.pos)
             identifier.parent = assignment

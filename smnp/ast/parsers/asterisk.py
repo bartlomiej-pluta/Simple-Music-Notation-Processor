@@ -5,7 +5,7 @@ from smnp.token.type import TokenType
 
 # asterisk -> expr '*' stmt
 def parseAsterisk(expr, input, parent):
-    if input.hasMore() and input.current().type == TokenType.ASTERISK:
+    if input.hasMore() and input.isCurrent(TokenType.ASTERISK):
         token = input.current()
         input.ahead()
 

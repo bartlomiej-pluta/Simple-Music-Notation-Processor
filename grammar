@@ -1,0 +1,42 @@
+integer := ...
+string := ...
+note := ...
+identifier := ...
+
+expr := integer
+expr := string
+expr := note
+expr := identifier
+expr := access
+expr := assignment
+expr := functionCall
+
+# left associative
+access := expr '.' expr
+
+# right associative
+asterisk := expr '*' stmt
+
+stmt := asterisk
+stmt := block
+stmt := return
+stmt := functionDefinition
+
+# right associative
+assignment := identifier '=' expr
+
+list := '(' ')'
+list := '(' expr listTail
+
+listTail := expr ', ' listTail
+listTail := ')'
+
+percent := integer '%'
+
+return := 'return' expr
+
+block := '{' stmt* '}'
+
+functionCall := identifier list
+
+functionDefinition := 'function' identifier list block

@@ -5,7 +5,7 @@ from smnp.token.type import TokenType
 
 # int -> INTEGER
 def parseInteger(input, parent):
-    if input.current().type == TokenType.INTEGER:
+    if input.isCurrent(TokenType.INTEGER):
         integer = IntegerLiteralNode(int(input.current().value), parent, input.current().pos)
         input.ahead()
 
@@ -17,7 +17,7 @@ def parseInteger(input, parent):
 # int -> int
 def parseIntegerAndPercent(input, parent):
     integer = parseInteger(input, parent)
-    if integer is not None and input.hasCurrent() and input.current().type == TokenType.PERCENT:
+    if integer is not None and input.isCurrent(TokenType.PERCENT):
         percent = PercentNode(integer, parent, input.current().pos)
         integer.parent = percent
         input.ahead()
