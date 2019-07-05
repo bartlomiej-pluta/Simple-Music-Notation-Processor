@@ -1,5 +1,5 @@
 from smnp.newast.node.ignore import IgnoredNode
-from smnp.newast.node.model import ParseResult
+from smnp.newast.node.model import ParseResult, Node
 
 
 class Parser:
@@ -46,6 +46,7 @@ class Parser:
             return ParseResult.FAIL()
 
         return combinedParser
+
     @staticmethod
     def allOf(*parsers, createNode, exception=None):
         if len(parsers) == 0:
@@ -68,8 +69,36 @@ class Parser:
 
                 results.append(result.node)
 
-            return ParseResult.OK(createNode(*results))
+            node = createNode(*results)
+            if not isinstance(node, Node):
+                raise RuntimeError("Function 'createNode' haven't returned a Node object. Probably forget to pass 'return'")
+
+            return ParseResult.OK(node)
 
 
 
         return extendedParser
+
+
+    # leftAssociative -> left | left OP right
+    @staticmethod
+    def leftAssociativeOperatorParser(leftParser, operatorTokenType, rightParser, createNode):
+        def parse(input):
+            left = leftParser(input)
+            if left.result:
+                while Parser.terminalParser(operatorTokenType)(input).result:
+                    right = rightParser(input)
+                    left = ParseResult.OK(createNode(left.node, right.node))
+
+                return left
+
+            return ParseResult.FAIL()
+
+        return parse
+
+    @staticmethod
+    def epsilon():
+        def parser(input):
+            return ParseResult.OK(IgnoredNode((-1, -1)))
+
+        return parser

@@ -9,11 +9,9 @@ integer := '-' DIGIT+ | DIGIT+
 string := '"' CHAR* '"'
 note := '@' PITCH PITCH_MODIFIER? DIGIT? ['.' DIGIT+ 'd'?]?
 identifier := ID [ID|DIGIT]*
-percent := DIGIT+ '%'
 
 # Parser
 expr := integer accessTail | integer
-expr := percent accessTail | percent
 expr := string accessTail | string
 expr := note accessTail | note
 expr := identifier accessTail | identifier '=' expr | functionCall | identifier

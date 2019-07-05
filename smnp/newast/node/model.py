@@ -56,6 +56,9 @@ class Node:
             else:
                 print(prefix, '└' if last else '├', f"'{str(child)}'", sep="")
 
+    def __str__(self):
+        return self.__class__.__name__
+
 
 class ParseResult():
     def __init__(self, result, node):
@@ -71,5 +74,8 @@ class ParseResult():
     @staticmethod
     def OK(node):
         return ParseResult(True, node)
+
+    def __str__(self):
+        return f"{'OK' if self.result else 'FAILED'}[{self.node}]"
 
 
