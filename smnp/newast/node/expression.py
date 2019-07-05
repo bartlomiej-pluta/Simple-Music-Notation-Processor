@@ -18,9 +18,9 @@ class ExpressionNode(Node):
 
 
     @classmethod
-    def withValue(cls, v, pos):
+    def withValue(cls, val, pos):
         node = cls(pos)
-        node.value = v
+        node.value = val
         return node
 
 

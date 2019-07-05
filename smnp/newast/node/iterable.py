@@ -91,7 +91,7 @@ def abstractIterableParser(iterableNodeType, openTokenType, closeTokenType, item
                 return node
 
             return Parser.allOf(
-                Parser.terminalParser(openTokenType, lambda v, pos: Node(pos)),
+                Parser.terminalParser(openTokenType, lambda val, pos: Node(pos)),
                 itemParser,
                 AbstractIterableTailNode.parse,
                 createNode=createNode

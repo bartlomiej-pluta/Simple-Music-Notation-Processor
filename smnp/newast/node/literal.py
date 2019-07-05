@@ -14,5 +14,5 @@ class LiteralNode(ExpressionNode):
 
     @classmethod
     def _literalParser(cls):
-        createNode = lambda v, pos: cls.withValue(cls._processValue(v), pos)
+        createNode = lambda val, pos: cls.withValue(cls._processValue(val), pos)
         return Parser.terminalParser(cls._getTokenType(), createNode)
