@@ -1,13 +1,14 @@
-from smnp.token.type import TokenType
 from smnp.token.model import Token
+from smnp.token.type import TokenType
 
-def tokenizeString(input, current, line):
+
+def stringTokenizer(input, current, line):
     if input[current] == '"':
         value = input[current]
         char = ''
         consumedChars = 1
         while char != '"':
-            if char is None: #TODO!!!
+            if char is None:  # TODO!!!
                 print("String not terminated")
             char = input[current + consumedChars]
             value += char

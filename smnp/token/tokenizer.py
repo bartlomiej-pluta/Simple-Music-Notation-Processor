@@ -1,61 +1,56 @@
 from smnp.error.syntax import SyntaxException
 from smnp.token.model import TokenList
-from smnp.token.tokenizers.assign import tokenizeAssign
-from smnp.token.tokenizers.asterisk import tokenizeAsterisk
-from smnp.token.tokenizers.bracket import tokenizeOpenBracket, tokenizeCloseBracket
-from smnp.token.tokenizers.comma import tokenizeComma
-from smnp.token.tokenizers.comment import tokenizeComment
-from smnp.token.tokenizers.dot import tokenizeDot
-from smnp.token.tokenizers.identifier import tokenizeIdentifier
-from smnp.token.tokenizers.integer import tokenizeInteger
-from smnp.token.tokenizers.keyword import tokenizeType, tokenizeFunction, tokenizeReturn, tokenizeExtend, \
-    tokenizeImport, tokenizeFrom, tokenizeAs
-from smnp.token.tokenizers.minus import tokenizeMinus
-from smnp.token.tokenizers.note import tokenizeNote
-from smnp.token.tokenizers.paren import tokenizeOpenParen, tokenizeCloseParen
-from smnp.token.tokenizers.percent import tokenizePercent
-from smnp.token.tokenizers.square import tokenizeOpenSquare, tokenizeCloseSquare
-from smnp.token.tokenizers.string import tokenizeString
-from smnp.token.tokenizers.whitespace import tokenizeWhitespaces
+from smnp.token.tokenizers.comment import commentTokenizer
+from smnp.token.tokenizers.identifier import identifierTokenizer
+from smnp.token.tokenizers.keyword import typeTokenizer
+from smnp.token.tokenizers.note import noteTokenizer
+from smnp.token.tokenizers.string import stringTokenizer
+from smnp.token.tokenizers.whitespace import whitespacesTokenizer
+from smnp.token.tools import defaultTokenizer, separated, regexPatternTokenizer
 from smnp.token.type import TokenType
 
-# TODO !!!
-# Enable tokenizer to detect separators of tokens
-# for example, "notes" instead of being tokenized
-# to IDENTIFIER(notes) is tokenized to [TYPE(note), IDENTIFIER(s)]
-
 tokenizers = (
-    tokenizeOpenParen, 
-    tokenizeCloseParen,
-    tokenizeOpenSquare,
-    tokenizeCloseSquare,
-    tokenizeAsterisk,
-    tokenizeType,
-    tokenizeString, 
-    tokenizeFunction,
-    tokenizeReturn,
-    tokenizeExtend,
-    tokenizeImport,
-    tokenizeFrom,
-    tokenizeAs,
-    tokenizeInteger,
-    tokenizeNote,
-    tokenizeIdentifier, 
-    tokenizeComma,
-    tokenizeOpenBracket,
-    tokenizeCloseBracket,
-    tokenizeAssign,
-    tokenizePercent,
-    tokenizeMinus,
-    tokenizeDot,
-    tokenizeComment,
-    tokenizeWhitespaces,
+    # Characters
+    defaultTokenizer(TokenType.OPEN_BRACKET),
+    defaultTokenizer(TokenType.CLOSE_BRACKET),
+    defaultTokenizer(TokenType.OPEN_PAREN),
+    defaultTokenizer(TokenType.OPEN_SQUARE),
+    defaultTokenizer(TokenType.CLOSE_SQUARE),
+    defaultTokenizer(TokenType.CLOSE_PAREN),
+    defaultTokenizer(TokenType.ASTERISK),
+    defaultTokenizer(TokenType.ASSIGN),
+    defaultTokenizer(TokenType.COMMA),
+    defaultTokenizer(TokenType.MINUS),
+    defaultTokenizer(TokenType.DOT),
+
+    # Types
+    separated(regexPatternTokenizer(TokenType.INTEGER, r'\d')),
+    stringTokenizer,
+    typeTokenizer,
+    noteTokenizer,
+
+    # Keywords
+    separated(defaultTokenizer(TokenType.FUNCTION)),
+    separated(defaultTokenizer(TokenType.RETURN)),
+    separated(defaultTokenizer(TokenType.EXTEND)),
+    separated(defaultTokenizer(TokenType.IMPORT)),
+    separated(defaultTokenizer(TokenType.FROM)),
+    separated(defaultTokenizer(TokenType.AS)),
+
+    # Identifier (couldn't be before keywords!)
+    identifierTokenizer,
+
+    # Other
+    whitespacesTokenizer,
+    commentTokenizer,
 )
+
 
 filters = [
     lambda token: token.type is not None,
     lambda token: token.type != TokenType.COMMENT
 ]
+
 
 def tokenize(lines):
     tokens = []     

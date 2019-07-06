@@ -5,7 +5,7 @@ from smnp.token.model import Token
 from smnp.token.type import TokenType
 
 
-def tokenizeNote(input, current, line):
+def noteTokenizer(input, current, line):
     consumedChars = 0
     notePitch = None
     octave = None

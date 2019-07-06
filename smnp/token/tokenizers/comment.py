@@ -1,7 +1,8 @@
-from smnp.token.type import TokenType
 from smnp.token.model import Token
+from smnp.token.type import TokenType
 
-def tokenizeComment(input, current, line):
+
+def commentTokenizer(input, current, line):
     if input[current] == '#':
         consumedChars = 0
         value = ''

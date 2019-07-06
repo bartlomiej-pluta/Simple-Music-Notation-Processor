@@ -3,15 +3,6 @@ import re
 from smnp.token.model import Token
 
 
-def charTokenizer(type, char):
-    def tokenizer(input, current, line):
-        if input[current] == char:
-            return (1, Token(type, input[current], (line, current)))
-        return (0, None)
-
-    return tokenizer
-
-
 def regexPatternTokenizer(type, pattern):
     def tokenizer(input, current, line):
         consumedChars = 0
@@ -44,7 +35,11 @@ def keywordTokenizer(type, keyword):
     return tokenizer
 
 
-def separate(tokenizer, end=r"\W"):
+def defaultTokenizer(type):
+    return keywordTokenizer(type, type.key)
+
+
+def separated(tokenizer, end=r"\W"):
     def separated(input, current, line):
         consumedChars, token = tokenizer(input, current, line)
         if consumedChars > 0:
