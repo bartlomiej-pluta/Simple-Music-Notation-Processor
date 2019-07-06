@@ -23,3 +23,6 @@ class TokenType(Enum):
     CLOSE_SQUARE = auto()
     TYPE = auto()
     EXTEND = auto()
+    IMPORT = auto()
+    FROM = auto()
+    AS = auto()
