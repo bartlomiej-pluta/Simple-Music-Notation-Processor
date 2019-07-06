@@ -36,7 +36,7 @@ class TypedVariableNode(ExpressionNode):
 
         return Parser.allOf(
             Parser.terminalParser(TokenType.TYPE, lambda val, pos: TypeNode.withValue(val, pos)),
-            IdentifierNode.identifierParser(),
+            Parser.doAssert(IdentifierNode.identifierParser(), "variable name"),
             createNode=createNode
         )
 

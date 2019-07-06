@@ -14,7 +14,7 @@ class BlockNode(StatementNode):
 
         return Parser.loop(
             Parser.terminalParser(TokenType.OPEN_BRACKET),
-            StatementNode.parse,
+            Parser.doAssert(StatementNode.parse, f"statement or '{TokenType.CLOSE_BRACKET.key}'"),
             Parser.terminalParser(TokenType.CLOSE_BRACKET),
-            createNode=createNode
+            createNode=createNode,
         )(input)

@@ -56,9 +56,9 @@ class FunctionDefinitionNode(StatementNode):
 
         return Parser.allOf(
             Parser.terminalParser(TokenType.FUNCTION),
-            IdentifierNode.identifierParser(),
-            cls._argumentsDeclarationParser(),
-            BlockNode.parse,
+            Parser.doAssert(IdentifierNode.identifierParser(), "function name"),
+            Parser.doAssert(cls._argumentsDeclarationParser(), "arguments list"),
+            Parser.doAssert(BlockNode.parse, "function body"),
             createNode=createNode
         )(input)
 

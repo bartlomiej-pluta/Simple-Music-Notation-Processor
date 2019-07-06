@@ -1,6 +1,7 @@
 from smnp.ast.node.expression import ExpressionNode
 from smnp.ast.node.ignore import IgnoredNode
 from smnp.ast.parser import Parser
+from smnp.error.syntax import SyntaxException
 from smnp.token.type import TokenType
 
 
@@ -50,5 +51,6 @@ class AccessNode(ExpressionNode):
 
         return Parser.oneOf(
             IdentifierNode._literalParser(),
-            IdentifierNode._functionCallParser()
+            IdentifierNode._functionCallParser(),
+            exception=lambda input: SyntaxException(f"Expected property name or method call, found '{input.current().rawValue}'", input.currentPos())
         )

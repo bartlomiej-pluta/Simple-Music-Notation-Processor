@@ -27,6 +27,6 @@ class ReturnNode(StatementNode):
 
         return Parser.allOf(
             Parser.terminalParser(TokenType.RETURN),
-            ExpressionNode.parse,
+            Parser.doAssert(ExpressionNode.parse, "expression"),
             createNode=createNode
         )(input)

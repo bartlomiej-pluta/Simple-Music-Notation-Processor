@@ -21,7 +21,7 @@ class Program(Node):
                 ExpressionNode.parse,
                 ImportNode.parse,
                 StatementNode.parse,
-                exception = SyntaxException(f"Unknown statement: {input.current().pos}")
+                exception = SyntaxException(f"Invalid statement: {input.currentToEndOfLine()}", input.current().pos)
             )(input)
 
         root = Program()

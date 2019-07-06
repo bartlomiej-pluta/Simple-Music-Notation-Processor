@@ -41,7 +41,7 @@ def abstractIterableParser(iterableNodeType, openTokenType, closeTokenType, item
                 return node
 
             return Parser.allOf(
-                Parser.terminalParser(TokenType.COMMA),
+                Parser.terminalParser(TokenType.COMMA, doAssert=True),
                 itemParser,
                 AbstractIterableTailNode.parse,
                 createNode=createNode

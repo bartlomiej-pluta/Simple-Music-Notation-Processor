@@ -48,10 +48,10 @@ class ExtendNode(StatementNode):
 
         return Parser.allOf(
             Parser.terminalParser(TokenType.EXTEND),
-            TypeNode.parse,
-            Parser.terminalParser(TokenType.AS),
-            IdentifierNode.identifierParser(),
-            cls._methodsDeclarationsParser(),
+            Parser.doAssert(TypeNode.parse, "type being extended"),
+            Parser.terminalParser(TokenType.AS, doAssert=True),
+            Parser.doAssert(IdentifierNode.identifierParser(), "variable name"),
+            Parser.doAssert(cls._methodsDeclarationsParser(), "methods declarations"),
             createNode=createNode
         )(input)
 
@@ -64,7 +64,7 @@ class ExtendNode(StatementNode):
 
         return Parser.loop(
             Parser.terminalParser(TokenType.OPEN_BRACKET),
-            FunctionDefinitionNode.parse,
+            Parser.doAssert(FunctionDefinitionNode.parse, f"method declaration or '{TokenType.CLOSE_BRACKET.key}'"),
             Parser.terminalParser(TokenType.CLOSE_BRACKET),
             createNode=createNode
         )

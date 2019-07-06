@@ -70,7 +70,7 @@ def tokenize(lines):
             current += consumedChars
             tokens.append(token)
             
-    return TokenList(filterTokens(filters, tokens))
+    return TokenList(filterTokens(filters, tokens), lines)
 
 
 def combinedTokenizer(line, current, lineNumber):

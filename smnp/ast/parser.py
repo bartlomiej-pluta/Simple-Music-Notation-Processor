@@ -1,5 +1,6 @@
 from smnp.ast.node.ignore import IgnoredNode
 from smnp.ast.node.model import ParseResult, Node
+from smnp.error.syntax import SyntaxException
 
 
 def parse(input):
@@ -11,7 +12,7 @@ class Parser:
 
     # a -> A
     @staticmethod
-    def terminalParser(expectedType, createNode=None):
+    def terminalParser(expectedType, createNode=None, doAssert=False):
         def provideNode(value, pos):
             if createNode is None:
                 return IgnoredNode(pos)
@@ -22,6 +23,10 @@ class Parser:
                 token = input.current()
                 input.ahead()
                 return ParseResult.OK(provideNode(token.value, token.pos))
+            elif doAssert:
+                found = f", found '{input.current().rawValue}'" if input.hasCurrent() else ""
+                raise SyntaxException(f"Expected '{expectedType.key}'{found}", input.currentPos())
+
             return ParseResult.FAIL()
 
         return parse
@@ -37,7 +42,11 @@ class Parser:
                     return value
 
             if exception is not None:
-                raise exception
+                if callable(exception):
+                    raise exception(input)
+                else:
+                    raise exception
+
 
             input.reset(snap)
             return ParseResult.FAIL()
@@ -60,7 +69,10 @@ class Parser:
 
                 if not result.result:
                     if exception is not None:
-                        raise exception
+                        if callable(exception):
+                            raise exception(input)
+                        else:
+                            raise exception
 
                     input.reset(snap)
                     return ParseResult.FAIL()
@@ -114,3 +126,16 @@ class Parser:
 
         return parse
 
+    @staticmethod
+    def doAssert(parser, expected):
+        def parse(input):
+            result = parser(input)
+
+            if not result.result:
+                found = f", found '{input.current().rawValue}'" if input.hasCurrent() else ''
+
+                raise SyntaxException(f"Expected {expected}{found}", input.currentPos())
+
+            return result
+
+        return parse

@@ -30,7 +30,7 @@ class IdentifierNode(AccessNode):
         return Parser.allOf(
             IdentifierNode.identifierParser(),
             Parser.terminalParser(TokenType.ASSIGN),
-            ExpressionNode.parse,
+            Parser.doAssert(ExpressionNode.parse, "expression"),
             createNode=createNode
         )
 

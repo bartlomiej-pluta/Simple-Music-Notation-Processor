@@ -5,4 +5,4 @@ def assertToken(expected, input):
     if not input.hasCurrent():
         raise SyntaxException(f"Expected '{expected}'")
     if expected != input.current().type:
-        raise SyntaxException(f"Expected '{expected}', found '{input.current().value}'", input.current().pos)
+        raise SyntaxException(f"Expected '{expected}', found '{input.current().rawValue}'", input.current().pos)

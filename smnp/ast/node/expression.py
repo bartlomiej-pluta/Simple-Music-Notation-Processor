@@ -44,7 +44,7 @@ class ExpressionNode(Node):
         return Parser.allOf(
             cls._expressionParser(),
             Parser.terminalParser(TokenType.ASTERISK),
-            StatementNode.parse,
+            Parser.doAssert(StatementNode.parse, 'statement'),
             createNode=createNode
         )
 

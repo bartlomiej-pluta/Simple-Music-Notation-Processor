@@ -22,7 +22,7 @@ class IntegerLiteralNode(AccessNode):
 
         return Parser.allOf(
             Parser.terminalParser(TokenType.MINUS),
-            cls._positiveIntegerParser(),
+            Parser.doAssert(cls._positiveIntegerParser(), "integer"),
             createNode=createNode
         )
 

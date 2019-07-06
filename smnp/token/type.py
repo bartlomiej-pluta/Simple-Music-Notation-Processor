@@ -1,28 +1,36 @@
-from enum import Enum, auto
+from enum import Enum
 
 
 class TokenType(Enum):
-    OPEN_PAREN = auto()
-    CLOSE_PAREN = auto()
-    ASTERISK = auto()
-    STRING = auto()
-    IDENTIFIER = auto()
-    COMMA = auto()
-    INTEGER = auto()
-    OPEN_BRACKET = auto()
-    CLOSE_BRACKET = auto()
-    ASSIGN = auto()
-    NOTE = auto()
-    COMMENT = auto()
-    PERCENT = auto()
-    MINUS = auto()
-    FUNCTION = auto()
-    RETURN = auto()
-    DOT = auto()
-    OPEN_SQUARE = auto()
-    CLOSE_SQUARE = auto()
-    TYPE = auto()
-    EXTEND = auto()
-    IMPORT = auto()
-    FROM = auto()
-    AS = auto()
+    OPEN_PAREN = '('
+    CLOSE_PAREN = ')'
+    ASTERISK = '*'
+    STRING = 'string'
+    IDENTIFIER = 'identifier'
+    COMMA = ','
+    INTEGER = 'integer'
+    OPEN_BRACKET = '{'
+    CLOSE_BRACKET = '}'
+    ASSIGN = '='
+    NOTE = 'note'
+    COMMENT = 'comment'
+    PERCENT = 'percent'
+    MINUS = '-'
+    FUNCTION = 'function'
+    RETURN = 'return'
+    DOT = '.'
+    OPEN_SQUARE = '['
+    CLOSE_SQUARE = ']'
+    TYPE = 'type'
+    EXTEND = 'extend'
+    IMPORT = 'import'
+    FROM = 'from'
+    AS = 'as'
+
+    @property
+    def key(self):
+        return self.value
+
+    @key.setter
+    def key(self, value):
+        raise RuntimeError("Cannot change key of token type")

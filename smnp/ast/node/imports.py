@@ -55,10 +55,10 @@ class ImportNode(Node):
         return Parser.allOf(
             Parser.terminalParser(TokenType.IMPORT),
             TypeNode.parse,
-            Parser.terminalParser(TokenType.FROM),
-            StringLiteralNode._literalParser(),
-            Parser.terminalParser(TokenType.AS),
-            IdentifierNode.identifierParser(),
+            Parser.doAssert(Parser.terminalParser(TokenType.FROM), "'from <source> as <variable name>'"),
+            Parser.doAssert(StringLiteralNode._literalParser(), "source as a string"),
+            Parser.doAssert(Parser.terminalParser(TokenType.AS), "'as <variable name>'"),
+            Parser.doAssert(IdentifierNode.identifierParser(), "variable name"),
             createNode=createNode
         )
 
@@ -71,6 +71,6 @@ class ImportNode(Node):
 
         return Parser.allOf(
             Parser.terminalParser(TokenType.IMPORT),
-            StringLiteralNode._literalParser(),
+            Parser.doAssert(StringLiteralNode._literalParser(), "source as a string"),
             createNode=createNode
         )
