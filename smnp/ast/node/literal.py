@@ -1,5 +1,5 @@
-from smnp.newast.node.expression import ExpressionNode
-from smnp.newast.parser import Parser
+from smnp.ast.node.expression import ExpressionNode
+from smnp.ast.parser import Parser
 
 
 class LiteralNode(ExpressionNode):

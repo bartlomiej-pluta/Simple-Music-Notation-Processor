@@ -1,6 +1,6 @@
-from smnp.newast.node.expression import ExpressionNode
-from smnp.newast.node.iterable import abstractIterableParser
-from smnp.newast.node.model import Node
+from smnp.ast.node.expression import ExpressionNode
+from smnp.ast.node.iterable import abstractIterableParser
+from smnp.ast.node.model import Node
 from smnp.token.type import TokenType
 
 

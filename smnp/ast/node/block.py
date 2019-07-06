@@ -1,17 +1,20 @@
-from smnp.ast.node.model import Node
+from smnp.ast.node.statement import StatementNode
+from smnp.ast.parser import Parser
+from smnp.token.type import TokenType
 
 
-class BlockNode(Node):
-    pass
+class BlockNode(StatementNode):
 
+    @classmethod
+    def _parse(cls, input):
+        def createNode(start, items, end):
+            node = BlockNode(start.pos)
+            node.children = items
+            return node
 
-class BlockItemNode(Node):
-    def __init__(self, statement, parent, pos):
-        Node.__init__(self, parent, pos)
-        self.children.append(statement)
-
-        self.statement = self.children[0]
-
-
-class CloseBlockNode(Node):
-    pass
+        return Parser.loop(
+            Parser.terminalParser(TokenType.OPEN_BRACKET),
+            StatementNode.parse,
+            Parser.terminalParser(TokenType.CLOSE_BRACKET),
+            createNode=createNode
+        )(input)

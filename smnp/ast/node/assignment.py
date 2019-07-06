@@ -1,10 +1,28 @@
-from smnp.ast.node.model import Node
+from smnp.ast.node.expression import ExpressionNode
+from smnp.ast.node.none import NoneNode
 
 
-class AssignmentNode(Node):
-    def __init__(self, target, value, parent, pos):
-        Node.__init__(self, parent, pos)
-        self.children.extend([target, value])
+class AssignmentNode(ExpressionNode):
+    def __init__(self, pos):
+        super().__init__(pos)
+        self.children.append(NoneNode())
 
-        self.target = self.children[0]
-        self.value = self.children[1]
+    @property
+    def target(self):
+        return self[0]
+
+    @target.setter
+    def target(self, value):
+        self[0] = value
+
+    @property
+    def value(self):
+        return self[1]
+
+    @value.setter
+    def value(self, value):
+        self[1] = value
+
+    @classmethod
+    def _parse(cls, input):
+        raise RuntimeError("This class is not supposed to be automatically called")

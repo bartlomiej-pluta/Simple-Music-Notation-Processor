@@ -1,8 +1,8 @@
-from smnp.newast.node.expression import ExpressionNode
-from smnp.newast.node.identifier import IdentifierNode
-from smnp.newast.node.none import NoneNode
-from smnp.newast.node.type import TypeNode
-from smnp.newast.parser import Parser
+from smnp.ast.node.expression import ExpressionNode
+from smnp.ast.node.identifier import IdentifierNode
+from smnp.ast.node.none import NoneNode
+from smnp.ast.node.type import TypeNode
+from smnp.ast.parser import Parser
 from smnp.token.type import TokenType
 
 class TypedVariableNode(ExpressionNode):

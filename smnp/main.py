@@ -1,8 +1,8 @@
 import sys
 
+from smnp.ast.node.program import Program
 from smnp.environment.factory import createEnvironment
 from smnp.error.base import SmnpException
-from smnp.newast.node.program import Program
 from smnp.runtime.evaluator import evaluate
 from smnp.token.tokenizer import tokenize
 

@@ -1,17 +1,11 @@
-from smnp.ast.node.model import Node
+from smnp.ast.node.access import AccessNode
+from smnp.ast.node.expression import ExpressionNode
+from smnp.ast.node.iterable import abstractIterableParser
+from smnp.token.type import TokenType
 
 
-class ListNode(Node):
-    pass
+class ListNode(AccessNode):
 
-
-class ListItemNode(Node):
-    def __init__(self, value, parent, pos):
-        Node.__init__(self, parent, pos)
-        self.children.append(value)
-
-        self.value = self.children[0]
-
-
-class CloseListNode(Node):
-    pass
+    @classmethod
+    def _literalParser(cls):
+        return abstractIterableParser(ListNode, TokenType.OPEN_SQUARE, TokenType.CLOSE_SQUARE, ExpressionNode.parse)

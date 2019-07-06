@@ -1,5 +1,5 @@
-from smnp.newast.node.access import AccessNode
-from smnp.newast.node.literal import LiteralNode
+from smnp.ast.node.access import AccessNode
+from smnp.ast.node.literal import LiteralNode
 from smnp.token.type import TokenType
 
 

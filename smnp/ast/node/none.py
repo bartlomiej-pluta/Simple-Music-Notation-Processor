@@ -1,4 +1,4 @@
-from smnp.newast.node.model import Node
+from smnp.ast.node.model import Node
 
 
 class NoneNode(Node):

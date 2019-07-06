@@ -1,8 +1,8 @@
-from smnp.newast.node.expression import ExpressionNode
-from smnp.newast.node.ignore import IgnoredNode
-from smnp.newast.node.model import Node, ParseResult
-from smnp.newast.node.none import NoneNode
-from smnp.newast.parser import Parser
+from smnp.ast.node.expression import ExpressionNode
+from smnp.ast.node.ignore import IgnoredNode
+from smnp.ast.node.model import Node, ParseResult
+from smnp.ast.node.none import NoneNode
+from smnp.ast.parser import Parser
 from smnp.token.type import TokenType
 
 

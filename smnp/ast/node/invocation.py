@@ -1,4 +1,4 @@
-from smnp.newast.node.access import AccessNode
+from smnp.ast.node.access import AccessNode
 
 
 class FunctionCall(AccessNode):

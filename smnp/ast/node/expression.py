@@ -1,8 +1,8 @@
-from smnp.newast.node.asterisk import AsteriskNode
-from smnp.newast.node.model import Node
-from smnp.newast.node.none import NoneNode
-from smnp.newast.node.statement import StatementNode
-from smnp.newast.parser import Parser
+from smnp.ast.node.asterisk import AsteriskNode
+from smnp.ast.node.model import Node
+from smnp.ast.node.none import NoneNode
+from smnp.ast.node.statement import StatementNode
+from smnp.ast.parser import Parser
 from smnp.token.type import TokenType
 
 
@@ -50,11 +50,11 @@ class ExpressionNode(Node):
 
     @classmethod
     def _expressionParser(cls):
-        from smnp.newast.node.integer import IntegerLiteralNode
-        from smnp.newast.node.string import StringLiteralNode
-        from smnp.newast.node.note import NoteLiteralNode
-        from smnp.newast.node.identifier import IdentifierNode
-        from smnp.newast.node.list import ListNode
+        from smnp.ast.node.integer import IntegerLiteralNode
+        from smnp.ast.node.string import StringLiteralNode
+        from smnp.ast.node.note import NoteLiteralNode
+        from smnp.ast.node.identifier import IdentifierNode
+        from smnp.ast.node.list import ListNode
 
         return Parser.oneOf(
             IntegerLiteralNode.parse,

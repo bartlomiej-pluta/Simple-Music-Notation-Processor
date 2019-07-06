@@ -1,9 +1,13 @@
-from smnp.ast.node.model import Node
+from smnp.ast.node.access import AccessNode
+from smnp.ast.node.literal import LiteralNode
+from smnp.token.type import TokenType
 
 
-class StringLiteralNode(Node):
-    def __init__(self, value, parent, pos):
-        Node.__init__(self, parent, pos)
-        self.children.append(value)
+class StringLiteralNode(LiteralNode, AccessNode):
+    def __init__(self, pos):
+        super().__init__(pos)
+        del self.children[1]
 
-        self.value = self.children[0]
+    @classmethod
+    def _getTokenType(cls):
+        return TokenType.STRING
