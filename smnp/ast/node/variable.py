@@ -3,7 +3,7 @@ from smnp.ast.node.identifier import IdentifierNode
 from smnp.ast.node.none import NoneNode
 from smnp.ast.node.type import TypeNode
 from smnp.ast.parser import Parser
-from smnp.token.type import TokenType
+
 
 class TypedVariableNode(ExpressionNode):
     def __init__(self, pos):
@@ -35,7 +35,7 @@ class TypedVariableNode(ExpressionNode):
             return node
 
         return Parser.allOf(
-            Parser.terminalParser(TokenType.TYPE, lambda val, pos: TypeNode.withValue(val, pos)),
+            TypeNode.parse,
             Parser.doAssert(IdentifierNode.identifierParser(), "variable name"),
             createNode=createNode
         )
