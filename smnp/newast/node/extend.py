@@ -39,7 +39,7 @@ class ExtendNode(StatementNode):
 
     @classmethod
     def _parse(cls, input):
-        def createNode(extend, type, variable, methods):
+        def createNode(extend, type, asKeyword, variable, methods):
             node = ExtendNode(extend.pos)
             node.type = type
             node.variable = variable
@@ -49,6 +49,7 @@ class ExtendNode(StatementNode):
         return Parser.allOf(
             Parser.terminalParser(TokenType.EXTEND),
             TypeNode.parse,
+            Parser.terminalParser(TokenType.AS),
             IdentifierNode.identifierParser(),
             cls._methodsDeclarationsParser(),
             createNode=createNode
