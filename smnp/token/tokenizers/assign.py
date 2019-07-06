@@ -1,5 +1,5 @@
-from smnp.token.tools import tokenizeChar
+from smnp.token.tools import charTokenizer
 from smnp.token.type import TokenType
 
 def tokenizeAssign(input, current, line):
-    return tokenizeChar(TokenType.ASSIGN, '=', input, current, line)
+    return charTokenizer(TokenType.ASSIGN, '=')(input, current, line)
