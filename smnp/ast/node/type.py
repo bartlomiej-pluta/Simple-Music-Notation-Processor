@@ -42,13 +42,6 @@ class TypeNode(AccessNode):
 
     @classmethod
     def _parse(cls, input):
-        return Parser.oneOf(
-            cls._specifiedTypeParser(),
-            cls._rawTypeParser()
-        )(input)
-
-    @classmethod
-    def _specifiedTypeParser(cls):
         def createNode(type, specifier):
             node = TypeNode(type.pos)
             node.type = type.value
@@ -57,9 +50,9 @@ class TypeNode(AccessNode):
 
         return Parser.allOf(
             cls._rawTypeParser(),
-            TypeSpecifier.parse,
+            Parser.optional(TypeSpecifier.parse),
             createNode=createNode
-        )
+        )(input)
 
     @classmethod
     def _rawTypeParser(cls):

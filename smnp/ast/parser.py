@@ -1,5 +1,6 @@
 from smnp.ast.node.ignore import IgnoredNode
 from smnp.ast.node.model import ParseResult, Node
+from smnp.ast.node.none import NoneNode
 from smnp.error.syntax import SyntaxException
 
 
@@ -137,5 +138,16 @@ class Parser:
                 raise SyntaxException(f"Expected {expected}{found}", input.currentPos())
 
             return result
+
+        return parse
+
+    @staticmethod
+    def optional(parser):
+        def parse(input):
+            result = parser(input)
+            if result.result:
+                return result
+
+            return ParseResult.OK(NoneNode())
 
         return parse
