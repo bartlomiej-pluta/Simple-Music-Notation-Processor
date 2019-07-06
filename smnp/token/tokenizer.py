@@ -11,12 +11,14 @@ from smnp.token.type import TokenType
 
 tokenizers = (
     # Characters
-    defaultTokenizer(TokenType.OPEN_BRACKET),
-    defaultTokenizer(TokenType.CLOSE_BRACKET),
+    defaultTokenizer(TokenType.OPEN_CURLY),
+    defaultTokenizer(TokenType.CLOSE_CURLY),
     defaultTokenizer(TokenType.OPEN_PAREN),
+    defaultTokenizer(TokenType.CLOSE_PAREN),
     defaultTokenizer(TokenType.OPEN_SQUARE),
     defaultTokenizer(TokenType.CLOSE_SQUARE),
-    defaultTokenizer(TokenType.CLOSE_PAREN),
+    defaultTokenizer(TokenType.OPEN_ANGLE),
+    defaultTokenizer(TokenType.CLOSE_ANGLE),
     defaultTokenizer(TokenType.ASTERISK),
     defaultTokenizer(TokenType.ASSIGN),
     defaultTokenizer(TokenType.COMMA),

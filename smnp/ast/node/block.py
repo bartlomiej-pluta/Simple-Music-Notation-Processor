@@ -13,8 +13,8 @@ class BlockNode(StatementNode):
             return node
 
         return Parser.loop(
-            Parser.terminalParser(TokenType.OPEN_BRACKET),
-            Parser.doAssert(StatementNode.parse, f"statement or '{TokenType.CLOSE_BRACKET.key}'"),
-            Parser.terminalParser(TokenType.CLOSE_BRACKET),
+            Parser.terminalParser(TokenType.OPEN_CURLY),
+            Parser.doAssert(StatementNode.parse, f"statement or '{TokenType.CLOSE_CURLY.key}'"),
+            Parser.terminalParser(TokenType.CLOSE_CURLY),
             createNode=createNode,
         )(input)

@@ -63,8 +63,8 @@ class ExtendNode(StatementNode):
             return node
 
         return Parser.loop(
-            Parser.terminalParser(TokenType.OPEN_BRACKET),
-            Parser.doAssert(FunctionDefinitionNode.parse, f"method declaration or '{TokenType.CLOSE_BRACKET.key}'"),
-            Parser.terminalParser(TokenType.CLOSE_BRACKET),
+            Parser.terminalParser(TokenType.OPEN_CURLY),
+            Parser.doAssert(FunctionDefinitionNode.parse, f"method declaration or '{TokenType.CLOSE_CURLY.key}'"),
+            Parser.terminalParser(TokenType.CLOSE_CURLY),
             createNode=createNode
         )
