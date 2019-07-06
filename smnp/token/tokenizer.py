@@ -19,6 +19,11 @@ from smnp.token.tokenizers.string import tokenizeString
 from smnp.token.tokenizers.whitespace import tokenizeWhitespaces
 from smnp.token.type import TokenType
 
+# TODO !!!
+# Enable tokenizer to detect separators of tokens
+# for example, "notes" instead of being tokenized
+# to IDENTIFIER(notes) is tokenized to [TYPE(note), IDENTIFIER(s)]
+
 tokenizers = (
     tokenizeOpenParen, 
     tokenizeCloseParen,
