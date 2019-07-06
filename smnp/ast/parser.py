@@ -1,10 +1,11 @@
 from smnp.ast.node.ignore import IgnoredNode
 from smnp.ast.node.model import ParseResult, Node
-from smnp.ast.node.program import Program
 
 
 def parse(input):
-    return Program.parse(input)
+    from smnp.ast.node.program import Program
+    return Program.parse(input).node
+
 
 class Parser:
 

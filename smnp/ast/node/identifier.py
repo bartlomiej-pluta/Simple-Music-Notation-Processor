@@ -1,8 +1,7 @@
 from smnp.ast.node.access import AccessNode
-from smnp.ast.node.args import ArgumentsListNode
 from smnp.ast.node.assignment import AssignmentNode
 from smnp.ast.node.expression import ExpressionNode
-from smnp.ast.node.invocation import FunctionCall
+from smnp.ast.node.invocation import FunctionCall, ArgumentsListNode
 from smnp.ast.parser import Parser
 from smnp.token.type import TokenType
 
