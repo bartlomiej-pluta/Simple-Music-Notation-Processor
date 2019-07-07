@@ -5,33 +5,52 @@ CHAR = ... \ '"'
 PITCH = 'c' | 'd' | 'e' | 'f' | 'g' | 'a' | 'h'
 PITCH_MODIFIER = 'b' | '#'
 
-<integer> := '-' DIGIT+ | DIGIT+
-<string> := '"' CHAR* '"'
-<note> := '@' PITCH PITCH_MODIFIER? DIGIT? ['.' DIGIT+ 'd'?]?
-<identifier> := ID [ID|DIGIT]*
+<integer> ::= '-' DIGIT+ | DIGIT+
+<string> ::= '"' CHAR* '"'
+<note> ::= '@' PITCH PITCH_MODIFIER? DIGIT? [':' DIGIT+ 'd'?]?
+<identifier> ::= ID [ID|DIGIT]*
+<type> ::= 'integer' | 'string' | 'note' | 'list' | 'void'
 
 # Parser
-<expr> := <integer> <accessTail> | <integer>
-<expr> := <string> <accessTail> | <string>
-<expr> := <note> <accessTail> | <note>
-<expr> := <identifier> <accessTail> | <identifier> '=' <expr> | <identifier> <list> | <identifier>
-<expr> := <list> <accessTail> | <list>
+<expr> ::= <integer> <access> | <integer>
+<expr> ::= <string> <access> | <string>
+<expr> ::= <note> <access> | <note>
+<expr> ::= <identifier> <access> | <identifier> '=' <expr> | <functionCall> | <identifier>
+<expr> ::= <list> <access> | <list>
+<expr> ::= <expr> '.' <identifier> | <expr> '.' <functionCall>
+<expr> ::= <asteriskExpr> '*' <expr>
+<asteriskExpr> ::= <integer> | <string> | <note> | <identifier> | <list>
 
-<accessTail> := '.' <expr> <accessTail> | e
+<functionCall> ::= <identifier> <arglist>
 
-<list> := '[' ']' | '[' <expr> <listTail>
-<listTail> := <expr> ', ' <listTail> | ']'
+<list> ::= '[' ']' | '[' <expr> <listTail>
+<listTail> ::= <expr> ', ' <listTail> | ']'
 
-<arglist> := '(' ')' | '(' <expr> <arglistTail>
-<arglistTail> := <expr> ', ' <arglistTail> | ')'
+<arglist> ::= '(' ')' | '(' <expr> <arglistTail>
+<arglistTail> ::= <expr> ', ' <arglistTail> | ')'
 
-block := '{' <stmt>* '}'
+<argdeflist> ::= '(' ')' | '(' <typedVariable> <argdeflist>
+<argdeflist> ::= <typedVariable> ', ' <argdeflist> | ')'
 
-<stmt> := <expr> <asteriskTail> | <expr> #nie wiem czy zamiast '<expr> <asteriskTail>' nie powinno być wprost co może wyprodukować iterator dla asterisk
-<asteriskTail> := '*' <stmt> | e
-<stmt> := <block>
-<stmt> := 'return' <expr>
-<stmt> := 'function' <identifier> <list> block
+<typedVariable> ::= <type> <typeSpecifier>? <identifier>
 
-<program> := <stmt>*
+<typeSpecifier> ::= '<' '>' | '<' <typeSpecifierItem> <typeSpecifierTail>
+<typeSpecifierTail> ::= <typeSpecifierItem> ', ' <typeSpecifierTail> | '>'
+<typeSpecifierItem> ::= <type> | <type> <typeSpecifier>
+
+<block> ::= '{' <stmt>* '}'
+
+<stmt> ::= <block>
+<stmt> ::= 'return' <expr>
+<stmt> ::= <expr>
+
+<functionDefinition> ::= 'function' <identifier> <list> <block>
+
+<extend> ::= 'extend' <type> 'as' <identifier> '{' <functionDefinition> '}'
+
+<import> ::= 'import' <string> | 'import' <type> 'from' <string> 'as' <identifier>
+
+<programItem> ::= <stmt> | <expr> | <import> | <functionDefinition> | <extend>
+
+<program> ::= <programItem>*
 
