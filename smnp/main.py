@@ -16,10 +16,8 @@ def main():
 
         ast = parse(tokens)
 
-
         ast.print()
 
-        sys.exit(0)
         env = createEnvironment()
 
         evaluate(ast, env)

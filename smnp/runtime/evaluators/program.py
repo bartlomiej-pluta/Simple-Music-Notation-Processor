@@ -1,6 +1,9 @@
-from smnp.runtime.evaluator import evaluate
+from smnp.runtime.evaluator import Evaluator, evaluate
 
 
-def evaluateProgram(program, environment):
-    for node in program.children:
-        evaluate(node, environment)
+class ProgramEvaluator(Evaluator):
+
+    @classmethod
+    def evaluator(cls, node, environment):
+        for n in node.children:
+            evaluate(n, environment)
