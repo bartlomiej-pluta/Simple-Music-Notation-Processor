@@ -44,7 +44,13 @@ class Note:
     
     def __repr__(self):
         return self.__str__()
-                
+
+    def __eq__(self, other):
+        return self.note == other.note and self.octave == other.octave and self.duration == other.duration and self.dot == other.dot
+
+    def __hash__(self):
+        return hash(self.__str__())
+
     @staticmethod
     def checkInterval(a, b):
         return b._intRepr() - a._intRepr()

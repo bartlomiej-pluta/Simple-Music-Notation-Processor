@@ -6,6 +6,7 @@ from smnp.library.signature import signature, listOfMatchers, ofType
 from smnp.runtime.evaluator import Evaluator, evaluate
 from smnp.runtime.evaluators.expression import expressionEvaluator
 from smnp.runtime.evaluators.iterable import abstractIterableEvaluator
+from smnp.runtime.tools import updatePos
 from smnp.type.model import Type
 
 
@@ -13,9 +14,12 @@ class FunctionCallEvaluator(Evaluator):
 
     @classmethod
     def evaluator(cls, node, environment):
-        name = node.name.value
-        arguments = abstractIterableEvaluator(expressionEvaluator(True))(node.arguments, environment)
-        return environment.invokeFunction(name, arguments)
+        try:
+            name = node.name.value
+            arguments = abstractIterableEvaluator(expressionEvaluator(True))(node.arguments, environment)
+            return environment.invokeFunction(name, arguments)
+        except RuntimeException as e:
+            raise updatePos(e, node)
 
 
 class FunctionDefinitionEvaluator(Evaluator):

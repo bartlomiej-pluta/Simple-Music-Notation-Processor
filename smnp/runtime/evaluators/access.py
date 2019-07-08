@@ -4,6 +4,7 @@ from smnp.error.runtime import RuntimeException
 from smnp.runtime.evaluator import Evaluator
 from smnp.runtime.evaluators.expression import expressionEvaluator
 from smnp.runtime.evaluators.iterable import abstractIterableEvaluator
+from smnp.runtime.tools import updatePos
 
 
 class AccessEvaluator(Evaluator):
@@ -20,8 +21,11 @@ class AccessEvaluator(Evaluator):
                 raise RuntimeException(f"Unknown property '{right.value}' of type '{left.type.name.lower()}'", right.pos)
 
         if type(right) == FunctionCallNode:
-            arguments = abstractIterableEvaluator(expressionEvaluator(True))(right.arguments, environment)
-            return environment.invokeMethod(left, right.name.value, arguments)
+            try:
+                arguments = abstractIterableEvaluator(expressionEvaluator(True))(right.arguments, environment)
+                return environment.invokeMethod(left, right.name.value, arguments)
+            except RuntimeException as e:
+                raise updatePos(e, right)
 
 #
 # def evaluateAccess(access, environment):

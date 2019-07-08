@@ -55,11 +55,13 @@ class ExpressionNode(Node):
         from smnp.ast.node.note import NoteLiteralNode
         from smnp.ast.node.identifier import IdentifierNode
         from smnp.ast.node.list import ListNode
+        from smnp.ast.node.map import MapNode
 
         return Parser.oneOf(
             IntegerLiteralNode.parse,
             StringLiteralNode.parse,
             NoteLiteralNode.parse,
             IdentifierNode.parse,
+            MapNode.parse,
             ListNode.parse
         )

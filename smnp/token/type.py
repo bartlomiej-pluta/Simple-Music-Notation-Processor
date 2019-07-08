@@ -12,6 +12,7 @@ class TokenType(Enum):
     CLOSE_ANGLE = '>'
     ASTERISK = '*'
     ASSIGN = '='
+    ARROW = '->'
     COMMA = ','
     MINUS = '-'
     DOT = '.'

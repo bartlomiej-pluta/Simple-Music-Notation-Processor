@@ -17,6 +17,7 @@ PITCH_MODIFIER = 'b' | '#'
 <expr> ::= <note> <access> | <note>
 <expr> ::= <identifier> <access> | <identifier> '=' <expr> | <functionCall> | <identifier>
 <expr> ::= <list> <access> | <list>
+<expr> ::= <map> <access> | <map>
 <expr> ::= <expr> '.' <identifier> | <expr> '.' <functionCall>
 <expr> ::= <asteriskExpr> '*' <expr>
 <asteriskExpr> ::= <integer> | <string> | <note> | <identifier> | <list>
@@ -33,6 +34,10 @@ PITCH_MODIFIER = 'b' | '#'
 <argdeflist> ::= <typedVariable> ', ' <argdeflist> | ')'
 
 <typedVariable> ::= <type> <typeSpecifier>? <identifier>
+
+<map> ::= '{' '}' | '{' <mapEntry> <mapTail>
+<mapTail> ::= <mapEntry> ', ' <mapTail> | ']'
+<mapEntry> ::= <integer> '->' <expr> | <string> '->' <expr> | <note> '->' <expr>
 
 <typeSpecifier> ::= '<' '>' | '<' <typeSpecifierItem> <typeSpecifierTail>
 <typeSpecifierTail> ::= <typeSpecifierItem> ', ' <typeSpecifierTail> | '>'

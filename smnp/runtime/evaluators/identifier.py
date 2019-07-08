@@ -1,5 +1,6 @@
 from smnp.error.runtime import RuntimeException
 from smnp.runtime.evaluator import Evaluator
+from smnp.runtime.tools import updatePos
 
 
 class IdentifierEvaluator(Evaluator):
@@ -9,5 +10,4 @@ class IdentifierEvaluator(Evaluator):
         try:
             return environment.findVariable(node.value)
         except RuntimeException as e:
-            e.pos = node.pos
-            raise e
+            raise updatePos(e, node)

@@ -28,6 +28,12 @@ class Value:
 
         return self
 
+    def __eq__(self, other):
+        return self.type == other.type and self.value == other.value
+
+    def __hash__(self):
+        return hash(self.type) ^ hash(self.value)
+
     def __str__(self):
         return f"{self.type.name}({self.value})"
 

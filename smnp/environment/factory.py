@@ -1,6 +1,6 @@
 from smnp.environment.environment import Environment
 from smnp.library.function import display, sleep, semitones, interval, combine, flat, wait, rand, tuplet, synth, pause, \
-    transpose, type, exit, duration, octave, debug
+    transpose, type, exit, duration, octave, debug, get
 from smnp.type.model import Type
 
 
@@ -26,6 +26,7 @@ def createEnvironment():
     methods = [
         duration.function,
         octave.function,
+        get.function
     ]
 
     variables = {

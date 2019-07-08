@@ -9,6 +9,7 @@ class Type(Enum):
     INTEGER = (int, lambda x: str(x))
     STRING = (str, lambda x: x)
     LIST = (list, lambda x: f"[{', '.join([e.stringify() for e in x])}]")
+    MAP = (dict, lambda x: '{' + ', '.join(f"'{k.stringify()}' -> '{v.stringify()}'" for k, v in x.items()) + '}')
     PERCENT = (float, lambda x: f"{int(x * 100)}%")
     NOTE = (Note, lambda x: x.note.name)
     TYPE = (None, lambda x: str(x.type.name.lower()))
@@ -30,6 +31,12 @@ class Type(Enum):
     @staticmethod
     def list(value):
         return Value(Type.LIST, value, {
+            "size": Type.integer(len(value))
+        })
+
+    @staticmethod
+    def map(value):
+        return Value(Type.MAP, value, {
             "size": Type.integer(len(value))
         })
 
