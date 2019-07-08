@@ -1,15 +1,29 @@
-from smnp.error.runtime import RuntimeException
-from smnp.runtime.evaluator import evaluate
-from smnp.type.model import Type
+from smnp.runtime.evaluator import Evaluator
+from smnp.runtime.evaluators.expression import expressionEvaluator
 
 
-def evaluateAssignment(assignment, environment):
-    target = assignment.target.identifier
-    value = evaluate(assignment.value, environment)
-    if value.type == Type.VOID:
-        raise RuntimeException(f"Expected expression, found '{value.type.name}'", assignment.value.pos)
-    scopeOfExistingVariable = environment.findVariableScope(target)
-    if scopeOfExistingVariable is not None:
-        scopeOfExistingVariable[target] = value
-    else:
-        environment.scopes[-1][target] = value
+class AssignmentEvaluator(Evaluator):
+
+    @classmethod
+    def evaluator(cls, node, environment):
+        target = node.target.value
+        value = expressionEvaluator(doAssert=True)(node.value, environment).value #TODO check if it isn't necessary to verify 'result' attr of EvaluatioNResult
+        scopeOfExistingVariable = environment.findVariableScope(target)
+        if scopeOfExistingVariable is None:
+            environment.scopes[-1][target] = value
+        else:
+            scopeOfExistingVariable[target] = value
+
+        return value
+
+#
+# def evaluateAssignment(assignment, environment):
+#     target = assignment.target.identifier
+#     value = evaluate(assignment.value, environment)
+#     if value.type == Type.VOID:
+#         raise RuntimeException(f"Expected expression, found '{value.type.name}'", assignment.value.pos)
+#     scopeOfExistingVariable = environment.findVariableScope(target)
+#     if scopeOfExistingVariable is not None:
+#         scopeOfExistingVariable[target] = value
+#     else:
+#         environment.scopes[-1][target] = value
