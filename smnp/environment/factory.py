@@ -2,7 +2,6 @@ from smnp.environment.environment import Environment
 from smnp.library.function import display, sleep, semitones, interval, combine, flat, wait, rand, tuplet, synth, pause, \
     transpose, type, exit, duration, octave, debug
 from smnp.type.model import Type
-from smnp.type.value import Value
 
 
 def createEnvironment():
@@ -30,7 +29,7 @@ def createEnvironment():
     ]
 
     variables = {
-        "bpm": Value(Type.INTEGER, 120)
+        "bpm": Type.integer(120)
     }
 
     return Environment([ variables ], functions, methods)

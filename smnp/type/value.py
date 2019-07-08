@@ -1,9 +1,10 @@
-from smnp.type.model import Type
-
-
 class Value:
-    def __init__(self, objectType, value):
+    def __init__(self, objectType, value, properties=None):
+        if properties is None:
+            properties = {}
+
         self.value = value
+        self.properties = properties
 
         if objectType.value[0] is None or type(value) == objectType.value[0]:
             self.type = objectType
@@ -18,6 +19,7 @@ class Value:
         return self.type.stringify(self.value)
 
     def decompose(self):
+        from smnp.type.model import Type
         if self.type != Type.LIST:
             raise RuntimeError(f"Method 'decompose' can be applied only for lists")
 

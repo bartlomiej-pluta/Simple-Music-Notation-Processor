@@ -1,13 +1,12 @@
 from smnp.runtime.evaluator import Evaluator
 from smnp.type.model import Type
-from smnp.type.value import Value
 
 
 class StringEvaluator(Evaluator):
 
     @classmethod
     def evaluator(cls, node, environment):
-        return Value(Type.STRING, node.value)
+        return Type.string(node.value)
 
 # TODO: make use of complex interpreter for code inside '{' and '}'
 # def interpolate(string, environment):

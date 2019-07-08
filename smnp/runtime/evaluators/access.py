@@ -1,5 +1,6 @@
 from smnp.ast.node.identifier import IdentifierNode
 from smnp.ast.node.invocation import FunctionCallNode
+from smnp.error.runtime import RuntimeException
 from smnp.runtime.evaluator import Evaluator
 from smnp.runtime.evaluators.expression import expressionEvaluator
 from smnp.runtime.evaluators.iterable import abstractIterableEvaluator
@@ -12,10 +13,13 @@ class AccessEvaluator(Evaluator):
         left = expressionEvaluator(doAssert=True)(node.left, environment).value #TODO check if it isn't necessary to verify 'result' attr of EvaluatioNResult
         right = node.right
 
-        if type(node.right) == IdentifierNode:
-            raise RuntimeError("Accessing properties is not implemented yet")
+        if type(right) == IdentifierNode:
+            try:
+                return left.properties[right.value]
+            except KeyError:
+                raise RuntimeException(f"Unknown property '{right.value}' of type '{left.type.name.lower()}'", right.pos)
 
-        if type(node.right) == FunctionCallNode:
+        if type(right) == FunctionCallNode:
             arguments = abstractIterableEvaluator(expressionEvaluator(True))(right.arguments, environment)
             return environment.invokeMethod(left, right.name.value, arguments)
 

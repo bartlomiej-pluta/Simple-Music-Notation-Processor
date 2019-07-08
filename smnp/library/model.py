@@ -2,7 +2,6 @@ from enum import Enum, auto
 
 from smnp.error.function import IllegalFunctionInvocationException
 from smnp.type.model import Type
-from smnp.type.value import Value
 
 
 class FunctionType(Enum):
@@ -24,7 +23,7 @@ class Function:
         if result[0]:
             ret = self.function(env, *result[1:])
             if ret is None:
-                return Value(Type.VOID, None)
+                return Type.void()
             return ret
         raise IllegalFunctionInvocationException(self.stringSignature(), f"{self.name}{types(args)}") #TODO: argumenty do typów, nie wartości
 
@@ -44,7 +43,7 @@ class CombinedFunction(Function):
             if result[0]:
                 ret = function.function(env, *result[1:])
                 if ret is None:
-                    return Value(Type.VOID, None)
+                    return Type.void()
                 return ret
         raise IllegalFunctionInvocationException(self.stringSignature(), f"{self.name}{types(args)}")
 

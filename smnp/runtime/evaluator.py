@@ -4,7 +4,6 @@ from smnp.ast.node.function import FunctionDefinitionNode
 from smnp.ast.node.program import Program
 from smnp.error.runtime import RuntimeException
 from smnp.type.model import Type
-from smnp.type.value import Value
 
 
 class Evaluator:
@@ -18,7 +17,7 @@ class Evaluator:
     def evaluate(cls, node, environment):
         result = cls.evaluator(node, environment)
         if result is None:
-            return EvaluationResult.OK(Value(Type.VOID, None))
+            return EvaluationResult.OK(Type.void())
         return EvaluationResult.OK(result)
 
     @staticmethod
