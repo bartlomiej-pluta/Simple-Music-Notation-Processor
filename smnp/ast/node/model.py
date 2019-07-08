@@ -59,6 +59,12 @@ class Node:
     def __str__(self):
         return self.__class__.__name__
 
+    @classmethod
+    def withChildren(cls, children, pos):
+        node = cls(pos)
+        node.children = children
+        return node
+
 
 class ParseResult():
     def __init__(self, result, node):

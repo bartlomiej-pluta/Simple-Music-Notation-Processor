@@ -20,6 +20,9 @@ class TypeSpecifier(Node):
             cls.parse
         )
 
+class TypeSpecifiers(Node):
+    pass
+
 
 class TypeNode(AccessNode):
     def __init__(self, pos):
@@ -34,24 +37,24 @@ class TypeNode(AccessNode):
         self[0] = value
 
     @property
-    def specifier(self):
+    def specifiers(self):
         return self[1]
 
-    @specifier.setter
-    def specifier(self, value):
+    @specifiers.setter
+    def specifiers(self, value):
         self[1] = value
 
     @classmethod
     def _parse(cls, input):
-        def createNode(type, specifier):
+        def createNode(type, specifiers):
             node = TypeNode(type.pos)
             node.type = Type[type.value.upper()]
-            node.specifier = specifier
+            node.specifiers = specifiers
             return node
 
         return Parser.allOf(
             cls._rawTypeParser(),
-            Parser.optional(TypeSpecifier.parse),
+            Parser.many(TypeSpecifier.parse, lambda specifiers, pos: TypeSpecifiers.withChildren(specifiers, pos)),
             createNode=createNode
         )(input)
 

@@ -2,7 +2,7 @@ from smnp.ast.node.none import NoneNode
 from smnp.ast.node.ret import ReturnNode
 from smnp.ast.node.variable import TypedVariableNode
 from smnp.error.runtime import RuntimeException
-from smnp.library.signature import signature, listOfMatchers, ofType
+from smnp.library.signature import signature, listOfMatchers, ofType, mapOfMatchers
 from smnp.runtime.evaluator import Evaluator, evaluate
 from smnp.runtime.evaluators.expression import expressionEvaluator
 from smnp.runtime.evaluators.iterable import abstractIterableEvaluator
@@ -38,28 +38,65 @@ class FunctionDefinitionEvaluator(Evaluator):
 
 
 def argumentsNodeToMethodSignature(node):
-    sign = []
+    try:
+        sign = []
 
-    for child in node.children:
-        if type(child) == TypedVariableNode:
-            if type(child.type.specifier) == NoneNode:
-                sign.append(ofType(child.type.type))
-            elif child.type.type == Type.LIST:
-                sign.append(listSpecifier(child.type.specifier))
+        for child in node.children:
+            if type(child) == TypedVariableNode:
+                if type(child.type.specifiers) == NoneNode:
+                    sign.append(ofType(child.type.type))
+                elif child.type.type == Type.LIST and len(child.type.specifiers) == 1:
+                    sign.append(listSpecifier(child.type.specifiers[0]))
+                elif child.type.type == Type.MAP and len(child.type.specifiers) == 2:
+                    sign.append(mapSpecifier(child.type.specifiers[0], child.type.specifiers[1]))
+                else:
+                    raise RuntimeException("Unknown type", child.pos) # Todo: Improve pointing position
 
-    return signature(*sign)
+        return signature(*sign)
+    except RuntimeException as e:
+        raise updatePos(e, node)
 
 
 def listSpecifier(specifier):
     subSignature = []
 
     for child in specifier.children:
-        if type(child.specifier) == NoneNode:
+        if type(child.specifiers) == NoneNode:
             subSignature.append(ofType(child.type))
-        elif child.type == Type.LIST:
-            subSignature.append(listSpecifier(child.specifier))
+        elif child.type == Type.LIST and len(child.type.specifiers) == 1:
+            subSignature.append(listSpecifier(child.specifiers[0]))
+        elif child.type == Type.MAP and len(child.specifiers) == 2:
+            subSignature.append(mapSpecifier(child.specifiers[0], child.specifiers[1]))
+        else:
+            raise RuntimeException("Unknown type", None)
 
     return listOfMatchers(*subSignature)
+
+def mapSpecifier(keySpecifier, valueSpecifier):
+    keySubSignature = []
+    valueSubSignature = []
+
+    for child in keySpecifier.children:
+        if type(child.specifiers) == NoneNode:
+            keySubSignature.append(ofType(child.type))
+        elif child.type == Type.LIST and len(child.specifiers) == 1:
+            keySubSignature.append(listSpecifier(child.specifiers[0]))
+        elif child.type == Type.MAP and len(child.specifiers) == 2:
+            keySubSignature.append(mapSpecifier(child.specifiers[0], child.specifiers[1]))
+        else:
+            raise RuntimeException("Unknown type", None)
+
+    for child in valueSpecifier.children:
+        if type(child.specifiers) == NoneNode:
+            valueSubSignature.append(ofType(child.type))
+        elif child.type == Type.LIST and len(child.specifiers) == 1:
+            valueSubSignature.append(listSpecifier(child.specifiers[0]))
+        elif child.type == Type.MAP and len(child.specifiers) == 2:
+            valueSubSignature.append(mapSpecifier(child.specifiers[0], child.specifiers[1]))
+        else:
+            raise RuntimeException("Unknown type", None)
+
+    return mapOfMatchers(keySubSignature, valueSubSignature)
 
 
 class BodyEvaluator(Evaluator):

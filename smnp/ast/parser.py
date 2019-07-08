@@ -151,3 +151,20 @@ class Parser:
             return ParseResult.OK(NoneNode())
 
         return parse
+
+    @staticmethod
+    def many(parser, createNode):
+        def parse(input):
+            results = []
+            snap = input.snapshot()
+            pos = input.currentPos()
+            while True:
+                result = parser(input)
+                if result.result:
+                    results.append(result.node)
+                    snap = input.snapshot()
+                else:
+                    input.reset(snap)
+                    return ParseResult.OK(createNode(results, pos) if len(results) > 0 else NoneNode())
+
+        return parse

@@ -24,6 +24,7 @@ tokenizers = (
     defaultTokenizer(TokenType.ARROW),
     defaultTokenizer(TokenType.COMMA),
     defaultTokenizer(TokenType.MINUS),
+    defaultTokenizer(TokenType.AMP),
     defaultTokenizer(TokenType.DOT),
 
     # Types

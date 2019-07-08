@@ -15,6 +15,7 @@ class TokenType(Enum):
     ARROW = '->'
     COMMA = ','
     MINUS = '-'
+    AMP = '&'
     DOT = '.'
     INTEGER = 'integer'
     STRING = 'string'
