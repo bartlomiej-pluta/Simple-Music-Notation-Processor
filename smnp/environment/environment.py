@@ -1,5 +1,7 @@
-from smnp.error.function import FunctionNotFoundException, MethodNotFoundException
+from smnp.error.function import FunctionNotFoundException, MethodNotFoundException, IllegalFunctionInvocationException
 from smnp.error.runtime import RuntimeException
+from smnp.library.model import types
+from smnp.runtime.evaluators.function import BodyEvaluator
 
 
 class Environment():
@@ -19,13 +21,37 @@ class Environment():
         raise MethodNotFoundException(object.type, name) # TODO method not found
 
     def invokeFunction(self, name, args):
-        for function in self.functions: # TODO to działa tylko dla wbudowanych funkcji
+        builtinFunctionResult = self._invokeFunction(name, args)
+        if builtinFunctionResult[0]:
+            return builtinFunctionResult[1]
+
+        customFunctionResult = self._invokeCustomFunction(name, args)
+        if customFunctionResult[0]:
+            return customFunctionResult[1]
+
+        raise FunctionNotFoundException(name)
+
+    def _invokeFunction(self, name, args):
+        for function in self.functions:
             if function.name == name:
                 ret = function.call(self, args)
                 if ret is not None:
-                    return ret
-        raise FunctionNotFoundException(name)
-        # TODO raise nie znaleziono funkcji
+                    return (True, ret)
+
+        return (False, None)
+
+    def _invokeCustomFunction(self, name, args):
+        for function in self.customFunctions:
+            if function.name == name:
+                signatureCheckresult = function.signature.check(args)
+                if signatureCheckresult[0]:
+
+                    self.scopes.append({ argName: argValue for argName, argValue in zip(function.arguments, args) })
+                    result = BodyEvaluator.evaluate(function.body, self).value #TODO check if it isn't necessary to verify 'result' attr of EvaluatioNResult
+                    self.scopes.pop(-1)
+                    return (True, result)
+                raise IllegalFunctionInvocationException(f"{function.name}{function.signature.string}", f"{name}{types(args)}")
+        return (False, None)
 
     def addCustomFunction(self, name, signature, arguments, body):
         self.customFunctions.append(CustomFunction(name, signature, arguments, body))

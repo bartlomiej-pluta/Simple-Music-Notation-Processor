@@ -1,7 +1,8 @@
 from smnp.ast.node.none import NoneNode
+from smnp.ast.node.ret import ReturnNode
 from smnp.ast.node.variable import TypedVariableNode
 from smnp.library.signature import signature, listOfMatchers, ofType
-from smnp.runtime.evaluator import Evaluator
+from smnp.runtime.evaluator import Evaluator, evaluate
 from smnp.runtime.evaluators.expression import expressionEvaluator
 from smnp.runtime.evaluators.iterable import abstractIterableEvaluator
 from smnp.type.model import Type
@@ -51,6 +52,17 @@ def listSpecifier(specifier):
 
     return listOfMatchers(*subSignature)
 
+
+class BodyEvaluator(Evaluator):
+
+    @classmethod
+    def evaluator(cls, node, environment):
+        for child in node.children:
+            if type(child) == ReturnNode:
+                x = expressionEvaluator(doAssert=True)(child.value, environment).value #TODO check if it isn't necessary to verify 'result' attr of EvaluatioNResult
+                return x
+            else:
+                evaluate(child, environment)
 
 # if node.type.specifier is not NoneNode:
             #     if Type[node.type.upper()] == Type.LIST:

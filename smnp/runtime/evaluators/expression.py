@@ -19,12 +19,12 @@ def expressionEvaluator(doAssert=False):
             from smnp.runtime.evaluators.function import FunctionCallEvaluator
 
             result =  Evaluator.oneOf(
+                Evaluator.forNodes(FunctionCallEvaluator.evaluate, FunctionCallNode),
                 Evaluator.forNodes(StringEvaluator.evaluate, StringLiteralNode),
                 Evaluator.forNodes(IntegerEvaluator.evaluate, IntegerLiteralNode),
                 Evaluator.forNodes(NoteEvaluator.evaluate, NoteLiteralNode),
                 Evaluator.forNodes(IdentifierEvaluator.evaluate, IdentifierNode),
                 Evaluator.forNodes(ListEvaluator.evaluate, ListNode),
-                Evaluator.forNodes(FunctionCallEvaluator.evaluate, FunctionCallNode)
             )(node, environment)
 
             if doAssert and result.result and result.value.type == Type.VOID:

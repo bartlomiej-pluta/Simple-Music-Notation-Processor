@@ -59,10 +59,12 @@ def types(args):
     return f"({', '.join(output)})"
 
 
-def listTypes(l, output=[]):
+def listTypes(l, output=None):
+    if output is None:
+        output = []
     for item in l:
         if item.type == Type.LIST:
             output.append(listTypes(item.value, []))
         else:
             output.append(item.type.name.lower())
-    return f"{Type.LIST.name.lower()}<{'|'.join(set(output))}>"
+    return f"{Type.LIST.name.lower()}<{', '.join(set(output))}>"
