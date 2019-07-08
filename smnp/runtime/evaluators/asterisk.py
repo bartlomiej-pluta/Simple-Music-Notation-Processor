@@ -24,12 +24,15 @@ class AsteriskEvaluator(Evaluator):
                 for i in range(evaluatedIterator.value):
                     environment.scopes[-1][automaticVariable] = Value(Type.INTEGER, i + 1)
                     result = evaluate(node.statement, environment).value #TODO check if it isn't necessary to verify 'result' attr of EvaluatioNResult
-                    if result is not None and result.type != Type.VOID:
+                    if result is None or result.type == Type.VOID:
+                        results = None
+
+                    if results is not None:
                         results.append(result)
 
                 del environment.scopes[-1][automaticVariable]
 
-                return EvaluationResult.OK(Value(Type.LIST, results).decompose())
+                return EvaluationResult.OK(Value(Type.LIST, results).decompose() if results is not None else Value(Type.VOID, None))
 
             return EvaluationResult.FAIL()
 
