@@ -21,7 +21,7 @@ class Environment():
         if customMethodResult[0]:
             return customMethodResult[1]
 
-        raise MethodNotFoundException(object.type, name)
+        raise MethodNotFoundException(types([object], False), name)
 
     def _invokeBuiltinMethod(self, object, name, args):
         for method in self.methods:
@@ -34,7 +34,7 @@ class Environment():
 
     def _invokeCustomMethod(self, object, name, args):
         for method in self.customMethods:
-            if method.type.value == object.type and method.name == name:
+            if method.typeSignature.check([object])[0] and method.name == name: #Todo sprawdzic sygnature typu
                 signatureCheckresult = method.signature.check(args)
                 if signatureCheckresult[0]:
                     self.scopes.append({argName: argValue for argName, argValue in zip(method.arguments, args)})
@@ -81,8 +81,8 @@ class Environment():
     def addCustomFunction(self, name, signature, arguments, body):
         self.customFunctions.append(CustomFunction(name, signature, arguments, body))
 
-    def addCustomMethod(self, type, alias, name, signature, arguments, body):
-        self.customMethods.append(CustomMethod(type, alias, name, signature, arguments, body))
+    def addCustomMethod(self, typeSignature, alias, name, signature, arguments, body):
+        self.customMethods.append(CustomMethod(typeSignature, alias, name, signature, arguments, body))
 
     def findVariable(self, name, type=None, pos=None):
         for scope in reversed(self.scopes):
@@ -137,8 +137,8 @@ class CustomFunction:
 
 
 class CustomMethod:
-    def __init__(self, type, alias, name, signature, arguments, body):
-        self.type = type
+    def __init__(self, typeSignature, alias, name, signature, arguments, body):
+        self.typeSignature = typeSignature
         self.alias = alias
         self.name = name
         self.signature = signature

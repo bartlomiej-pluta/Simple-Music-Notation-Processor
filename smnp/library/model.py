@@ -49,14 +49,14 @@ class CombinedFunction(Function):
         raise IllegalFunctionInvocationException(self.stringSignature(), f"{self.name}{types(args)}")
 
 
-def types(args):
+def types(args, parentheses=True):
     output = []
     for arg in args:
         if arg.type == Type.LIST:
             output.append(listTypes(arg.value, []))
         else:
             output.append(arg.type.name.lower())
-    return f"({', '.join(output)})"
+    return f"({', '.join(output)})" if parentheses else ', '.join(output)
 
 
 def listTypes(l, output=None):
