@@ -122,7 +122,7 @@ class Environment():
 
 
     def __str__(self):
-        return self.scopesToString() + self.functionsToString() + self.methodsToString() + self.customFunctionsToString() + self.customMethodsToString()
+        return f"{self.scopesToString()}\n{self.functionsToString()}\n{self.methodsToString()}\n{self.customFunctionsToString()}\n{self.customMethodsToString()}"
 
     def __repr__(self):
         return self.__str__()

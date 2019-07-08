@@ -16,7 +16,7 @@ def main():
 
         ast = parse(tokens)
 
-        #ast.print()
+        ast.print()
 
         env = createEnvironment()
 

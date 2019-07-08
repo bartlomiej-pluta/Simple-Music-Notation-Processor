@@ -1,3 +1,4 @@
+from smnp.error.runtime import RuntimeException
 from smnp.runtime.evaluator import Evaluator
 from smnp.runtime.evaluators.expression import expressionEvaluator
 
@@ -7,6 +8,9 @@ class AssignmentEvaluator(Evaluator):
     @classmethod
     def evaluator(cls, node, environment):
         target = node.target.value
+        if target.startswith("_"):
+            raise RuntimeException("Usage of variables with names starting with '_' is not allowed", node.target.pos)
+
         value = expressionEvaluator(doAssert=True)(node.value, environment).value #TODO check if it isn't necessary to verify 'result' attr of EvaluatioNResult
         scopeOfExistingVariable = environment.findVariableScope(target)
         if scopeOfExistingVariable is None:
