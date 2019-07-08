@@ -24,6 +24,9 @@ class Matcher:
         string = f"[{self.string} or {matcher.string}]"
         return Matcher(None, lambda x: self.match(x) or matcher.match(x), string)
 
+    def __eq__(self, other):
+        return self.type == other.type and self.string == other.string
+
 
 
     def __str__(self):
@@ -34,9 +37,10 @@ class Matcher:
 
 
 class Signature:
-    def __init__(self, check, string):
+    def __init__(self, check, string, matchers):
         self.check = check
         self.string = string
+        self.matchers = matchers
 
 
 def varargSignature(varargMatcher, *basicSignature):
@@ -56,7 +60,7 @@ def varargSignature(varargMatcher, *basicSignature):
 
     string = f"({', '.join([str(m) for m in basicSignature])}{', ' if len(basicSignature) > 0 else ''}{str(varargMatcher)}...)"
 
-    return Signature(check, string)
+    return Signature(check, string, [varargMatcher, *basicSignature])
 
 
 def doesNotMatchVararg(basicSignature):
@@ -77,7 +81,7 @@ def signature(*signature):
 
     string = f"({', '.join([str(m) for m in signature])})"
 
-    return Signature(check, string)
+    return Signature(check, string, signature)
 
 
 def doesNotMatch(sign):

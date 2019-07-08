@@ -79,9 +79,27 @@ class Environment():
         return (False, None)
 
     def addCustomFunction(self, name, signature, arguments, body):
+        if len([fun for fun in self.functions + self.customFunctions if fun.name == name]) > 0:
+            raise RuntimeException(f"Cannot redeclare function '{name}'", None)
+
         self.customFunctions.append(CustomFunction(name, signature, arguments, body))
 
+    # TODO:
+    # There is still problem with checking existing of generic types, like lists:
+    # extend list as l {
+    #   function foo() { return 1 }
+    # }
+    # extend list<integer> as l {
+    #   function foo() { return 2 }
+    # }
+    # Then calling [1, 2, 3, 4].foo() will produce 1, when the second method is more suitable
     def addCustomMethod(self, typeSignature, alias, name, signature, arguments, body):
+        if len([m for m in self.methods if m.name == name and m.signature.matchers[0] == typeSignature.matchers[0]]) > 0:
+            raise RuntimeException(f"Cannot redeclare method '{name}' for type '{typeSignature.matchers[0]}'", None)
+
+        if len([m for m in self.customMethods if m.name == name and m.typeSignature.matchers[0] == typeSignature.matchers[0]]) > 0:
+            raise RuntimeException(f"Cannot redeclare method '{name}' for type '{typeSignature.matchers[0]}'", None)
+
         self.customMethods.append(CustomMethod(typeSignature, alias, name, signature, arguments, body))
 
     def findVariable(self, name, type=None, pos=None):

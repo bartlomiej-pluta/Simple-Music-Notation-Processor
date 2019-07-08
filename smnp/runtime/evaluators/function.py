@@ -1,6 +1,7 @@
 from smnp.ast.node.none import NoneNode
 from smnp.ast.node.ret import ReturnNode
 from smnp.ast.node.variable import TypedVariableNode
+from smnp.error.runtime import RuntimeException
 from smnp.library.signature import signature, listOfMatchers, ofType
 from smnp.runtime.evaluator import Evaluator, evaluate
 from smnp.runtime.evaluators.expression import expressionEvaluator
@@ -21,11 +22,15 @@ class FunctionDefinitionEvaluator(Evaluator):
 
     @classmethod
     def evaluator(cls, node, environment):
-        name = node.name.value
-        signature = argumentsNodeToMethodSignature(node.arguments)
-        arguments = [ arg.variable.value for arg in node.arguments ]
-        body = node.body
-        environment.addCustomFunction(name, signature, arguments, body)
+        try:
+            name = node.name.value
+            signature = argumentsNodeToMethodSignature(node.arguments)
+            arguments = [ arg.variable.value for arg in node.arguments ]
+            body = node.body
+            environment.addCustomFunction(name, signature, arguments, body)
+        except RuntimeException as e:
+            e.pos = node.pos
+            raise e
 
 
 def argumentsNodeToMethodSignature(node):
