@@ -120,6 +120,11 @@ class Environment():
     def customMethodsToString(self):
         return "Custom Methods:\n" + ("\n".join([ f"  {function.name}(...)" for function in self.customMethods ]))
 
+    def extend(self, environment):
+        self.scopes[0].update(environment.scopes[0])
+        self.customFunctions.extend(environment.customFunctions)
+        self.customMethods.extend(environment.customMethods)
+
 
     def __str__(self):
         return f"{self.scopesToString()}\n{self.functionsToString()}\n{self.methodsToString()}\n{self.customFunctionsToString()}\n{self.customMethodsToString()}"

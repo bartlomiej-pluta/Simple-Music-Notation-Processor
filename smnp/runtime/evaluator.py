@@ -1,6 +1,7 @@
 from smnp.ast.node.block import BlockNode
 from smnp.ast.node.extend import ExtendNode
 from smnp.ast.node.function import FunctionDefinitionNode
+from smnp.ast.node.imports import ImportNode
 from smnp.ast.node.program import Program
 from smnp.error.runtime import RuntimeException
 from smnp.type.model import Type
@@ -71,8 +72,10 @@ def evaluate(node, environment):
     from smnp.runtime.evaluators.function import FunctionDefinitionEvaluator
     from smnp.runtime.evaluators.extend import ExtendEvaluator
     from smnp.runtime.evaluators.block import BlockEvaluator
+    from smnp.runtime.evaluators.imports import ImportEvaluator
     result = Evaluator.oneOf(
         Evaluator.forNodes(ProgramEvaluator.evaluate, Program),
+        Evaluator.forNodes(ImportEvaluator.evaluate, ImportNode),
         Evaluator.forNodes(FunctionDefinitionEvaluator.evaluate, FunctionDefinitionNode),
         Evaluator.forNodes(ExtendEvaluator.evaluate, ExtendNode),
         Evaluator.forNodes(BlockEvaluator.evaluate, BlockNode),
