@@ -12,16 +12,41 @@ class Environment():
         self.customFunctions = []
         self.customMethods = []
 
-    def invokeMethod(self, name, object, args):
-        for method in self.methods: # TODO to działa tylko dla wbudowanych funkcji
+    def invokeMethod(self, object, name, args):
+        builtinMethodResult = self._invokeBuiltinMethod(object, name, args)
+        if builtinMethodResult[0]:
+            return builtinMethodResult[1]
+
+        customMethodResult = self._invokeCustomMethod(object, name, args)
+        if customMethodResult[0]:
+            return customMethodResult[1]
+
+        raise MethodNotFoundException(object.type, name)
+
+    def _invokeBuiltinMethod(self, object, name, args):
+        for method in self.methods:
             if method.name == name:
-                ret = method.call(self, [object, *args.value])
+                ret = method.call(self, [object, *args])
                 if ret is not None:
-                    return ret
-        raise MethodNotFoundException(object.type, name) # TODO method not found
+                    return (True, ret)
+
+        return (False, None)
+
+    def _invokeCustomMethod(self, object, name, args):
+        for function in self.customMethods:
+            if function.name == name:
+                signatureCheckresult = function.signature.check(args)
+                if signatureCheckresult[0]:
+                    self.scopes.append({argName: argValue for argName, argValue in zip(function.arguments, args)})
+                    result = BodyEvaluator.evaluate(function.body, self).value  # TODO check if it isn't necessary to verify 'result' attr of EvaluatioNResult
+                    self.scopes.pop(-1)
+                    return (True, result)
+                raise IllegalFunctionInvocationException(f"{function.name}{function.signature.string}",
+                                                         f"{name}{types(args)}")
+        return (False, None)
 
     def invokeFunction(self, name, args):
-        builtinFunctionResult = self._invokeFunction(name, args)
+        builtinFunctionResult = self._invokeBuiltinFunction(name, args)
         if builtinFunctionResult[0]:
             return builtinFunctionResult[1]
 
@@ -31,7 +56,7 @@ class Environment():
 
         raise FunctionNotFoundException(name)
 
-    def _invokeFunction(self, name, args):
+    def _invokeBuiltinFunction(self, name, args):
         for function in self.functions:
             if function.name == name:
                 ret = function.call(self, args)
@@ -45,7 +70,6 @@ class Environment():
             if function.name == name:
                 signatureCheckresult = function.signature.check(args)
                 if signatureCheckresult[0]:
-
                     self.scopes.append({ argName: argValue for argName, argValue in zip(function.arguments, args) })
                     result = BodyEvaluator.evaluate(function.body, self).value #TODO check if it isn't necessary to verify 'result' attr of EvaluatioNResult
                     self.scopes.pop(-1)
