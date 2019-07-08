@@ -1,40 +1,45 @@
-from smnp.ast.node.identifier import IdentifierNode
-from smnp.ast.node.program import Program
-from smnp.error.base import SmnpException
-from smnp.error.runtime import RuntimeException
-from smnp.runtime.evaluators.list import evaluateList
-from smnp.runtime.tools import flatListNode
+from smnp.runtime.evaluator import Evaluator
+from smnp.runtime.evaluators.expression import expressionEvaluator
+from smnp.runtime.evaluators.iterable import abstractIterableEvaluator
 
 
-def evaluateFunctionDefinition(definition, environment):
-    name = definition.name
-    params = list([p for p in flatListNode(definition.parameters)])
-    body = definition.body
+class FunctionCallEvaluator(Evaluator):
 
-    if not isinstance(definition.parent, Program):
-        raise RuntimeException(f"Functions can be defined only on the top level of script", name.pos)
-
-    for p in params:
-        if not isinstance(p, IdentifierNode):
-            raise RuntimeException("Parameter of function definition must be an identifier", p.pos, )
-
-    if name.identifier in environment.customFunctions or name.identifier in environment.functions:
-        raise RuntimeException(f"Function '{name.identifier}' already exists", name.pos)
-
-    environment.customFunctions[name.identifier] = {
-        'params': params,
-        'body': flatListNode(body)
-    }
-
-
-def evaluateFunctionCall(functionCall, environment):
-    try:
-        functionName = functionCall.identifier.identifier
-        arguments = evaluateList(functionCall.arguments, environment).value
-        return environment.invokeFunction(functionName, arguments)
-    except SmnpException as e:
-        e.pos = functionCall.pos
-        raise e
+    @classmethod
+    def evaluator(cls, node, environment):
+        name = node.name.value
+        arguments = abstractIterableEvaluator(expressionEvaluator(True))(node.arguments, environment)
+        return environment.invokeFunction(name, arguments)
+#
+# def evaluateFunctionDefinition(definition, environment):
+#     name = definition.name
+#     params = list([p for p in flatListNode(definition.parameters)])
+#     body = definition.body
+#
+#     if not isinstance(definition.parent, Program):
+#         raise RuntimeException(f"Functions can be defined only on the top level of script", name.pos)
+#
+#     for p in params:
+#         if not isinstance(p, IdentifierNode):
+#             raise RuntimeException("Parameter of function definition must be an identifier", p.pos, )
+#
+#     if name.identifier in environment.customFunctions or name.identifier in environment.functions:
+#         raise RuntimeException(f"Function '{name.identifier}' already exists", name.pos)
+#
+#     environment.customFunctions[name.identifier] = {
+#         'params': params,
+#         'body': flatListNode(body)
+#     }
+#
+#
+# def evaluateFunctionCall(functionCall, environment):
+#     try:
+#         functionName = functionCall.identifier.identifier
+#         arguments = evaluateList(functionCall.arguments, environment).value
+#         return environment.invokeFunction(functionName, arguments)
+#     except SmnpException as e:
+#         e.pos = functionCall.pos
+#         raise e
 
 
 # def evaluateFunctionCall(functionCall, environment):

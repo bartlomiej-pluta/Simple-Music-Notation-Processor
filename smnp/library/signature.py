@@ -92,14 +92,14 @@ def allTypes():
 def ofTypes(*types):
     def check(value):
         return value.type in types
-    return Matcher(None, check, f"<{'|'.join([t.name for t in types])}>")
+    return Matcher(None, check, f"<{', '.join([t.name.lower() for t in types])}>")
 
 
 def listOf(*types):
     def check(value):
         return len([item for item in value.value if not item.type in types]) == 0
 
-    return Matcher(Type.LIST, check, f"{Type.LIST.name}<{'|'.join([t.name for t in types])}>")
+    return Matcher(Type.LIST, check, f"{Type.LIST.name.lower()}<{', '.join([t.name.lower() for t in types])}>")
 
 
 def listMatches(*pattern):

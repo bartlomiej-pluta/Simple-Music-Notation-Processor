@@ -64,11 +64,11 @@ class EvaluationResult():
 
 def evaluate(node, environment):
     from smnp.runtime.evaluators.program import ProgramEvaluator
-    from smnp.runtime.evaluators.expression import evaluateExpression
+    from smnp.runtime.evaluators.expression import expressionEvaluator
 
     result = Evaluator.oneOf(
         Evaluator.forNodes(ProgramEvaluator.evaluate, Program),
-        evaluateExpression
+        expressionEvaluator()
     )(node, environment)
 
     if not result.result:

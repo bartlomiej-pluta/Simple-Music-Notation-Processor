@@ -1,7 +1,7 @@
 from smnp.ast.node.access import AccessNode
 from smnp.ast.node.assignment import AssignmentNode
 from smnp.ast.node.expression import ExpressionNode
-from smnp.ast.node.invocation import FunctionCall, ArgumentsListNode
+from smnp.ast.node.invocation import FunctionCallNode, ArgumentsListNode
 from smnp.ast.parser import Parser
 from smnp.token.type import TokenType
 
@@ -37,7 +37,7 @@ class IdentifierNode(AccessNode):
     @staticmethod
     def _functionCallParser():
         def createNode(name, arguments):
-            node = FunctionCall(name.pos)
+            node = FunctionCallNode(name.pos)
             node.name = name
             node.arguments = arguments
             return node

@@ -55,7 +55,7 @@ def types(args):
         if arg.type == Type.LIST:
             output.append(listTypes(arg.value, []))
         else:
-            output.append(arg.type.name)
+            output.append(arg.type.name.lower())
     return f"({', '.join(output)})"
 
 
@@ -64,5 +64,5 @@ def listTypes(l, output=[]):
         if item.type == Type.LIST:
             output.append(listTypes(item.value, []))
         else:
-            output.append(item.type.name)
-    return f"LIST<{'|'.join(set(output))}>"
+            output.append(item.type.name.lower())
+    return f"{Type.LIST.name.lower()}<{'|'.join(set(output))}>"

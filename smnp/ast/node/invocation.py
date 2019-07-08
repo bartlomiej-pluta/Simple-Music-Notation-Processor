@@ -14,7 +14,7 @@ class ArgumentsListNode(Node):
                                       Parser.doAssert(ExpressionNode.parse, "expression"))(input)
 
 
-class FunctionCall(AccessNode):
+class FunctionCallNode(AccessNode):
     def __init__(self, pos):
         super().__init__(pos)
 
