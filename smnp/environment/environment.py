@@ -33,15 +33,16 @@ class Environment():
         return (False, None)
 
     def _invokeCustomMethod(self, object, name, args):
-        for function in self.customMethods:
-            if function.name == name:
-                signatureCheckresult = function.signature.check(args)
+        for method in self.customMethods:
+            if method.type.value == object.type and method.name == name:
+                signatureCheckresult = method.signature.check(args)
                 if signatureCheckresult[0]:
-                    self.scopes.append({argName: argValue for argName, argValue in zip(function.arguments, args)})
-                    result = BodyEvaluator.evaluate(function.body, self).value  # TODO check if it isn't necessary to verify 'result' attr of EvaluatioNResult
+                    self.scopes.append({argName: argValue for argName, argValue in zip(method.arguments, args)})
+                    self.scopes[-1][method.alias] = object
+                    result = BodyEvaluator.evaluate(method.body, self).value  # TODO check if it isn't necessary to verify 'result' attr of EvaluatioNResult
                     self.scopes.pop(-1)
                     return (True, result)
-                raise IllegalFunctionInvocationException(f"{function.name}{function.signature.string}",
+                raise IllegalFunctionInvocationException(f"{method.name}{method.signature.string}",
                                                          f"{name}{types(args)}")
         return (False, None)
 
@@ -79,6 +80,9 @@ class Environment():
 
     def addCustomFunction(self, name, signature, arguments, body):
         self.customFunctions.append(CustomFunction(name, signature, arguments, body))
+
+    def addCustomMethod(self, type, alias, name, signature, arguments, body):
+        self.customMethods.append(CustomMethod(type, alias, name, signature, arguments, body))
 
     def findVariable(self, name, type=None, pos=None):
         for scope in reversed(self.scopes):
@@ -126,6 +130,16 @@ class Environment():
 
 class CustomFunction:
     def __init__(self, name, signature, arguments, body):
+        self.name = name
+        self.signature = signature
+        self.arguments = arguments
+        self.body = body
+
+
+class CustomMethod:
+    def __init__(self, type, alias, name, signature, arguments, body):
+        self.type = type
+        self.alias = alias
         self.name = name
         self.signature = signature
         self.arguments = arguments

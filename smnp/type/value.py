@@ -5,7 +5,7 @@ class Value:
     def __init__(self, objectType, value):
         self.value = value
 
-        if type(value) == objectType.value[0]:
+        if objectType.value[0] is None or type(value) == objectType.value[0]:
             self.type = objectType
 
         elif type(value) == Value:

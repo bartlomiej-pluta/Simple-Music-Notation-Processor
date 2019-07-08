@@ -1,3 +1,4 @@
+from smnp.ast.node.extend import ExtendNode
 from smnp.ast.node.function import FunctionDefinitionNode
 from smnp.ast.node.program import Program
 from smnp.error.runtime import RuntimeException
@@ -68,9 +69,11 @@ def evaluate(node, environment):
     from smnp.runtime.evaluators.expression import expressionEvaluator
 
     from smnp.runtime.evaluators.function import FunctionDefinitionEvaluator
+    from smnp.runtime.evaluators.extend import ExtendEvaluator
     result = Evaluator.oneOf(
         Evaluator.forNodes(ProgramEvaluator.evaluate, Program),
         Evaluator.forNodes(FunctionDefinitionEvaluator.evaluate, FunctionDefinitionNode),
+        Evaluator.forNodes(ExtendEvaluator.evaluate, ExtendNode),
         expressionEvaluator()
     )(node, environment)
 
