@@ -7,8 +7,8 @@ class Environment():
         self.scopes = scopes
         self.functions = functions
         self.methods = methods
-        self.customFunctions = {}
-        self.callStack = [] #TODO remove
+        self.customFunctions = []
+        self.customMethods = []
 
     def invokeMethod(self, name, object, args):
         for method in self.methods: # TODO to działa tylko dla wbudowanych funkcji
@@ -26,6 +26,9 @@ class Environment():
                     return ret
         raise FunctionNotFoundException(name)
         # TODO raise nie znaleziono funkcji
+
+    def addCustomFunction(self, name, signature, arguments, body):
+        self.customFunctions.append(CustomFunction(name, signature, arguments, body))
 
     def findVariable(self, name, type=None, pos=None):
         for scope in reversed(self.scopes):
@@ -54,12 +57,26 @@ class Environment():
     def functionsToString(self):
         return "Functions:\n" + ("\n".join([ f"  {function.name}(...)" for function in self.functions ]))
 
+    def customFunctionsToString(self):
+        return "Custom Functions:\n" + ("\n".join([ f"  {function.name}(...)" for function in self.customFunctions ]))
+
     def methodsToString(self):
         return "Methods:\n" + ("\n".join([f"  {function.name}(...)" for function in self.methods]))
 
+    def customMethodsToString(self):
+        return "Custom Methods:\n" + ("\n".join([ f"  {function.name}(...)" for function in self.customMethods ]))
+
 
     def __str__(self):
-        return self.scopesToString() + self.functionsToString() + self.methodsToString()
+        return self.scopesToString() + self.functionsToString() + self.methodsToString() + self.customFunctionsToString() + self.customMethodsToString()
 
     def __repr__(self):
         return self.__str__()
+
+
+class CustomFunction:
+    def __init__(self, name, signature, arguments, body):
+        self.name = name
+        self.signature = signature
+        self.arguments = arguments
+        self.body = body

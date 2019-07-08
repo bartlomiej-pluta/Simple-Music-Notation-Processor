@@ -3,6 +3,7 @@ from smnp.ast.node.iterable import abstractIterableParser
 from smnp.ast.node.model import Node
 from smnp.ast.parser import Parser
 from smnp.token.type import TokenType
+from smnp.type.model import Type
 
 
 class TypeSpecifier(Node):
@@ -44,7 +45,7 @@ class TypeNode(AccessNode):
     def _parse(cls, input):
         def createNode(type, specifier):
             node = TypeNode(type.pos)
-            node.type = type.value
+            node.type = Type[type.value.upper()]
             node.specifier = specifier
             return node
 

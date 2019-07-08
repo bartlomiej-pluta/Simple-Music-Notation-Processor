@@ -1,3 +1,4 @@
+from smnp.ast.node.function import FunctionDefinitionNode
 from smnp.ast.node.program import Program
 from smnp.error.runtime import RuntimeException
 from smnp.type.model import Type
@@ -66,8 +67,10 @@ def evaluate(node, environment):
     from smnp.runtime.evaluators.program import ProgramEvaluator
     from smnp.runtime.evaluators.expression import expressionEvaluator
 
+    from smnp.runtime.evaluators.function import FunctionDefinitionEvaluator
     result = Evaluator.oneOf(
         Evaluator.forNodes(ProgramEvaluator.evaluate, Program),
+        Evaluator.forNodes(FunctionDefinitionEvaluator.evaluate, FunctionDefinitionNode),
         expressionEvaluator()
     )(node, environment)
 

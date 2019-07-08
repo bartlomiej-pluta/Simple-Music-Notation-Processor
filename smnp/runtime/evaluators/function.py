@@ -1,6 +1,10 @@
+from smnp.ast.node.none import NoneNode
+from smnp.ast.node.variable import TypedVariableNode
+from smnp.library.signature import signature, listOfMatchers, ofType
 from smnp.runtime.evaluator import Evaluator
 from smnp.runtime.evaluators.expression import expressionEvaluator
 from smnp.runtime.evaluators.iterable import abstractIterableEvaluator
+from smnp.type.model import Type
 
 
 class FunctionCallEvaluator(Evaluator):
@@ -10,6 +14,48 @@ class FunctionCallEvaluator(Evaluator):
         name = node.name.value
         arguments = abstractIterableEvaluator(expressionEvaluator(True))(node.arguments, environment)
         return environment.invokeFunction(name, arguments)
+
+
+class FunctionDefinitionEvaluator(Evaluator):
+
+    @classmethod
+    def evaluator(cls, node, environment):
+        name = node.name.value
+        signature = argumentsNodeToMethodSignature(node.arguments)
+        arguments = [ arg.variable.value for arg in node.arguments ]
+        body = node.body
+        environment.addCustomFunction(name, signature, arguments, body)
+
+
+def argumentsNodeToMethodSignature(node):
+    sign = []
+
+    for child in node.children:
+        if type(child) == TypedVariableNode:
+            if type(child.type.specifier) == NoneNode:
+                sign.append(ofType(child.type.type))
+            elif child.type.type == Type.LIST:
+                sign.append(listSpecifier(child.type.specifier))
+
+    return signature(*sign)
+
+
+def listSpecifier(specifier):
+    subSignature = []
+
+    for child in specifier.children:
+        if type(child.specifier) == NoneNode:
+            subSignature.append(ofType(child.type))
+        elif child.type == Type.LIST:
+            subSignature.append(listSpecifier(child.specifier))
+
+    return listOfMatchers(*subSignature)
+
+
+# if node.type.specifier is not NoneNode:
+            #     if Type[node.type.upper()] == Type.LIST:
+            #         return listOf([])
+
 #
 # def evaluateFunctionDefinition(definition, environment):
 #     name = definition.name

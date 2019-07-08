@@ -94,6 +94,11 @@ def ofTypes(*types):
         return value.type in types
     return Matcher(None, check, f"<{', '.join([t.name.lower() for t in types])}>")
 
+def ofType(type):
+    def check(value):
+        return value.type == type
+
+    return Matcher(None, check, type.name.lower())
 
 def listOf(*types):
     def check(value):
@@ -101,6 +106,15 @@ def listOf(*types):
 
     return Matcher(Type.LIST, check, f"{Type.LIST.name.lower()}<{', '.join([t.name.lower() for t in types])}>")
 
+def listOfMatchers(*matchers):
+    def check(value):
+        matched = 0
+        for item in value.value:
+            matched += 1 if any(matcher.match(item) for matcher in matchers) else 0
+
+        return matched == len(value.value)
+
+    return Matcher(Type.LIST, check, f"{Type.LIST.name.lower()}<{', '.join([m.string for m in matchers])}>")
 
 def listMatches(*pattern):
     def check(value):
