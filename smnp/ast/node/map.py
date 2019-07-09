@@ -5,6 +5,7 @@ from smnp.ast.node.iterable import abstractIterableParser
 from smnp.ast.node.none import NoneNode
 from smnp.ast.node.note import NoteLiteralNode
 from smnp.ast.node.string import StringLiteralNode
+from smnp.ast.node.type import TypeNode
 from smnp.ast.parser import Parser
 from smnp.token.type import TokenType
 
@@ -56,4 +57,5 @@ class MapNode(AccessNode):
             IntegerLiteralNode._literalParser(),
             StringLiteralNode._literalParser(),
             NoteLiteralNode._literalParser(),
+            TypeNode.parse
         )
