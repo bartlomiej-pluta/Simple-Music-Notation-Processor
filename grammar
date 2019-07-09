@@ -33,6 +33,8 @@ PITCH_MODIFIER = 'b' | '#'
 <argdeflist> ::= '(' ')' | '(' <typedVariable> <argdeflist>
 <argdeflist> ::= <typedVariable> ', ' <argdeflist> | ')'
 
+<argdef> = <type> <typeSpecifier>? <identifier> '...'? | <typeSpecifier> <identifier> '...'?
+
 <typedVariable> ::= <type> <typeSpecifier>? <identifier>
 
 <map> ::= '{' '}' | '{' <mapEntry> <mapTail>

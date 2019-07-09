@@ -1,6 +1,6 @@
+from smnp.ast.node.function import ArgumentDefinitionNode
 from smnp.ast.node.none import NoneNode
 from smnp.ast.node.ret import ReturnNode
-from smnp.ast.node.variable import TypedVariableNode
 from smnp.error.runtime import RuntimeException
 from smnp.function.signature import signature
 from smnp.runtime.evaluator import Evaluator, evaluate
@@ -45,7 +45,7 @@ def argumentsNodeToMethodSignature(node):
         sign = []
 
         for child in node.children:
-            if type(child) == TypedVariableNode:
+            if type(child) == ArgumentDefinitionNode:
                 if type(child.type.specifiers) == NoneNode:
                     sign.append(ofType(child.type.type))
                 elif child.type.type == Type.LIST and len(child.type.specifiers) == 1:
