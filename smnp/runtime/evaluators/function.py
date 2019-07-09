@@ -2,12 +2,15 @@ from smnp.ast.node.none import NoneNode
 from smnp.ast.node.ret import ReturnNode
 from smnp.ast.node.variable import TypedVariableNode
 from smnp.error.runtime import RuntimeException
-from smnp.library.signature import signature, listOfMatchers, ofType, mapOfMatchers
+from smnp.library.signature import signature
 from smnp.runtime.evaluator import Evaluator, evaluate
 from smnp.runtime.evaluators.expression import expressionEvaluator
 from smnp.runtime.evaluators.iterable import abstractIterableEvaluator
 from smnp.runtime.tools import updatePos
 from smnp.type.model import Type
+from smnp.type.signature.matcher.list import listOfMatchers
+from smnp.type.signature.matcher.map import mapOfMatchers
+from smnp.type.signature.matcher.type import ofType
 
 
 class FunctionCallEvaluator(Evaluator):

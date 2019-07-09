@@ -1,7 +1,8 @@
 from smnp.library.model import Function, CombinedFunction
-from smnp.library.signature import varargSignature, listMatches, ofTypes, allTypes, signature, listOfMatchers
+from smnp.library.signature import varargSignature, signature
 from smnp.type.model import Type
-
+from smnp.type.signature.matcher.list import listOfMatchers, listMatches
+from smnp.type.signature.matcher.type import allTypes, ofTypes
 
 _signature1 = varargSignature(listMatches(ofTypes(Type.INTEGER, Type.STRING, Type.NOTE), allTypes()))
 def _function1(env, vararg):

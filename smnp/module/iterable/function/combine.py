@@ -1,8 +1,9 @@
 from functools import reduce
 
 from smnp.library.model import Function
-from smnp.library.signature import varargSignature, ofTypes
+from smnp.library.signature import varargSignature
 from smnp.type.model import Type
+from smnp.type.signature.matcher.type import ofTypes
 
 _signature = varargSignature(ofTypes(Type.LIST))
 def _function(env, vararg):

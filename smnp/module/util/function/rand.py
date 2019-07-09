@@ -2,8 +2,10 @@ import random as r
 
 from smnp.error.function import IllegalArgumentException
 from smnp.library.model import Function, CombinedFunction
-from smnp.library.signature import varargSignature, listMatches, ofTypes
+from smnp.library.signature import varargSignature
 from smnp.type.model import Type
+from smnp.type.signature.matcher.list import listMatches
+from smnp.type.signature.matcher.type import ofTypes
 
 
 def forType(t):

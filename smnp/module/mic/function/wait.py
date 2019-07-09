@@ -1,8 +1,8 @@
 from smnp.library.model import CombinedFunction, Function
-from smnp.library.signature import signature, ofTypes
+from smnp.library.signature import signature
 from smnp.module.mic.lib.detector.noise import NoiseDetector
 from smnp.type.model import Type
-
+from smnp.type.signature.matcher.type import ofTypes
 
 _signature1 = signature()
 def _function1(env):

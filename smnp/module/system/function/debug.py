@@ -1,8 +1,8 @@
 from smnp.error.function import IllegalArgumentException
 from smnp.library.model import Function
-from smnp.library.signature import signature, ofTypes
+from smnp.library.signature import signature
 from smnp.type.model import Type
-
+from smnp.type.signature.matcher.type import ofTypes
 
 _signature = signature(ofTypes(Type.STRING))
 def _function(env, parameter):

@@ -1,8 +1,9 @@
 from smnp.library.model import CombinedFunction, Function
-from smnp.library.signature import varargSignature, ofTypes, listOf
+from smnp.library.signature import varargSignature
 from smnp.module.synth.lib.player import playNotes
 from smnp.type.model import Type
-
+from smnp.type.signature.matcher.list import listOf
+from smnp.type.signature.matcher.type import ofTypes
 
 _signature1 = varargSignature(ofTypes(Type.NOTE, Type.INTEGER))
 def _function1(env, vararg):

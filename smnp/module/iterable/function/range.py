@@ -1,8 +1,8 @@
 from smnp.library.model import CombinedFunction, Function
-from smnp.library.signature import signature, ofType
+from smnp.library.signature import signature
 from smnp.note.model import Note
 from smnp.type.model import Type
-
+from smnp.type.signature.matcher.type import ofType
 
 _signature1 = signature(ofType(Type.INTEGER))
 def _function1(env, upper):

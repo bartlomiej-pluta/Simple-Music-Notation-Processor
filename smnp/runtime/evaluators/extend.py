@@ -1,8 +1,9 @@
 from smnp.ast.node.none import NoneNode
-from smnp.library.signature import ofType, signature
+from smnp.library.signature import signature
 from smnp.runtime.evaluator import Evaluator
 from smnp.runtime.evaluators.function import argumentsNodeToMethodSignature, listSpecifier
 from smnp.type.model import Type
+from smnp.type.signature.matcher.type import ofType
 
 
 class ExtendEvaluator(Evaluator):

@@ -1,8 +1,8 @@
 from smnp.error.runtime import RuntimeException
 from smnp.library.model import CombinedFunction, Function
-from smnp.library.signature import signature, ofType, ofTypes
+from smnp.library.signature import signature
 from smnp.type.model import Type
-
+from smnp.type.signature.matcher.type import ofTypes, ofType
 
 _signature1 = signature(ofType(Type.LIST), ofType(Type.INTEGER))
 def _function1(env, list, index):
