@@ -14,7 +14,7 @@ class Type(Enum):
     PERCENT = (float, lambda x: f"{int(x * 100)}%")
     NOTE = (Note, lambda x: x.note.name)
     SOUND = (Sound, lambda x: x.file)
-    TYPE = (None, lambda x: str(x.type.name.lower()))
+    TYPE = (None, lambda x: x.name.lower())
     VOID = (type(None), lambda x: _failStringify(Type.VOID))
 
     def stringify(self, element):
