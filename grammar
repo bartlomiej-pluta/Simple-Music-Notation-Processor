@@ -41,7 +41,7 @@ PITCH_MODIFIER = 'b' | '#'
 
 <typeSpecifier> ::= '<' '>' | '<' <typeSpecifierItem> <typeSpecifierTail>
 <typeSpecifierTail> ::= <typeSpecifierItem> ', ' <typeSpecifierTail> | '>'
-<typeSpecifierItem> ::= <type> | <type> <typeSpecifier> [ '&' <typeSpecifier ]*
+<typeSpecifierItem> ::= <type> <typeSpecifier>*
 
 <block> ::= '{' <stmt>* '}'
 
