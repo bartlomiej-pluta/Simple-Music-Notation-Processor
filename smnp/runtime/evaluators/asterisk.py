@@ -11,7 +11,8 @@ class AsteriskEvaluator(Evaluator):
         iterator = expressionEvaluator(doAssert=True)(node.iterator, environment).value #TODO check if it isn't necessary to verify 'result' attr of EvaluatioNResult
         return Evaluator.oneOf(
             cls._numberIteratorAsteriskEvaluator(iterator),
-            cls._listIteratorAsteriskEvaluator(iterator)
+            cls._listIteratorAsteriskEvaluator(iterator),
+            cls._mapIteratorAsteriskEvaluator(iterator)
         )(node, environment).value #TODO check if it isn't necessary to verify 'result' attr of EvaluatioNResult
 
     @classmethod
@@ -65,6 +66,29 @@ class AsteriskEvaluator(Evaluator):
                 automaticVariableValue = cls._automaticNamedVariable(node.iterator, environment, "__")
                 for i, v in enumerate(evaluatedIterator.value):
                     environment.scopes[-1][automaticVariableKey] = Type.integer(i + 1)
+                    environment.scopes[-1][automaticVariableValue] = v
+                    result = evaluate(node.statement, environment).value  # TODO check if it isn't necessary to verify 'result' attr of EvaluatioNResult
+                    if result is not None and result.type != Type.VOID:
+                        results.append(result)
+
+                del environment.scopes[-1][automaticVariableKey]
+                del environment.scopes[-1][automaticVariableValue]
+
+                return EvaluationResult.OK(Type.list(results).decompose())
+
+            return EvaluationResult.FAIL()
+
+        return evaluator
+
+    @classmethod
+    def _mapIteratorAsteriskEvaluator(cls, evaluatedIterator):
+        def evaluator(node, environment):
+            if evaluatedIterator.type == Type.MAP:
+                results = []
+                automaticVariableKey = cls._automaticNamedVariable(node.iterator, environment, "_")
+                automaticVariableValue = cls._automaticNamedVariable(node.iterator, environment, "__")
+                for k, v in evaluatedIterator.value.items():
+                    environment.scopes[-1][automaticVariableKey] = k
                     environment.scopes[-1][automaticVariableValue] = v
                     result = evaluate(node.statement, environment).value  # TODO check if it isn't necessary to verify 'result' attr of EvaluatioNResult
                     if result is not None and result.type != Type.VOID:
