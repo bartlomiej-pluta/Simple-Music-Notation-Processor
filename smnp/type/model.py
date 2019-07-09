@@ -1,5 +1,6 @@
 from enum import Enum
 
+from smnp.audio.sound import Sound
 from smnp.error.runtime import RuntimeException
 from smnp.note.model import Note
 from smnp.type.value import Value
@@ -12,6 +13,7 @@ class Type(Enum):
     MAP = (dict, lambda x: '{' + ', '.join(f"'{k.stringify()}' -> '{v.stringify()}'" for k, v in x.items()) + '}')
     PERCENT = (float, lambda x: f"{int(x * 100)}%")
     NOTE = (Note, lambda x: x.note.name)
+    SOUND = (Sound, lambda x: x.file)
     TYPE = (None, lambda x: str(x.type.name.lower()))
     VOID = (type(None), lambda x: _failStringify(Type.VOID))
 
@@ -46,6 +48,13 @@ class Type(Enum):
             "octave": Type.integer(value.octave),
             "duration": Type.integer(value.duration),
             "dot": Type.string('.' if value.dot else '')
+        })
+
+    @staticmethod
+    def sound(value):
+        return Value(Type.SOUND, value, {
+            "file": Type.string(value.file),
+            "fs": Type.integer(value.fs)
         })
 
     @staticmethod
