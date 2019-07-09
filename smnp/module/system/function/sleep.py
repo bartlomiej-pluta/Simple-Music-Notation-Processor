@@ -1,7 +1,7 @@
 import time
 
-from smnp.library.model import Function
-from smnp.library.signature import signature
+from smnp.function.model import Function
+from smnp.function.signature import signature
 from smnp.type.model import Type
 from smnp.type.signature.matcher.type import ofTypes
 

@@ -1,6 +1,6 @@
 from smnp.error.function import FunctionNotFoundException, MethodNotFoundException, IllegalFunctionInvocationException
 from smnp.error.runtime import RuntimeException
-from smnp.library.model import types
+from smnp.function.model import types
 from smnp.runtime.evaluators.function import BodyEvaluator
 
 

@@ -1,6 +1,6 @@
 from smnp.error.runtime import RuntimeException
-from smnp.library.model import CombinedFunction, Function
-from smnp.library.signature import signature
+from smnp.function.model import CombinedFunction, Function
+from smnp.function.signature import signature
 from smnp.type.model import Type
 from smnp.type.signature.matcher.type import ofTypes, ofType
 

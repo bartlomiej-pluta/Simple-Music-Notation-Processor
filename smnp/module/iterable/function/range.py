@@ -1,5 +1,5 @@
-from smnp.library.model import CombinedFunction, Function
-from smnp.library.signature import signature
+from smnp.function.model import CombinedFunction, Function
+from smnp.function.signature import signature
 from smnp.note.model import Note
 from smnp.type.model import Type
 from smnp.type.signature.matcher.type import ofType

@@ -1,5 +1,5 @@
-from smnp.library.model import CombinedFunction, Function
-from smnp.library.signature import varargSignature
+from smnp.function.model import CombinedFunction, Function
+from smnp.function.signature import varargSignature
 from smnp.type.model import Type
 from smnp.type.signature.matcher.list import listOf
 from smnp.type.signature.matcher.type import ofTypes

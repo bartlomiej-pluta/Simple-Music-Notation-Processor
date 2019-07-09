@@ -1,5 +1,5 @@
-from smnp.library.model import Function, CombinedFunction
-from smnp.library.signature import varargSignature
+from smnp.function.model import Function, CombinedFunction
+from smnp.function.signature import varargSignature
 from smnp.note.interval import intervalToString
 from smnp.note.model import Note
 from smnp.type.model import Type

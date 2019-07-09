@@ -1,4 +1,4 @@
-from smnp.library.signature import signature
+from smnp.function.signature import signature
 from smnp.type.model import Type
 from smnp.type.signature.matcher.model import Matcher
 

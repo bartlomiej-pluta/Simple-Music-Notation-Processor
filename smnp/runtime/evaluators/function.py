@@ -2,7 +2,7 @@ from smnp.ast.node.none import NoneNode
 from smnp.ast.node.ret import ReturnNode
 from smnp.ast.node.variable import TypedVariableNode
 from smnp.error.runtime import RuntimeException
-from smnp.library.signature import signature
+from smnp.function.signature import signature
 from smnp.runtime.evaluator import Evaluator, evaluate
 from smnp.runtime.evaluators.expression import expressionEvaluator
 from smnp.runtime.evaluators.iterable import abstractIterableEvaluator
