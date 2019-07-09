@@ -11,7 +11,7 @@ class StatementNode(Node):
         from smnp.ast.node.ret import ReturnNode
 
         return Parser.oneOf(
+            ExpressionNode.parse,
             BlockNode.parse,
             ReturnNode.parse,
-            ExpressionNode.parse
         )(input)
