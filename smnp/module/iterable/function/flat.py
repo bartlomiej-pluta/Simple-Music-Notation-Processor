@@ -2,6 +2,7 @@ from smnp.library.model import Function
 from smnp.library.signature import varargSignature, allTypes
 from smnp.type.model import Type
 
+
 _signature = varargSignature(allTypes())
 def _function(env, vararg):
     return Type.list(doFlat(vararg, [])).decompose()
