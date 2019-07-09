@@ -3,6 +3,7 @@ from smnp.library.signature import varargSignature, ofTypes, listOf
 from smnp.note.model import Note
 from smnp.type.model import Type
 
+
 _signature1 = varargSignature(ofTypes(Type.NOTE, Type.INTEGER))
 def _function1(env, vararg):
     withoutPauses = [note.value for note in vararg if note.type == Type.NOTE]

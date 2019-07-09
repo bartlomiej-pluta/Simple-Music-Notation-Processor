@@ -2,6 +2,7 @@ from smnp.library.model import CombinedFunction, Function
 from smnp.library.signature import signature, listOf, ofTypes, varargSignature
 from smnp.type.model import Type
 
+
 _signature1 = varargSignature(ofTypes(Type.NOTE), ofTypes(Type.INTEGER), ofTypes(Type.INTEGER))
 def _function1(env, n, m, vararg):
     t = [Type.note(arg.value.withDuration(int(arg.value.duration * n.value / m.value))) for arg in vararg]

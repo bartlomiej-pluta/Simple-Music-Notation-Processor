@@ -2,6 +2,7 @@ from smnp.library.model import CombinedFunction, Function
 from smnp.library.signature import varargSignature, ofTypes, listOf
 from smnp.type.model import Type
 
+
 _signature1 = varargSignature(ofTypes(Type.INTEGER, Type.NOTE), ofTypes(Type.INTEGER))
 def _function1(env, value, vararg):
     transposed = [Type.note(arg.value.transpose(value.value)) if arg.type == Type.NOTE else arg for arg in vararg]
