@@ -1,7 +1,7 @@
 from smnp.ast.node.none import NoneNode
 from smnp.function.signature import signature
 from smnp.runtime.evaluator import Evaluator
-from smnp.runtime.evaluators.function import argumentsNodeToMethodSignature, listSpecifier
+from smnp.runtime.evaluators.function import argumentsNodeToMethodSignature, listSpecifier, mapSpecifier
 from smnp.type.model import Type
 from smnp.type.signature.matcher.type import ofType
 
@@ -16,11 +16,13 @@ class ExtendEvaluator(Evaluator):
 
     @classmethod
     def _typeToMethodSignature(cls, node):
-        if type(node.specifier) == NoneNode:
+        if type(node.specifiers) == NoneNode:
             return signature(ofType(node.type))
 
         elif node.type == Type.LIST:
-            return signature(listSpecifier(node.specifier))
+            return signature(listSpecifier(node.specifiers[0]))
+        elif node.type == Type.MAP:
+            return signature(mapSpecifier(node.specifiers[0], node.specifiers[1]))
 
     @classmethod
     def _evaluateExtend(cls, node, environment, type, variable):
