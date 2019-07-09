@@ -39,7 +39,9 @@ class Type(Enum):
     @staticmethod
     def map(value):
         return Value(Type.MAP, value, {
-            "size": Type.integer(len(value))
+            "size": Type.integer(len(value)),
+            "keys": Type.list([ k for k, v in value.items() ]),
+            "values": Type.list([ v for k, v in value.items() ])
         })
 
     @staticmethod
