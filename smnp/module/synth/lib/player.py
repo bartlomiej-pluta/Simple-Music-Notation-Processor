@@ -1,7 +1,7 @@
 import time
 
+from smnp.module.synth.lib.wave import sine
 from smnp.note.model import Note
-from smnp.synth.wave import sine
 
 
 def playNotes(notes, bpm):

@@ -1,6 +1,6 @@
 from smnp.library.model import Function
 from smnp.library.signature import signature, ofTypes
-from smnp.synth import player
+from smnp.module.synth.lib import player
 from smnp.type.model import Type
 
 

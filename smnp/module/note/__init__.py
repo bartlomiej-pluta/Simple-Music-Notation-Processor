@@ -1,4 +1,4 @@
-from smnp.module.note.function import tuplet, transpose, semitones, pause, octave, duration, interval
+from smnp.module.note.function import tuplet, transpose, semitones, octave, duration, interval
 
-functions = [ pause.function, semitones.function, interval.function, transpose.function, tuplet.function ]
+functions = [ semitones.function, interval.function, transpose.function, tuplet.function ]
 methods = [ duration.function, octave.function ]

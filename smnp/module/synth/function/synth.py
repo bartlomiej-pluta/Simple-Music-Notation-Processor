@@ -1,6 +1,6 @@
 from smnp.library.model import CombinedFunction, Function
 from smnp.library.signature import varargSignature, ofTypes, listOf
-from smnp.synth.player import playNotes
+from smnp.module.synth.lib.player import playNotes
 from smnp.type.model import Type
 
 
