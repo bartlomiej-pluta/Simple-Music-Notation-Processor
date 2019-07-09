@@ -1,5 +1,4 @@
-import smnp.module.mic
-import smnp.module.note
+from smnp.module import system, mic, note
 
-functions = [ *mic.functions, *note.functions ]
-methods = [ *mic.methods, *note.methods ]
+functions = [ *system.functions, *mic.functions, *note.functions ]
+methods = [ *system.methods, *mic.methods, *note.methods ]

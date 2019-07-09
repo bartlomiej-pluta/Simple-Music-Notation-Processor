@@ -3,6 +3,7 @@ from smnp.library.model import Function
 from smnp.library.signature import signature, ofTypes
 from smnp.type.model import Type
 
+
 _signature = signature(ofTypes(Type.STRING))
 def _function(env, parameter):
     if parameter.value == "environment":
