@@ -5,7 +5,7 @@ from smnp.ast.node.iterable import abstractIterableParser
 from smnp.ast.node.model import Node
 from smnp.ast.node.none import NoneNode
 from smnp.ast.node.statement import StatementNode
-from smnp.ast.node.type import TypeNode
+from smnp.ast.node.type import TypeNode, TypeSpecifier
 from smnp.ast.parser import Parser
 from smnp.token.type import TokenType
 
@@ -15,6 +15,10 @@ class ArgumentsDeclarationNode(Node):
     @classmethod
     def _parse(cls, input):
         raise RuntimeError("This class is not supposed to be automatically called")
+
+
+class VarargNode(Node):
+    pass
 
 
 class ArgumentDefinitionNode(ExpressionNode):
@@ -46,40 +50,23 @@ class ArgumentDefinitionNode(ExpressionNode):
     def vararg(self, value):
         self[2] = value
 
-    @classmethod
-    def parser(cls):
-        return Parser.oneOf(
-            cls._varargParser(),
-            cls._normalParser()
-        )
 
     @classmethod
-    def _varargParser(cls):
+    def parser(cls):
         def createNode(type, variable, dots):
             node = ArgumentDefinitionNode(type.pos)
             node.type = type
             node.variable = variable
-            node.vararg = True
+            node.vararg = isinstance(dots, VarargNode)
             return node
 
         return Parser.allOf(
-            TypeNode.parse,
+            Parser.oneOf(
+                TypeNode.parse,
+                TypeSpecifier.parse
+            ),
             Parser.doAssert(IdentifierNode.identifierParser(), "variable name"),
-            Parser.terminalParser(TokenType.DOTS),
-            createNode=createNode
-        )
-
-    @classmethod
-    def _normalParser(cls):
-        def createNode(type, variable):
-            node = ArgumentDefinitionNode(type.pos)
-            node.type = type
-            node.variable = variable
-            return node
-
-        return Parser.allOf(
-            TypeNode.parse,
-            Parser.doAssert(IdentifierNode.identifierParser(), "variable name"),
+            Parser.optional(Parser.terminalParser(TokenType.DOTS, lambda val, pos: VarargNode(pos))),
             createNode=createNode
         )
 
