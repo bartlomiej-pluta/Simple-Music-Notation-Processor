@@ -8,7 +8,7 @@ _signature1 = signature(ofType(Type.LIST), ofType(Type.INTEGER))
 def _function1(env, list, index):
     try:
         return list.value[index.value]
-    except KeyError:
+    except IndexError:
         raise RuntimeException(f"Attempt to access item which is outside the list", None)
 
 
