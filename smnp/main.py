@@ -6,7 +6,7 @@ from smnp.program.interpreter import Interpreter
 
 def main():
     try:
-
+        
         Interpreter.interpretFile(sys.argv[1], printAst=True)
 
     except SmnpException as e:

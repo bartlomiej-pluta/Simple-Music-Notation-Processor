@@ -1,6 +1,6 @@
 from smnp.library.model import CombinedFunction, Function
 from smnp.library.signature import signature, ofTypes
-from smnp.mic.detector.noise import NoiseDetector
+from smnp.module.mic.lib.detector.noise import NoiseDetector
 from smnp.type.model import Type
 
 
