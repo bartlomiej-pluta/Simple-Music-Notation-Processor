@@ -1,6 +1,6 @@
-from smnp.ast.node.function import ArgumentDefinitionNode
 from smnp.ast.node.none import NoneNode
 from smnp.ast.node.ret import ReturnNode
+from smnp.ast.node.type import TypeNode
 from smnp.error.runtime import RuntimeException
 from smnp.function.signature import signature, varargSignature
 from smnp.runtime.evaluator import Evaluator, evaluate
@@ -10,7 +10,7 @@ from smnp.runtime.tools import updatePos
 from smnp.type.model import Type
 from smnp.type.signature.matcher.list import listOfMatchers
 from smnp.type.signature.matcher.map import mapOfMatchers
-from smnp.type.signature.matcher.type import ofType
+from smnp.type.signature.matcher.type import ofType, oneOf
 
 
 class FunctionCallEvaluator(Evaluator):
@@ -46,14 +46,20 @@ def argumentsNodeToMethodSignature(node):
         vararg = None
         argumentsCount = len(node.children)
         for i, child in enumerate(node.children):
-            if type(child) == ArgumentDefinitionNode:
+            if type(child.type) == TypeNode:
                 if child.vararg:
                     if i != argumentsCount-1:
                         raise RuntimeException("Vararg must be the last argument in signature", child.pos)
-                    vararg = typeMatcher(child)
+                    vararg = typeMatcher(child.type)
                 else:
-                    sign.append(typeMatcher(child))
-
+                    sign.append(typeMatcher(child.type))
+            else:
+                if child.vararg:
+                    if i != argumentsCount-1:
+                        raise RuntimeException("Vararg must be the last argument in signature", child.pos)
+                    vararg = multipleTypeMatcher(child)
+                else:
+                    sign.append(multipleTypeMatcher(child))
 
 
         return varargSignature(vararg, *sign, wrapVarargInValue=True) if vararg is not None else signature(*sign)
@@ -61,15 +67,26 @@ def argumentsNodeToMethodSignature(node):
         raise updatePos(e, node)
 
 
+def multipleTypeMatcher(typeNode):
+    subSignature = []
+
+    for child in typeNode.type.children:
+        m = typeMatcher(child)
+        subSignature.append(m)
+
+    return oneOf(*subSignature)
+
+
 def typeMatcher(typeNode):
-    if type(typeNode.type.specifiers) == NoneNode:
-        return ofType(typeNode.type.type)
-    elif typeNode.type.type == Type.LIST and len(typeNode.type.specifiers) == 1:
-        return listSpecifier(typeNode.type.specifiers[0])
-    elif typeNode.type.type == Type.MAP and len(typeNode.type.specifiers) == 2:
-        return mapSpecifier(typeNode.type.specifiers[0], typeNode.type.specifiers[1])
+    if type(typeNode.specifiers) == NoneNode:
+        return ofType(typeNode.type)
+    elif typeNode.type == Type.LIST and len(typeNode.specifiers) == 1:
+        return listSpecifier(typeNode.specifiers[0])
+    elif typeNode.type == Type.MAP and len(typeNode.specifiers) == 2:
+        return mapSpecifier(typeNode.specifiers[0], typeNode.specifiers[1])
 
     raise RuntimeException("Unknown type", typeNode.pos)  # Todo: Improve pointing position
+
 
 
 def listSpecifier(specifier):

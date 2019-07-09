@@ -18,3 +18,9 @@ def ofType(type):
         return value.type == type
 
     return Matcher(None, check, type.name.lower())
+
+def oneOf(*matchers):
+    def check(value):
+        return any(matcher.match(value) for matcher in matchers)
+
+    return Matcher(None, check, f"<{', '.join(m.string for m in matchers)}>")
