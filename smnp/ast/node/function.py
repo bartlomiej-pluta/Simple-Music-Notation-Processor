@@ -20,7 +20,7 @@ class ArgumentsDeclarationNode(Node):
 class ArgumentDefinitionNode(ExpressionNode):
     def __init__(self, pos):
         super().__init__(pos)
-        self.children.append(NoneNode())
+        self.children.extend([NoneNode(), False])
 
     @property
     def type(self):
@@ -38,8 +38,39 @@ class ArgumentDefinitionNode(ExpressionNode):
     def variable(self, value):
         self[1] = value
 
+    @property
+    def vararg(self):
+        return self[2]
+
+    @vararg.setter
+    def vararg(self, value):
+        self[2] = value
+
     @classmethod
     def parser(cls):
+        return Parser.oneOf(
+            cls._varargParser(),
+            cls._normalParser()
+        )
+
+    @classmethod
+    def _varargParser(cls):
+        def createNode(type, variable, dots):
+            node = ArgumentDefinitionNode(type.pos)
+            node.type = type
+            node.variable = variable
+            node.vararg = True
+            return node
+
+        return Parser.allOf(
+            TypeNode.parse,
+            Parser.doAssert(IdentifierNode.identifierParser(), "variable name"),
+            Parser.terminalParser(TokenType.DOTS),
+            createNode=createNode
+        )
+
+    @classmethod
+    def _normalParser(cls):
         def createNode(type, variable):
             node = ArgumentDefinitionNode(type.pos)
             node.type = type

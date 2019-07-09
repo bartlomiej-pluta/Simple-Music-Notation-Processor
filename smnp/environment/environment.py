@@ -37,7 +37,7 @@ class Environment():
             if method.typeSignature.check([object])[0] and method.name == name: #Todo sprawdzic sygnature typu
                 signatureCheckresult = method.signature.check(args)
                 if signatureCheckresult[0]:
-                    self.scopes.append({argName: argValue for argName, argValue in zip(method.arguments, args)})
+                    self.scopes.append({argName: argValue for argName, argValue in zip(method.arguments, list(signatureCheckresult[1:]))})
                     self.scopes[-1][method.alias] = object
                     result = BodyEvaluator.evaluate(method.body, self).value  # TODO check if it isn't necessary to verify 'result' attr of EvaluatioNResult
                     self.scopes.pop(-1)
@@ -71,7 +71,7 @@ class Environment():
             if function.name == name:
                 signatureCheckresult = function.signature.check(args)
                 if signatureCheckresult[0]:
-                    self.scopes.append({ argName: argValue for argName, argValue in zip(function.arguments, args) })
+                    self.scopes.append({ argName: argValue for argName, argValue in zip(function.arguments, list(signatureCheckresult[1:])) })
                     result = BodyEvaluator.evaluate(function.body, self).value #TODO check if it isn't necessary to verify 'result' attr of EvaluatioNResult
                     self.scopes.pop(-1)
                     return (True, result)

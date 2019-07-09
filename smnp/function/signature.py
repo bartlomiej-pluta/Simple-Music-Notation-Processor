@@ -1,5 +1,6 @@
 # from smnp.type.model import Type
 #
+from smnp.type.model import Type
 
 
 class Signature:
@@ -9,7 +10,7 @@ class Signature:
         self.matchers = matchers
 
 
-def varargSignature(varargMatcher, *basicSignature):
+def varargSignature(varargMatcher, *basicSignature, wrapVarargInValue=False):
     def check(args):
         if len(basicSignature) > len(args):
             return doesNotMatchVararg(basicSignature)
@@ -22,7 +23,10 @@ def varargSignature(varargMatcher, *basicSignature):
             if not varargMatcher.match(args[i]):
                 return doesNotMatchVararg(basicSignature)
 
-        return True, (*args[:len(basicSignature)]), args[len(basicSignature):]
+        if wrapVarargInValue:
+            return True, (*args[:len(basicSignature)]), Type.list(args[len(basicSignature):])
+        else:
+            return True, (*args[:len(basicSignature)]), args[len(basicSignature):]
 
     string = f"({', '.join([str(m) for m in basicSignature])}{', ' if len(basicSignature) > 0 else ''}{str(varargMatcher)}...)"
 
@@ -31,8 +35,6 @@ def varargSignature(varargMatcher, *basicSignature):
 
 def doesNotMatchVararg(basicSignature):
     return (False, *[None for n in basicSignature], None)
-
-
 
 def signature(*signature):
     def check(args):

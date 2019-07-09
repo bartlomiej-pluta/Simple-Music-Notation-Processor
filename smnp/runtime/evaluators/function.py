@@ -2,7 +2,7 @@ from smnp.ast.node.function import ArgumentDefinitionNode
 from smnp.ast.node.none import NoneNode
 from smnp.ast.node.ret import ReturnNode
 from smnp.error.runtime import RuntimeException
-from smnp.function.signature import signature
+from smnp.function.signature import signature, varargSignature
 from smnp.runtime.evaluator import Evaluator, evaluate
 from smnp.runtime.evaluators.expression import expressionEvaluator
 from smnp.runtime.evaluators.iterable import abstractIterableEvaluator
@@ -43,21 +43,33 @@ class FunctionDefinitionEvaluator(Evaluator):
 def argumentsNodeToMethodSignature(node):
     try:
         sign = []
-
-        for child in node.children:
+        vararg = None
+        argumentsCount = len(node.children)
+        for i, child in enumerate(node.children):
             if type(child) == ArgumentDefinitionNode:
-                if type(child.type.specifiers) == NoneNode:
-                    sign.append(ofType(child.type.type))
-                elif child.type.type == Type.LIST and len(child.type.specifiers) == 1:
-                    sign.append(listSpecifier(child.type.specifiers[0]))
-                elif child.type.type == Type.MAP and len(child.type.specifiers) == 2:
-                    sign.append(mapSpecifier(child.type.specifiers[0], child.type.specifiers[1]))
+                if child.vararg:
+                    if i != argumentsCount-1:
+                        raise RuntimeException("Vararg must be the last argument in signature", child.pos)
+                    vararg = typeMatcher(child)
                 else:
-                    raise RuntimeException("Unknown type", child.pos) # Todo: Improve pointing position
+                    sign.append(typeMatcher(child))
 
-        return signature(*sign)
+
+
+        return varargSignature(vararg, *sign, wrapVarargInValue=True) if vararg is not None else signature(*sign)
     except RuntimeException as e:
         raise updatePos(e, node)
+
+
+def typeMatcher(typeNode):
+    if type(typeNode.type.specifiers) == NoneNode:
+        return ofType(typeNode.type.type)
+    elif typeNode.type.type == Type.LIST and len(typeNode.type.specifiers) == 1:
+        return listSpecifier(typeNode.type.specifiers[0])
+    elif typeNode.type.type == Type.MAP and len(typeNode.type.specifiers) == 2:
+        return mapSpecifier(typeNode.type.specifiers[0], typeNode.type.specifiers[1])
+
+    raise RuntimeException("Unknown type", typeNode.pos)  # Todo: Improve pointing position
 
 
 def listSpecifier(specifier):
