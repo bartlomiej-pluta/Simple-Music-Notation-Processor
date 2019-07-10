@@ -4,7 +4,9 @@ from smnp.type.signature.matcher.model import Matcher
 
 def allTypes():
     allowedTypes = [t for t in Type if t != Type.VOID]
-    return ofTypes(*allowedTypes)
+    matcher = ofTypes(*allowedTypes)
+    matcher.string = "any"
+    return matcher
 
 
 def ofTypes(*types):

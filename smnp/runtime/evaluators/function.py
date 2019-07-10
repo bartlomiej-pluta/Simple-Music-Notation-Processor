@@ -10,7 +10,7 @@ from smnp.runtime.tools import updatePos
 from smnp.type.model import Type
 from smnp.type.signature.matcher.list import listOfMatchers
 from smnp.type.signature.matcher.map import mapOfMatchers
-from smnp.type.signature.matcher.type import ofType, oneOf
+from smnp.type.signature.matcher.type import ofType, oneOf, allTypes
 
 
 class FunctionCallEvaluator(Evaluator):
@@ -53,6 +53,13 @@ def argumentsNodeToMethodSignature(node):
                     vararg = typeMatcher(child.type)
                 else:
                     sign.append(typeMatcher(child.type))
+            elif type(child.type) == NoneNode:
+                if child.vararg:
+                    if i != argumentsCount-1:
+                        raise RuntimeException("Vararg must be the last argument in signature", child.pos)
+                    vararg = allTypes()
+                else:
+                    sign.append(allTypes())
             else:
                 if child.vararg:
                     if i != argumentsCount-1:

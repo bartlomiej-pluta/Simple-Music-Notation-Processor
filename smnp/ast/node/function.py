@@ -61,10 +61,10 @@ class ArgumentDefinitionNode(ExpressionNode):
             return node
 
         return Parser.allOf(
-            Parser.oneOf(
+            Parser.optional(Parser.oneOf(
                 TypeNode.parse,
                 TypeSpecifier.parse
-            ),
+            )),
             Parser.doAssert(IdentifierNode.identifierParser(), "variable name"),
             Parser.optional(Parser.terminalParser(TokenType.DOTS, lambda val, pos: VarargNode(pos))),
             createNode=createNode
