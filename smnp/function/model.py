@@ -61,7 +61,7 @@ def types(args, parentheses=True):
     for arg in args:
         if arg.type == Type.LIST:
             output.append(listTypes(arg.value, []))
-        if arg.type == Type.MAP:
+        elif arg.type == Type.MAP:
             output.append(mapTypes(arg.value, {}))
         else:
             output.append(arg.type.name.lower())
