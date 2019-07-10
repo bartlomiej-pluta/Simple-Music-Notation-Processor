@@ -93,14 +93,7 @@ def listSpecifier(specifier):
     subSignature = []
 
     for child in specifier.children:
-        if type(child.specifiers) == NoneNode:
-            subSignature.append(ofType(child.type))
-        elif child.type == Type.LIST and len(child.type.specifiers) == 1:
-            subSignature.append(listSpecifier(child.specifiers[0]))
-        elif child.type == Type.MAP and len(child.specifiers) == 2:
-            subSignature.append(mapSpecifier(child.specifiers[0], child.specifiers[1]))
-        else:
-            raise RuntimeException("Unknown type", None)
+        subSignature.append(typeMatcher(child))
 
     return listOfMatchers(*subSignature)
 
@@ -109,24 +102,10 @@ def mapSpecifier(keySpecifier, valueSpecifier):
     valueSubSignature = []
 
     for child in keySpecifier.children:
-        if type(child.specifiers) == NoneNode:
-            keySubSignature.append(ofType(child.type))
-        elif child.type == Type.LIST and len(child.specifiers) == 1:
-            keySubSignature.append(listSpecifier(child.specifiers[0]))
-        elif child.type == Type.MAP and len(child.specifiers) == 2:
-            keySubSignature.append(mapSpecifier(child.specifiers[0], child.specifiers[1]))
-        else:
-            raise RuntimeException("Unknown type", None)
+        keySubSignature.append(typeMatcher(child))
 
     for child in valueSpecifier.children:
-        if type(child.specifiers) == NoneNode:
-            valueSubSignature.append(ofType(child.type))
-        elif child.type == Type.LIST and len(child.specifiers) == 1:
-            valueSubSignature.append(listSpecifier(child.specifiers[0]))
-        elif child.type == Type.MAP and len(child.specifiers) == 2:
-            valueSubSignature.append(mapSpecifier(child.specifiers[0], child.specifiers[1]))
-        else:
-            raise RuntimeException("Unknown type", None)
+        valueSubSignature.append(typeMatcher(child))
 
     return mapOfMatchers(keySubSignature, valueSubSignature)
 
