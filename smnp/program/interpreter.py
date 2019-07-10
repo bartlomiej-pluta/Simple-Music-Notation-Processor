@@ -9,12 +9,20 @@ from smnp.token.tokenizer import tokenize
 class Interpreter:
 
     @staticmethod
-    def interpretFile(file, printTokens=False, printAst=False):
+    def interpretString(string, printTokens=False, printAst=False, baseEnvironment=None):
+        return Interpreter._interpret(string.splitlines(), printTokens, printAst, baseEnvironment)
+
+    @staticmethod
+    def interpretFile(file, printTokens=False, printAst=False, baseEnvironment=None):
+        return Interpreter._interpret(readLines(file), printTokens, printAst, baseEnvironment)
+
+    @staticmethod
+    def _interpret(lines, printTokens=False, printAst=False, baseEnvironment=None):
         environment = createEnvironment()
+        if baseEnvironment is not None:
+            environment.extend(baseEnvironment)
 
         try:
-            lines = readLines(file)
-
             tokens = tokenize(lines)
             if printTokens:
                 print(tokens)
