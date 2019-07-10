@@ -122,10 +122,10 @@ class Parser:
     # leftAssociative -> left | left OP right
     @staticmethod
     def leftAssociativeOperatorParser(leftParser, operatorTokenTypes, rightParser, createNode, name="leftAssoc"):
-        from smnp.ast.node.operator import OperatorNode
+        from smnp.ast.node.operator import Operator
 
         def parse(input):
-            operatorParser = Parser.oneOfTerminals(*operatorTokenTypes, createNode=lambda val, pos: OperatorNode.withChildren([val], pos))
+            operatorParser = Parser.oneOfTerminals(*operatorTokenTypes, createNode=lambda val, pos: Operator.withChildren([val], pos))
             left = leftParser(input)
             if left.result:
                 operator = operatorParser(input)

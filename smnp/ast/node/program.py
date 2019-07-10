@@ -1,4 +1,4 @@
-from smnp.ast.node.atom import AtomParser
+from smnp.ast.node.chain import ChainParser
 from smnp.ast.node.model import Node, ParseResult
 from smnp.ast.parser import Parser
 
@@ -15,7 +15,7 @@ def parse(input):
 
 
             #TODO -> temporary (to remove):
-            AtomParser
+            ChainParser
         )(input)
 
         if result.result:
