@@ -5,12 +5,17 @@ from smnp.token.tokenizers.comment import commentTokenizer
 from smnp.token.tokenizers.identifier import identifierTokenizer
 from smnp.token.tokenizers.keyword import typeTokenizer
 from smnp.token.tokenizers.note import noteTokenizer
+from smnp.token.tokenizers.relation import relationOperatorTokenizer
 from smnp.token.tokenizers.string import stringTokenizer
 from smnp.token.tokenizers.whitespace import whitespacesTokenizer
 from smnp.token.tools import defaultTokenizer, separated, regexPatternTokenizer
 from smnp.token.type import TokenType
 
 tokenizers = (
+    # Double-character operators
+    relationOperatorTokenizer,
+    defaultTokenizer(TokenType.DOUBLE_ASTERISK),
+
     # Characters
     defaultTokenizer(TokenType.OPEN_CURLY),
     defaultTokenizer(TokenType.CLOSE_CURLY),
@@ -20,7 +25,6 @@ tokenizers = (
     defaultTokenizer(TokenType.CLOSE_SQUARE),
     defaultTokenizer(TokenType.OPEN_ANGLE),
     defaultTokenizer(TokenType.CLOSE_ANGLE),
-    defaultTokenizer(TokenType.DOUBLE_ASTERISK),
     defaultTokenizer(TokenType.ASTERISK),
     defaultTokenizer(TokenType.ASSIGN),
     defaultTokenizer(TokenType.ARROW),

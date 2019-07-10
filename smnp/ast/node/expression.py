@@ -8,9 +8,11 @@ from smnp.token.type import TokenType
 class Expression(Valuable):
     pass
 
-
 ExpressionParser = Parser.leftAssociativeOperatorParser(TermParser, [TokenType.PLUS, TokenType.MINUS], TermParser,
                                                         lambda left, op, right: Expression.withValue(BinaryOperator.withValues(left, op, right)))
+
+Expression2Parser = Parser.leftAssociativeOperatorParser(ExpressionParser, [TokenType.RELATION], ExpressionParser,
+                                                         lambda left, op, right: Expression.withValue(BinaryOperator.withValues(left, op, right)))
 
 #
 # class ExpressionNode(Node):

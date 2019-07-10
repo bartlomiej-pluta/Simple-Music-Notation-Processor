@@ -1,4 +1,4 @@
-from smnp.ast.node.expression import ExpressionParser
+from smnp.ast.node.expression import Expression2Parser
 from smnp.ast.node.model import Node, ParseResult
 from smnp.ast.parser import Parser
 
@@ -15,7 +15,7 @@ def parse(input):
 
 
             #TODO -> temporary (to remove):
-            ExpressionParser
+            Expression2Parser
         )(input)
 
         if result.result:
