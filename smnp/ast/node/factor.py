@@ -1,5 +1,5 @@
 from smnp.ast.node.chain import ChainParser
-from smnp.ast.node.operator import BinaryOperator
+from smnp.ast.node.operator import BinaryOperator, Operator
 from smnp.ast.node.valuable import Valuable
 from smnp.ast.parser import Parser
 from smnp.token.type import TokenType
@@ -9,22 +9,36 @@ class Factor(Valuable):
     pass
 
 
-powerFactor = Parser.leftAssociativeOperatorParser(ChainParser, [TokenType.DOUBLE_ASTERISK], ChainParser,
-                                                    lambda left, op, right: Factor.withValue(BinaryOperator.withValues(left, op, right)))
+class Loop(BinaryOperator):
+    pass
 
 
-def exprFactor():
-    from smnp.ast.node.expression import ExpressionParser
+def FactorParser(input):
+    from smnp.ast.node.expression import MaxPrecedenceExpressionParser
 
-    return Parser.allOf(
+    powerFactor = Parser.leftAssociativeOperatorParser(
+        ChainParser,
+        [TokenType.DOUBLE_ASTERISK],
+        ChainParser,
+        lambda left, op, right: Factor.withValue(BinaryOperator.withValues(left, op, right))
+    )
+
+    exprFactor = Parser.allOf(
         Parser.terminalParser(TokenType.OPEN_PAREN),
-        ExpressionParser,
+        MaxPrecedenceExpressionParser,
         Parser.terminalParser(TokenType.CLOSE_PAREN),
         createNode=lambda open, expr, close: expr
     )
 
-def FactorParser(input):
-    return Parser.oneOf(
+    loopFactor = Parser.allOf(
         powerFactor,
-        exprFactor()
+        Parser.terminalParser(TokenType.DASH, lambda val, pos: Operator.withValue(val, pos)),
+        MaxPrecedenceExpressionParser, #TODO statement here
+        createNode=lambda chain, dash, stmt: Loop.withValues(chain, dash, stmt)
+    )
+
+    return Parser.oneOf(
+        loopFactor,
+        powerFactor,
+        exprFactor,
     )(input)
