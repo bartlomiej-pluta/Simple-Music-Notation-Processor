@@ -4,7 +4,7 @@ from smnp.error.runtime import RuntimeException
 from smnp.runtime.evaluator import Evaluator
 from smnp.runtime.evaluators.expression import expressionEvaluator
 from smnp.runtime.evaluators.iterable import abstractIterableEvaluator
-from smnp.runtime.tools import updatePos
+from smnp.runtime.tools.error import updatePos
 
 
 class AccessEvaluator(Evaluator):

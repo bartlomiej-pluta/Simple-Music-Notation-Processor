@@ -1,7 +1,7 @@
 from smnp.ast.node.none import NoneNode
 from smnp.function.signature import signature
 from smnp.runtime.evaluator import Evaluator
-from smnp.runtime.evaluators.function import argumentsNodeToMethodSignature, listSpecifier, mapSpecifier
+from smnp.runtime.tools.signature import argumentsNodeToMethodSignature, listSpecifier, mapSpecifier
 from smnp.type.model import Type
 from smnp.type.signature.matcher.type import ofType
 

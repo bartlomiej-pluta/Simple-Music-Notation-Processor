@@ -1,6 +1,6 @@
 from smnp.error.runtime import RuntimeException
 from smnp.runtime.evaluator import Evaluator
-from smnp.runtime.tools import updatePos
+from smnp.runtime.tools.error import updatePos
 
 
 class IdentifierEvaluator(Evaluator):
