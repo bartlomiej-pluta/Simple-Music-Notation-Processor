@@ -14,6 +14,14 @@ ExpressionParser = Parser.leftAssociativeOperatorParser(TermParser, [TokenType.P
 Expression2Parser = Parser.leftAssociativeOperatorParser(ExpressionParser, [TokenType.RELATION], ExpressionParser,
                                                          lambda left, op, right: Expression.withValue(BinaryOperator.withValues(left, op, right)))
 
+Expression3Parser = Parser.leftAssociativeOperatorParser(Expression2Parser, [TokenType.AND], Expression2Parser,
+                                                         lambda left, op, right: Expression.withValue(BinaryOperator.withValues(left, op, right)))
+
+Expression4Parser = Parser.leftAssociativeOperatorParser(Expression3Parser, [TokenType.OR], Expression3Parser,
+                                                         lambda left, op, right: Expression.withValue(BinaryOperator.withValues(left, op, right)))
+
+MaxPrecedenceExpressionParser = Expression4Parser
+
 #
 # class ExpressionNode(Node):
 #     def __init__(self, pos):
