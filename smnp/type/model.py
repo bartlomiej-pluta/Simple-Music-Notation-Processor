@@ -55,6 +55,10 @@ class Type(Enum):
         })
 
     @staticmethod
+    def bool(value):
+        return Value(Type.BOOL, value, {})
+
+    @staticmethod
     def sound(value):
         return Value(Type.SOUND, value, {
             "file": Type.string(value.file),

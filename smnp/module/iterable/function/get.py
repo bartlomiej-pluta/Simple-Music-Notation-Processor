@@ -12,7 +12,7 @@ def _function1(env, list, index):
         raise RuntimeException(f"Attempt to access item which is outside the list", None)
 
 
-_signature2 = signature(ofType(Type.MAP), ofTypes(Type.INTEGER, Type.STRING, Type.NOTE, Type.TYPE))
+_signature2 = signature(ofType(Type.MAP), ofTypes(Type.INTEGER, Type.STRING, Type.NOTE, Type.BOOL, Type.TYPE))
 def _function2(env, map, key):
     try:
         return map.value[key]

@@ -1,6 +1,7 @@
 from smnp.ast.node.access import AccessNode
 from smnp.ast.node.assignment import AssignmentNode
 from smnp.ast.node.asterisk import AsteriskNode
+from smnp.ast.node.bool import BoolLiteralNode
 from smnp.ast.node.identifier import IdentifierNode
 from smnp.ast.node.integer import IntegerLiteralNode
 from smnp.ast.node.invocation import FunctionCallNode
@@ -28,11 +29,13 @@ def expressionEvaluator(doAssert=False):
             from smnp.runtime.evaluators.asterisk import AsteriskEvaluator
             from smnp.runtime.evaluators.map import MapEvaluator
             from smnp.runtime.evaluators.type import TypeEvaluator
+            from smnp.runtime.evaluators.bool import BoolEvaluator
             result =  Evaluator.oneOf(
                 Evaluator.forNodes(FunctionCallEvaluator.evaluate, FunctionCallNode),
                 Evaluator.forNodes(StringEvaluator.evaluate, StringLiteralNode),
                 Evaluator.forNodes(IntegerEvaluator.evaluate, IntegerLiteralNode),
                 Evaluator.forNodes(NoteEvaluator.evaluate, NoteLiteralNode),
+                Evaluator.forNodes(BoolEvaluator.evaluate, BoolLiteralNode),
                 Evaluator.forNodes(TypeEvaluator.evaluate, TypeNode),
                 Evaluator.forNodes(IdentifierEvaluator.evaluate, IdentifierNode),
                 Evaluator.forNodes(ListEvaluator.evaluate, ListNode),
