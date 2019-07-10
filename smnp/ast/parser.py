@@ -41,6 +41,7 @@ class Parser:
                 value = parser(input)
                 if value.result:
                     return value
+                input.reset(snap)
 
             if exception is not None:
                 if callable(exception):
@@ -96,12 +97,15 @@ class Parser:
     def leftAssociativeOperatorParser(leftParser, operatorTokenType, rightParser, createNode):
         def parse(input):
             left = leftParser(input)
+            oneAtLeast = False
             if left.result:
                 while Parser.terminalParser(operatorTokenType)(input).result:
+                    oneAtLeast = True
                     right = rightParser(input)
                     left = ParseResult.OK(createNode(left.node, right.node))
 
-                return left
+                if oneAtLeast:
+                    return left
 
             return ParseResult.FAIL()
 

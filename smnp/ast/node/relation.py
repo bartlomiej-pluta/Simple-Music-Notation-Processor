@@ -1,11 +1,10 @@
 from smnp.ast.node.expression import ExpressionNode
 from smnp.ast.node.ignore import IgnoredNode
 from smnp.ast.parser import Parser
-from smnp.error.syntax import SyntaxException
 from smnp.token.type import TokenType
 
 
-class AccessNode(ExpressionNode):
+class RelationOperatorNode(ExpressionNode):
     def __init__(self, pos):
         super().__init__(pos)
         self.children.append(IgnoredNode(pos))
@@ -27,30 +26,25 @@ class AccessNode(ExpressionNode):
         self[1] = value
 
     @classmethod
-    def accessParser(cls):
+    def relationParser(cls):
         def createNode(left, right):
-            node = AccessNode(right.pos)
+            node = RelationOperatorNode(right.pos)
             node.left = left
             node.right = right
             return node
 
         return Parser.leftAssociativeOperatorParser(
-            cls._accessLiteralParser(),
-            TokenType.DOT,
-            cls._parseAccessingProperty(),
+            cls._relationLiteralParser(),
+            TokenType.EQUAL,
+            cls._parseRelationProperty(),
             createNode=createNode
         )
 
     @classmethod
-    def _accessLiteralParser(cls):
-        raise RuntimeError(f"_accessLiteralParser() is not implemented in {cls.__name__} class")
+    def _relationLiteralParser(cls):
+        raise RuntimeError(f"_relationLiteralParser() is not implemented in {cls.__name__} class")
 
     @staticmethod
-    def _parseAccessingProperty():
-        from smnp.ast.node.identifier import IdentifierNode
-
-        return Parser.oneOf(
-            IdentifierNode.identifierParser(),
-            IdentifierNode._functionCallParser(),
-            exception=lambda input: SyntaxException(f"Expected property name or method call, found '{input.current().rawValue}'", input.currentPos())
-        )
+    def _parseRelationProperty():
+        # TODO doAssert
+        return ExpressionNode.parse

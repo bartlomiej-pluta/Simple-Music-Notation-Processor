@@ -11,6 +11,8 @@ from smnp.token.tools import defaultTokenizer, separated, regexPatternTokenizer
 from smnp.token.type import TokenType
 
 tokenizers = (
+    defaultTokenizer(TokenType.EQUAL),
+
     # Characters
     defaultTokenizer(TokenType.OPEN_CURLY),
     defaultTokenizer(TokenType.CLOSE_CURLY),

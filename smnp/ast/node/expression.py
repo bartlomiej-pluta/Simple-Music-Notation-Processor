@@ -50,22 +50,15 @@ class ExpressionNode(Node):
 
     @classmethod
     def _expressionParser(cls):
-        from smnp.ast.node.integer import IntegerLiteralNode
-        from smnp.ast.node.string import StringLiteralNode
-        from smnp.ast.node.note import NoteLiteralNode
         from smnp.ast.node.bool import BoolLiteralNode
-        from smnp.ast.node.identifier import IdentifierNode
-        from smnp.ast.node.list import ListNode
-        from smnp.ast.node.map import MapNode
-        from smnp.ast.node.type import TypeNode
 
         return Parser.oneOf(
-            IntegerLiteralNode.parse,
-            StringLiteralNode.parse,
-            NoteLiteralNode.parse,
+            #IntegerLiteralNode.parse,
+            #StringLiteralNode.parse,
+            #NoteLiteralNode.parse,
             BoolLiteralNode.parse,
-            IdentifierNode.parse,
-            MapNode.parse,
-            ListNode.parse,
-            TypeNode.parse,
+            #IdentifierNode.parse,
+            #MapNode.parse,
+            #ListNode.parse,
+            #TypeNode.parse,
         )

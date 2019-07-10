@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class TokenType(Enum):
+    EQUAL = '=='
     OPEN_CURLY = '{'
     CLOSE_CURLY = '}'
     OPEN_PAREN = '('

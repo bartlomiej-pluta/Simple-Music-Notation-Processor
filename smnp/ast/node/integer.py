@@ -1,12 +1,18 @@
-from smnp.ast.node.access import AccessNode
+from smnp.ast.node.expression import ExpressionNode
 from smnp.ast.parser import Parser
 from smnp.token.type import TokenType
 
 
-class IntegerLiteralNode(AccessNode):
+class IntegerLiteralNode(ExpressionNode):
     def __init__(self, pos):
         super().__init__(pos)
-        del self.children[1]
+        #TODO del self.children[1]
+
+
+    # TODO: To Remove
+    @classmethod
+    def _parse(cls, input):
+        return cls._literalParser()(input)
 
     @classmethod
     def _literalParser(cls):
