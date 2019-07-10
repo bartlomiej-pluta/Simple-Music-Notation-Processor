@@ -30,21 +30,21 @@ class Operation(Node):
     def right(self):
         return self[2]
 
-def atom(input):
-    return Parser.terminalParser(TokenType.INTEGER, lambda val, pos: Atom(val, pos))(input)
+def atom():
+    return Parser.terminalParser(TokenType.INTEGER, lambda val, pos: Atom(val, pos))
 
-def chain(input):
-    return Parser.leftAssociativeOperatorParser(atom, [TokenType.DOT], atom, lambda left, op, right: Operation(left, op, right, op.pos))(input)
+def chain():
+    return Parser.leftAssociativeOperatorParser(atom(), [TokenType.DOT], atom(), lambda left, op, right: Operation(left, op, right, op.pos), name="chain")
 
-def factor(input):
-    return Parser.leftAssociativeOperatorParser(chain, [TokenType.DOUBLE_ASTERISK], chain, lambda left, op, right: Operation(left, op, right, op.pos))(input)
+def factor():
+    return Parser.leftAssociativeOperatorParser(chain(), [TokenType.DOUBLE_ASTERISK], chain(), lambda left, op, right: Operation(left, op, right, op.pos), name="factor")
 
-def term(input):
-    return Parser.leftAssociativeOperatorParser(factor, [TokenType.ASTERISK, TokenType.SLASH], factor, lambda left, op, right: Operation(left, op, right, op.pos))(input)
+def term():
+    return Parser.leftAssociativeOperatorParser(factor(), [TokenType.ASTERISK, TokenType.SLASH], factor(), lambda left, op, right: Operation(left, op, right, op.pos), name="term")
 
-def expr(input):
-    return Parser.leftAssociativeOperatorParser(term, [TokenType.PLUS, TokenType.MINUS], term, lambda left, op, right: Operation(left, op, right, op.pos))(input)
-
+def expr():
+    return Parser.leftAssociativeOperatorParser(term(), [TokenType.PLUS, TokenType.MINUS], term(), lambda left, op, right: Operation(left, op, right, op.pos), name="expr")
+#
 def evaluate(node):
     if type(node) == Atom:
         return node.value
@@ -60,7 +60,8 @@ def evaluate(node):
 
 def draft():
 
-    tokens = tokenize(['2 + 2 * 2 / 2'])
-    node = expr(tokens).node
+    tokens = tokenize(['2**3/2 + 10 - 2'])
+    e = expr()
+    node = e(tokens).node
     node.print()
     print(evaluate(node))
