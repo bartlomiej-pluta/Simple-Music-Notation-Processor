@@ -52,12 +52,13 @@ class ExpressionNode(Node):
     def _expressionParser(cls):
         from smnp.ast.node.bool import BoolLiteralNode
 
+        from smnp.ast.node.identifier import IdentifierNode
         return Parser.oneOf(
             #IntegerLiteralNode.parse,
             #StringLiteralNode.parse,
             #NoteLiteralNode.parse,
             BoolLiteralNode.parse,
-            #IdentifierNode.parse,
+            IdentifierNode.parse,
             #MapNode.parse,
             #ListNode.parse,
             #TypeNode.parse,

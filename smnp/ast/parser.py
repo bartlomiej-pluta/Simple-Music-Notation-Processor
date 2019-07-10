@@ -105,7 +105,7 @@ class Parser:
                     oneAtLeast = True
                     right = rightParser(input)
                     left = ParseResult.OK(createNode(left.node, operator.node, right.node))
-                    operator = Parser.terminalParser(operatorTokenType)(input)
+                    operator = Parser.terminalParser(operatorTokenType, lambda val, pos: OperatorNode.withChildren([val], pos))(input)
                 if oneAtLeast:
                     return left
 

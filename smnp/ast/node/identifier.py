@@ -2,17 +2,34 @@ from smnp.ast.node.access import AccessNode
 from smnp.ast.node.assignment import AssignmentNode
 from smnp.ast.node.expression import ExpressionNode
 from smnp.ast.node.invocation import FunctionCallNode, ArgumentsListNode
+from smnp.ast.node.relation import RelationOperatorNode
 from smnp.ast.parser import Parser
 from smnp.token.type import TokenType
 
 
-class IdentifierNode(AccessNode):
+class IdentifierNode(AccessNode, RelationOperatorNode):
     def __init__(self, pos):
         super().__init__(pos)
         del self.children[1]
 
     @classmethod
-    def _literalParser(cls):
+    def _parse(cls, input):
+        return Parser.oneOf(
+            cls.accessParser(),
+            cls.relationParser(),
+            cls.literalParser()
+        )(input)
+
+    @classmethod
+    def _accessLhs(cls):
+        return cls.literalParser()
+
+    @classmethod
+    def _relationLhs(cls):
+        return cls.literalParser()
+
+    @classmethod
+    def literalParser(cls):
         return Parser.oneOf(
             IdentifierNode.functionCallParser(),
             IdentifierNode._assignmentParser(),
