@@ -53,6 +53,7 @@ class ExpressionNode(Node):
         from smnp.ast.node.integer import IntegerLiteralNode
         from smnp.ast.node.string import StringLiteralNode
         from smnp.ast.node.note import NoteLiteralNode
+        from smnp.ast.node.bool import BoolLiteralNode
         from smnp.ast.node.identifier import IdentifierNode
         from smnp.ast.node.list import ListNode
         from smnp.ast.node.map import MapNode
@@ -62,6 +63,7 @@ class ExpressionNode(Node):
             IntegerLiteralNode.parse,
             StringLiteralNode.parse,
             NoteLiteralNode.parse,
+            BoolLiteralNode.parse,
             IdentifierNode.parse,
             MapNode.parse,
             ListNode.parse,

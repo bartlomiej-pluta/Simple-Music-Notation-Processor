@@ -1,4 +1,5 @@
 from smnp.ast.node.access import AccessNode
+from smnp.ast.node.bool import BoolLiteralNode
 from smnp.ast.node.expression import ExpressionNode
 from smnp.ast.node.integer import IntegerLiteralNode
 from smnp.ast.node.iterable import abstractIterableParser
@@ -57,5 +58,6 @@ class MapNode(AccessNode):
             IntegerLiteralNode._literalParser(),
             StringLiteralNode._literalParser(),
             NoteLiteralNode._literalParser(),
+            BoolLiteralNode._literalParser(),
             TypeNode.parse
         )

@@ -8,7 +8,7 @@ from smnp.program.interpreter import Interpreter
 def main():
     try:
         stdLibraryEnv = loadStandardLibrary()
-        Interpreter.interpretFile(sys.argv[1], printTokens=True, printAst=False, baseEnvironment=stdLibraryEnv)
+        Interpreter.interpretFile(sys.argv[1], printTokens=False, printAst=True, baseEnvironment=stdLibraryEnv)
 
     except SmnpException as e:
         print(e.message())
