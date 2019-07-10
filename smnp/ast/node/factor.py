@@ -15,6 +15,7 @@ class Loop(BinaryOperator):
 
 def FactorParser(input):
     from smnp.ast.node.expression import MaxPrecedenceExpressionParser
+    from smnp.ast.node.statement import StatementParser
 
     powerFactor = Parser.leftAssociativeOperatorParser(
         ChainParser,
@@ -33,7 +34,7 @@ def FactorParser(input):
     loopFactor = Parser.allOf(
         powerFactor,
         Parser.terminalParser(TokenType.DASH, createNode=Operator.withValue),
-        MaxPrecedenceExpressionParser, #TODO statement here
+        StatementParser,
         createNode=Loop.withValues
     )
 
