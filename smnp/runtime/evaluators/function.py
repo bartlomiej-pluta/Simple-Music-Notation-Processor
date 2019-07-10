@@ -77,6 +77,9 @@ def argumentsNodeToMethodSignature(node):
 def multipleTypeMatcher(typeNode):
     subSignature = []
 
+    if len(typeNode.type.children) == 0:
+        return allTypes()
+
     for child in typeNode.type.children:
         m = typeMatcher(child)
         subSignature.append(m)
@@ -99,6 +102,9 @@ def typeMatcher(typeNode):
 def listSpecifier(specifier):
     subSignature = []
 
+    if len(specifier.children) == 0:
+        subSignature.append(allTypes())
+
     for child in specifier.children:
         subSignature.append(typeMatcher(child))
 
@@ -107,6 +113,12 @@ def listSpecifier(specifier):
 def mapSpecifier(keySpecifier, valueSpecifier):
     keySubSignature = []
     valueSubSignature = []
+
+    if len(keySpecifier.children) == 0:
+        keySubSignature.append(allTypes())
+
+    if len(valueSpecifier.children) == 0:
+        valueSubSignature.append(allTypes())
 
     for child in keySpecifier.children:
         keySubSignature.append(typeMatcher(child))
