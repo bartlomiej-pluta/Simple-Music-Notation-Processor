@@ -19,9 +19,13 @@ class Function:
         return f"{self.name}{self.signature.string}"
 
     def call(self, env, args):
+        from smnp.environment.environment import CallStackItem
+
         result = self.signature.check(args)
         if result[0]:
+            env.callStack.append(CallStackItem(self.name))
             ret = self.function(env, *result[1:])
+            env.callStack.pop(-1)
             if ret is None:
                 return Type.void()
             return ret
@@ -38,10 +42,14 @@ class CombinedFunction(Function):
         return "\nor\n".join([f"{self.name}{function.signature.string}" for function in self.functions])
 
     def call(self, env, args):
+        from smnp.environment.environment import CallStackItem
+
         for function in self.functions:
             result = function.signature.check(args)
             if result[0]:
+                env.callStack.append(CallStackItem(self.name))
                 ret = function.function(env, *result[1:])
+                env.callStack.pop(-1)
                 if ret is None:
                     return Type.void()
                 return ret

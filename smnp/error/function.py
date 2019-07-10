@@ -1,7 +1,7 @@
-from smnp.error.base import SmnpException
+from smnp.error.runtime import RuntimeException
 
 
-class IllegalFunctionInvocationException(SmnpException):
+class IllegalFunctionInvocationException(RuntimeException):
     def __init__(self, expected, found, pos=None):
         super().__init__(f"Expected signature:\n{expected}\n\nFound:\n{found}", pos)
 
@@ -9,7 +9,7 @@ class IllegalFunctionInvocationException(SmnpException):
         return "Invocation Error"
 
 
-class FunctionNotFoundException(SmnpException):
+class FunctionNotFoundException(RuntimeException):
     def __init__(self, function, pos=None):
         super().__init__(f"Function '{function}' not found", pos)
 
@@ -17,7 +17,7 @@ class FunctionNotFoundException(SmnpException):
         return "Invocation Error"
 
 
-class MethodNotFoundException(SmnpException):
+class MethodNotFoundException(RuntimeException):
     def __init__(self, object, method, pos=None):
         super().__init__(f"Method '{method}' of type '{object}' not found", pos)
 
@@ -25,7 +25,7 @@ class MethodNotFoundException(SmnpException):
         return "Invocation Error"
 
 
-class IllegalArgumentException(SmnpException):
+class IllegalArgumentException(RuntimeException):
     def __init__(self, msg, pos=None):
         super().__init__(msg, pos)
 

@@ -2,9 +2,9 @@ from smnp.error.function import IllegalArgumentException
 from smnp.function.model import Function
 from smnp.function.signature import signature
 from smnp.type.model import Type
-from smnp.type.signature.matcher.type import ofTypes
+from smnp.type.signature.matcher.type import ofType
 
-_signature = signature(ofTypes(Type.STRING))
+_signature = signature(ofType(Type.STRING))
 def _function(env, parameter):
     if parameter.value == "environment":
         print(env)

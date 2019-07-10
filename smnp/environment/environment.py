@@ -27,9 +27,7 @@ class Environment():
     def _invokeBuiltinMethod(self, object, name, args):
         for method in self.methods:
             if method.name == name:
-                self.callStack.append(CallStackItem(name))
                 ret = method.call(self, [object, *args])
-                self.callStack.pop(-1)
                 if ret is not None:
                     return (True, ret)
 
@@ -65,9 +63,7 @@ class Environment():
     def _invokeBuiltinFunction(self, name, args):
         for function in self.functions:
             if function.name == name:
-                self.callStack.append(CallStackItem(name))
                 ret = function.call(self, args)
-                self.callStack.pop(-1)
                 if ret is not None:
                     return (True, ret)
 
