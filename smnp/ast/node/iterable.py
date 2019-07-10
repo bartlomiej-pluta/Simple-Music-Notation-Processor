@@ -1,4 +1,3 @@
-from smnp.ast.node.expression import ExpressionNode
 from smnp.ast.node.ignore import IgnoredNode
 from smnp.ast.node.model import Node, ParseResult
 from smnp.ast.node.none import NoneNode
@@ -7,11 +6,19 @@ from smnp.token.type import TokenType
 
 
 def abstractIterableParser(iterableNodeType, openTokenType, closeTokenType, itemParser):
-    class AbstractIterableTailNode(ExpressionNode):
+
+    class AbstractIterable(Node):
         def __init__(self, pos):
             super().__init__(pos)
+            self.children = [NoneNode(), NoneNode()]
 
-            self.children.append(NoneNode())
+        @property
+        def value(self):
+            return self[0]
+
+        @value.setter
+        def value(self, value):
+            self[0] = value
 
         @property
         def next(self):
@@ -21,83 +28,120 @@ def abstractIterableParser(iterableNodeType, openTokenType, closeTokenType, item
         def next(self, value):
             self[1] = value
 
-        @classmethod
-        def _parse(cls, input):
-            return Parser.oneOf(
-                AbstractIterableTailNode._parser1(),
-                AbstractIterableTailNode._parser2(),
-            )(input)
+    class AbstractIterableTail(AbstractIterable):
+        pass
 
-        @staticmethod
-        def _parser1():
-            return Parser.terminalParser(closeTokenType)
+    def abstractIterableParser(input):
+        return Parser.oneOf(
+            emptyIterable,
+            openIterable
+        )(input)
 
-        @staticmethod
-        def _parser2():
-            def createNode(comma, expr, iterableTail):
-                node = AbstractIterableTailNode(expr.pos)
-                node.value = expr
-                node.next = iterableTail
-                return node
+    def emptyIterable(input):
+        def createNode(open, close):
+            node = AbstractIterable(open.pos)
+            node.value = open
+            node.next = close
+            return node
 
-            return Parser.allOf(
-                Parser.terminalParser(TokenType.COMMA, doAssert=True),
-                itemParser,
-                AbstractIterableTailNode.parse,
-                createNode=createNode
-            )
+        return Parser.allOf(
+            Parser.terminalParser(openTokenType),
+            Parser.terminalParser(closeTokenType),
+            createNode=createNode
+        )(input)
 
-    class AbstractIterableNode(ExpressionNode):
-        def __init__(self, pos):
-            super().__init__(pos)
+    def openIterable(input):
+        def createNode(open, item, tail):
+            node = AbstractIterable(open.pos)
+            node.value = item
+            node.next = tail
+            return node
 
-            self.children.append(NoneNode())
+        return Parser.allOf(
+            Parser.terminalParser(openTokenType),
+            itemParser,
+            abstractIterableTailParser,
+            createNode=createNode
+        )(input)
 
-        @property
-        def next(self):
-            return self[1]
+    def abstractIterableTailParser(input):
+        return Parser.oneOf(
+            closeIterable,
+            nextItem,
+        )(input)
 
-        @next.setter
-        def next(self, value):
-            self[1] = value
+    def nextItem(input):
+        def createNode(comma, item, tail):
+            node = AbstractIterableTail(item.pos)
+            node.value = item
+            node.next = tail
+            return node
 
-        @classmethod
-        def _parse(cls, input):
-            return Parser.oneOf(
-                AbstractIterableNode._parser1(),
-                AbstractIterableNode._parser2()
-            )(input)
+        return Parser.allOf(
+            Parser.terminalParser(TokenType.COMMA, doAssert=True),
+            itemParser,
+            abstractIterableTailParser,
+            createNode=createNode
+        )(input)
 
-        @staticmethod
-        def _parser1():
-            def emptyIterable(openToken, closeToken):
-                node = AbstractIterableNode(openToken.pos)
-                node.value = openToken
-                node.next = closeToken
-                return node
+    def closeIterable(input):
+        return Parser.terminalParser(closeTokenType)(input)
 
-            return Parser.allOf(
-                Parser.terminalParser(openTokenType),
-                Parser.terminalParser(closeTokenType),
-                createNode=emptyIterable
-            )
 
-        @staticmethod
-        def _parser2():
-            def createNode(openParen, expr, iterableTail):
-                node = AbstractIterableNode(openParen.pos)
-                node.value = expr
-                node.next = iterableTail
-                return node
+    return toFlatDesiredNode(iterableNodeType, abstractIterableParser)
 
-            return Parser.allOf(
-                Parser.terminalParser(openTokenType, lambda val, pos: Node(pos)),
-                itemParser,
-                AbstractIterableTailNode.parse,
-                createNode=createNode
-            )
+        #
+        # @classmethod
+        # def _parse(cls, input):
+        #     return Parser.oneOf(
+        #         AbstractIterableTail._parser1(input),
+        #         AbstractIterableTail._parser2(input),
+        #     )(input)
+        #
+        # @staticmethod
+        # def _parser1(input):
+        #     return Parser.terminalParser(closeTokenType)
+        #
+       
 
-    return toFlatDesiredNode(iterableNodeType, AbstractIterableNode.parse)
+        # class AbstractIterableNode(ExpressionNode):
+        # @classmethod
+        # def _parse(cls, input):
+        #     return Parser.oneOf(
+        #         AbstractIterableNode._parser1(input),
+        #         AbstractIterableNode._parser2(input)
+        #     )(input)
+        #
+        # @staticmethod
+        # def _parser1(input):
+        #     def emptyIterable(openToken, closeToken):
+        #         node = AbstractIterableNode(openToken.pos)
+        #         node.value = openToken
+        #         node.next = closeToken
+        #         return node
+        #
+        #     return Parser.allOf(
+        #         Parser.terminalParser(openTokenType),
+        #         Parser.terminalParser(closeTokenType),
+        #         createNode=emptyIterable
+        #     )
+        #
+        # @staticmethod
+        # def _parser2(input):
+        #     def createNode(openParen, expr, iterableTail):
+        #         node = AbstractIterableNode(openParen.pos)
+        #         node.value = expr
+        #         node.next = iterableTail
+        #         return node
+        #
+        #     return Parser.allOf(
+        #         Parser.terminalParser(openTokenType, lambda val, pos: Node(pos)),
+        #         itemParser,
+        #         AbstractIterableTail.parse,
+        #         createNode=createNode
+        #     )
+
+    #return toFlatDesiredNode(iterableNodeType, AbstractIterableNode.parse)
 
 
 def toFlatDesiredNode(iterableNodeType, parser):
@@ -114,7 +158,7 @@ def toFlatDesiredNode(iterableNodeType, parser):
 
         return ParseResult.FAIL()
 
-    return parse
+    return Parser(parse, "flat", [parser])
 
 
 def flattenList(node, output=None):

@@ -1,13 +1,12 @@
-from smnp.ast.node.expression import ExpressionNode
+from smnp.ast.node.atom import AtomParser
 from smnp.ast.node.iterable import abstractIterableParser
-from smnp.ast.node.operator import LeftAssociativeOperatorNode
-from smnp.ast.parser import Parser
+from smnp.ast.node.model import Node
 from smnp.token.type import TokenType
 
 
-class ListNode(LeftAssociativeOperatorNode):
+class ListNode(Node):
+    pass
 
-    @classmethod
-    def _lhsParser(cls):
-        return abstractIterableParser(ListNode, TokenType.OPEN_SQUARE, TokenType.CLOSE_SQUARE,
-                                      Parser.doAssert(ExpressionNode.parse, "expression"))
+
+ListParser = abstractIterableParser(ListNode, TokenType.OPEN_SQUARE, TokenType.CLOSE_SQUARE,
+                                      AtomParser)  #TODO -> zamienić na expr czy coś
