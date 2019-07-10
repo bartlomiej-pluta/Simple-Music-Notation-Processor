@@ -1,4 +1,4 @@
-from smnp.ast.node.identifier import IdentifierNode
+from smnp.ast.node.identifier import Identifier
 from smnp.runtime.evaluator import evaluate, Evaluator, EvaluationResult
 from smnp.runtime.evaluators.expression import expressionEvaluator
 from smnp.type.model import Type
@@ -40,7 +40,7 @@ class AsteriskEvaluator(Evaluator):
 
     @classmethod
     def _automaticNamedVariable(cls, iteratorNode, environment, prefix=''):
-        if type(iteratorNode) == IdentifierNode:
+        if type(iteratorNode) == Identifier:
             return cls._automaticVariableName(environment, prefix, iteratorNode.value, False)
         else:
             return cls._automaticVariableName(environment, prefix, '', True)

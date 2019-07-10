@@ -113,3 +113,9 @@ class Operator(Node):
     @value.setter
     def value(self, value):
         self[0] = value
+
+    @classmethod
+    def withValue(cls, value, pos):
+        node = cls(pos)
+        node.value = value
+        return node

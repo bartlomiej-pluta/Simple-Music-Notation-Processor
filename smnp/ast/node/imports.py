@@ -1,4 +1,4 @@
-from smnp.ast.node.identifier import IdentifierNode
+from smnp.ast.node.identifier import Identifier
 from smnp.ast.node.model import Node
 from smnp.ast.node.none import NoneNode
 from smnp.ast.node.string import StringLiteralNode
@@ -58,7 +58,7 @@ class ImportNode(Node):
             Parser.doAssert(Parser.terminalParser(TokenType.FROM), "'from <source> as <variable name>'"),
             Parser.doAssert(StringLiteralNode._literalParser(), "source as a string"),
             Parser.doAssert(Parser.terminalParser(TokenType.AS), "'as <variable name>'"),
-            Parser.doAssert(IdentifierNode.identifierParser(), "variable name"),
+            Parser.doAssert(Identifier.identifierParser(), "variable name"),
             createNode=createNode
         )
 

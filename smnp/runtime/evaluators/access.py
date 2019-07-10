@@ -1,4 +1,4 @@
-from smnp.ast.node.identifier import IdentifierNode
+from smnp.ast.node.identifier import Identifier
 from smnp.ast.node.invocation import FunctionCallNode
 from smnp.error.runtime import RuntimeException
 from smnp.runtime.evaluator import Evaluator
@@ -14,7 +14,7 @@ class AccessEvaluator(Evaluator):
         left = expressionEvaluator(doAssert=True)(node.left, environment).value #TODO check if it isn't necessary to verify 'result' attr of EvaluatioNResult
         right = node.right
 
-        if type(right) == IdentifierNode:
+        if type(right) == Identifier:
             try:
                 return left.properties[right.value]
             except KeyError:

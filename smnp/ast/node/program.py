@@ -15,7 +15,8 @@ def parse(input):
 
 
             #TODO -> temporary (to remove):
-            MaxPrecedenceExpressionParser
+            MaxPrecedenceExpressionParser,
+            exception=RuntimeError("Nie znam tego wyrazenia")
         )(input)
 
         if result.result:
