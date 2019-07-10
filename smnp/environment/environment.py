@@ -1,6 +1,6 @@
 from smnp.error.function import FunctionNotFoundException, MethodNotFoundException, IllegalFunctionInvocationException
 from smnp.error.runtime import RuntimeException
-from smnp.function.model import types
+from smnp.function.tools import argsTypesToString
 from smnp.runtime.evaluators.function import BodyEvaluator
 
 
@@ -22,7 +22,7 @@ class Environment():
         if customMethodResult[0]:
             return customMethodResult[1]
 
-        raise MethodNotFoundException(types([object], False), name)
+        raise MethodNotFoundException(argsTypesToString([object], False), name)
 
     def _invokeBuiltinMethod(self, object, name, args):
         for method in self.methods:
@@ -46,7 +46,7 @@ class Environment():
                     self.scopes.pop(-1)
                     return (True, result)
                 raise IllegalFunctionInvocationException(f"{method.name}{method.signature.string}",
-                                                         f"{name}{types(args)}")
+                                                         f"{name}{argsTypesToString(args)}")
         return (False, None)
 
     def invokeFunction(self, name, args):
@@ -80,7 +80,7 @@ class Environment():
                     self.callStack.pop(-1)
                     self.scopes.pop(-1)
                     return (True, result)
-                raise IllegalFunctionInvocationException(f"{function.name}{function.signature.string}", f"{name}{types(args)}")
+                raise IllegalFunctionInvocationException(f"{function.name}{function.signature.string}", f"{name}{argsTypesToString(args)}")
         return (False, None)
 
     def addCustomFunction(self, name, signature, arguments, body):
