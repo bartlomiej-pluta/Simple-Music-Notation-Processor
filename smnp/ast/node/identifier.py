@@ -15,8 +15,8 @@ class IdentifierNode(AccessNode, RelationOperatorNode):
     @classmethod
     def _parse(cls, input):
         return Parser.oneOf(
-            cls.accessParser(),
             cls.relationParser(),
+            cls.accessParser(),
             cls.literalParser()
         )(input)
 
@@ -26,7 +26,10 @@ class IdentifierNode(AccessNode, RelationOperatorNode):
 
     @classmethod
     def _relationLhs(cls):
-        return cls.literalParser()
+        return Parser.oneOf(
+            cls.accessParser(),
+            cls.literalParser()
+        )
 
     @classmethod
     def literalParser(cls):

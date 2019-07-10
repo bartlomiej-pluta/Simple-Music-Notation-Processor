@@ -62,7 +62,7 @@ class RelationOperatorNode(ExpressionNode):
         return Parser.doAssert(Parser.oneOf(
             BoolLiteralNode.accessParser(),
             BoolLiteralNode.literalParser(),
-            IdentifierNode.literalParser(),
+            IdentifierNode.parse,
             StringLiteralNode.accessParser(),
             StringLiteralNode.literalParser()
         ), "expression")
