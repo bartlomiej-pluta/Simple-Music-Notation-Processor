@@ -13,5 +13,6 @@ itemParser = Parser.oneOf(
     AtomParser,
 )
 
-ChainParser = Parser.leftAssociativeOperatorParser(itemParser, [TokenType.DOT], itemParser, lambda left, op, right: Chain.withValues(left, op, right))
+ChainParser = Parser.leftAssociativeOperatorParser(itemParser, [TokenType.DOT], itemParser,
+                                                   lambda left, op, right: Chain.withValues(left, op, right))
 

@@ -8,4 +8,5 @@ class Factor(BinaryOperator):
     pass
 
 
-FactorParser = Parser.leftAssociativeOperatorParser(ChainParser, [TokenType.DOUBLE_ASTERISK], ChainParser, lambda left, op, right: Factor.withValues(left, op, right))
+FactorParser = Parser.leftAssociativeOperatorParser(ChainParser, [TokenType.DOUBLE_ASTERISK], ChainParser,
+                                                    lambda left, op, right: Factor.withValues(left, op, right))

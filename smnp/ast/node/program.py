@@ -1,5 +1,5 @@
-from smnp.ast.node.factor import FactorParser
 from smnp.ast.node.model import Node, ParseResult
+from smnp.ast.node.term import TermParser
 from smnp.ast.parser import Parser
 
 
@@ -15,7 +15,7 @@ def parse(input):
 
 
             #TODO -> temporary (to remove):
-            FactorParser
+            TermParser
         )(input)
 
         if result.result:

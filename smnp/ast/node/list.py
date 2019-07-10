@@ -4,9 +4,9 @@ from smnp.ast.node.model import Node
 from smnp.token.type import TokenType
 
 
-class ListNode(Node):
+class List(Node):
     pass
 
 
-ListParser = abstractIterableParser(ListNode, TokenType.OPEN_SQUARE, TokenType.CLOSE_SQUARE,
-                                      AtomParser)  #TODO -> zamienić na expr czy coś
+ListParser = abstractIterableParser(List, TokenType.OPEN_SQUARE, TokenType.CLOSE_SQUARE,
+                                    AtomParser)  #TODO -> zamienić na expr czy coś

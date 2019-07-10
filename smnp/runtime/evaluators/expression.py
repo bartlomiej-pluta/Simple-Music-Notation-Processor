@@ -4,7 +4,7 @@ from smnp.ast.node.bool import BoolLiteralNode
 from smnp.ast.node.identifier import IdentifierNode
 from smnp.ast.node.integer import IntegerLiteralNode
 from smnp.ast.node.invocation import FunctionCallNode
-from smnp.ast.node.list import ListNode
+from smnp.ast.node.list import List
 from smnp.ast.node.map import MapNode
 from smnp.ast.node.note import NoteLiteralNode
 from smnp.ast.node.operator import LeftAssociativeOperatorNode
@@ -38,7 +38,7 @@ def expressionEvaluator(doAssert=False):
                 Evaluator.forNodes(BoolEvaluator.evaluate, BoolLiteralNode),
                 Evaluator.forNodes(TypeEvaluator.evaluate, TypeNode),
                 Evaluator.forNodes(IdentifierEvaluator.evaluate, IdentifierNode),
-                Evaluator.forNodes(ListEvaluator.evaluate, ListNode),
+                Evaluator.forNodes(ListEvaluator.evaluate, List),
                 Evaluator.forNodes(AccessEvaluator.evaluate, LeftAssociativeOperatorNode),
                 Evaluator.forNodes(AssignmentEvaluator.evaluate, AssignmentNode),
                 Evaluator.forNodes(AsteriskEvaluator.evaluate, AsteriskNode),
