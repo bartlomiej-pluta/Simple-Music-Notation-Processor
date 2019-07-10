@@ -1,8 +1,7 @@
 from smnp.ast.parser import parse
-from smnp.environment.factory import createEnvironment
+#from smnp.environment.factory import createEnvironment
 from smnp.error.runtime import RuntimeException
 from smnp.program.FileReader import readLines
-from smnp.runtime.evaluator import evaluate
 from smnp.token.tokenizer import tokenize
 
 
@@ -18,9 +17,9 @@ class Interpreter:
 
     @staticmethod
     def _interpret(lines, printTokens=False, printAst=False, execute=True, baseEnvironment=None):
-        environment = createEnvironment()
-        if baseEnvironment is not None:
-            environment.extend(baseEnvironment)
+        #environment = createEnvironment()
+        #if baseEnvironment is not None:
+        #    environment.extend(baseEnvironment)
 
         try:
             tokens = tokenize(lines)
@@ -31,10 +30,10 @@ class Interpreter:
             if printAst:
                 ast.print()
 
-            if execute:
-                evaluate(ast, environment)
+            #if execute:
+            #    evaluate(ast, environment)
 
-            return environment
+            #return environment
         except RuntimeException as e:
-            e.environment = environment
+            #e.environment = environment
             raise e
