@@ -1,4 +1,4 @@
-from smnp.ast.node.access import LeftAssociativeOperatorNode
+from smnp.ast.node.operator import LeftAssociativeOperatorNode
 from smnp.ast.parser import Parser
 from smnp.token.type import TokenType
 

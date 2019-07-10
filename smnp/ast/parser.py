@@ -1,7 +1,6 @@
 from smnp.ast.node.ignore import IgnoredNode
 from smnp.ast.node.model import ParseResult, Node
 from smnp.ast.node.none import NoneNode
-from smnp.ast.node.operator import OperatorNode
 from smnp.error.syntax import SyntaxException
 
 
@@ -95,6 +94,7 @@ class Parser:
     # leftAssociative -> left | left OP right
     @staticmethod
     def leftAssociativeOperatorParser(leftParser, operatorTokenType, rightParser, createNode):
+        from smnp.ast.node.operator import OperatorNode
         def parse(input):
             left = leftParser(input)
             if left.result:

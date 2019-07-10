@@ -1,4 +1,3 @@
-from smnp.ast.node.access import LeftAssociativeOperatorNode
 from smnp.ast.node.assignment import AssignmentNode
 from smnp.ast.node.asterisk import AsteriskNode
 from smnp.ast.node.bool import BoolLiteralNode
@@ -8,6 +7,7 @@ from smnp.ast.node.invocation import FunctionCallNode
 from smnp.ast.node.list import ListNode
 from smnp.ast.node.map import MapNode
 from smnp.ast.node.note import NoteLiteralNode
+from smnp.ast.node.operator import LeftAssociativeOperatorNode
 from smnp.ast.node.string import StringLiteralNode
 from smnp.ast.node.type import TypeNode
 from smnp.error.runtime import RuntimeException

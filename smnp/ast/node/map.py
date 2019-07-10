@@ -1,14 +1,15 @@
-from smnp.ast.node.access import LeftAssociativeOperatorNode
 from smnp.ast.node.bool import BoolLiteralNode
 from smnp.ast.node.expression import ExpressionNode
 from smnp.ast.node.integer import IntegerLiteralNode
 from smnp.ast.node.iterable import abstractIterableParser
 from smnp.ast.node.none import NoneNode
 from smnp.ast.node.note import NoteLiteralNode
+from smnp.ast.node.operator import LeftAssociativeOperatorNode
 from smnp.ast.node.string import StringLiteralNode
 from smnp.ast.node.type import TypeNode
 from smnp.ast.parser import Parser
 from smnp.token.type import TokenType
+
 
 class MapEntry(ExpressionNode):
     def __init__(self, pos):

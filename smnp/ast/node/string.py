@@ -1,5 +1,5 @@
-from smnp.ast.node.access import LeftAssociativeOperatorNode
 from smnp.ast.node.literal import LiteralNode
+from smnp.ast.node.operator import LeftAssociativeOperatorNode
 from smnp.token.type import TokenType
 
 
