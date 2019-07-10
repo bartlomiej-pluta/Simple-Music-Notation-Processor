@@ -9,7 +9,8 @@ PITCH_MODIFIER = 'b' | '#'
 <string> ::= '"' CHAR* '"'
 <note> ::= '@' PITCH PITCH_MODIFIER? DIGIT? [':' DIGIT+ 'd'?]?
 <identifier> ::= ID [ID|DIGIT]*
-<type> ::= 'integer' | 'string' | 'note' | 'list' | 'void'
+<bool> ::= 'true' | 'false'
+<type> ::= 'integer' | 'string' | 'note' | 'list' | 'map' | 'sound' | 'bool' | 'void'
 
 # Parser
 <expr> ::= <integer> <access> | <integer>
@@ -18,9 +19,10 @@ PITCH_MODIFIER = 'b' | '#'
 <expr> ::= <identifier> <access> | <identifier> '=' <expr> | <functionCall> | <identifier>
 <expr> ::= <list> <access> | <list>
 <expr> ::= <map> <access> | <map>
+<expr> ::= <bool> <access> | <bool>
 <expr> ::= <expr> '.' <identifier> | <expr> '.' <functionCall>
 <expr> ::= <asteriskExpr> '*' <expr>
-<asteriskExpr> ::= <integer> | <string> | <note> | <identifier> | <list>
+<asteriskExpr> ::= <integer> | <string> | <note> | <identifier> | <list> | <map>
 
 <functionCall> ::= <identifier> <arglist>
 
