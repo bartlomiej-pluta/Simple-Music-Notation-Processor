@@ -50,7 +50,7 @@ class Assignment(BinaryOperator):
 
 
 def IdentifierParser(input):
-    identifierLiteralParser = Parser.terminalParser(TokenType.IDENTIFIER, createNode=lambda val, pos: Identifier.withValue(val, pos))
+    identifierLiteralParser = Parser.terminalParser(TokenType.IDENTIFIER, createNode=Identifier.withValue)
 
     functionCallParser = Parser.allOf(
         identifierLiteralParser,
@@ -60,7 +60,7 @@ def IdentifierParser(input):
 
     assignmentParser = Parser.allOf(
         identifierLiteralParser,
-        Parser.terminalParser(TokenType.ASSIGN, lambda val, pos: Operator.withValue(val, pos)),
+        Parser.terminalParser(TokenType.ASSIGN, createNode=Operator.withValue),
         MaxPrecedenceExpressionParser,
         createNode=lambda identifier, assign, expr: Assignment.withValues(identifier, assign, expr)
     )

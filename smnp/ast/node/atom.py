@@ -55,10 +55,10 @@ def LiteralParser(input):
 
     return Parser.oneOf(
         integerParser,
-        Parser.terminalParser(TokenType.STRING, lambda val, pos: StringLiteral.withValue(val, pos)),
-        Parser.terminalParser(TokenType.NOTE, lambda val, pos: NoteLiteral.withValue(val, pos)),
-        Parser.terminalParser(TokenType.BOOL, lambda val, pos: BoolLiteral.withValue(val, pos)),
-        Parser.terminalParser(TokenType.TYPE, lambda val, pos: TypeLiteral.withValue(val, pos)),
+        Parser.terminalParser(TokenType.STRING, createNode=StringLiteral.withValue),
+        Parser.terminalParser(TokenType.NOTE, createNode=NoteLiteral.withValue),
+        Parser.terminalParser(TokenType.BOOL, createNode=BoolLiteral.withValue),
+        Parser.terminalParser(TokenType.TYPE, createNode=TypeLiteral.withValue),
     )(input)
 
 
@@ -68,10 +68,6 @@ def AtomParser(input):
 
     parser = Parser.oneOf(
         LiteralParser,
-        Parser.terminalParser(TokenType.STRING, lambda val, pos: StringLiteral.withValue(val, pos)),
-        Parser.terminalParser(TokenType.NOTE, lambda val, pos: NoteLiteral.withValue(val, pos)),
-        Parser.terminalParser(TokenType.BOOL, lambda val, pos: BoolLiteral.withValue(val, pos)),
-        Parser.terminalParser(TokenType.TYPE, lambda val, pos: TypeLiteral.withValue(val, pos)),
         IdentifierParser,
     )
 

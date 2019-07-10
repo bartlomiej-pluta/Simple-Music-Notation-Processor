@@ -32,9 +32,9 @@ def FactorParser(input):
 
     loopFactor = Parser.allOf(
         powerFactor,
-        Parser.terminalParser(TokenType.DASH, lambda val, pos: Operator.withValue(val, pos)),
+        Parser.terminalParser(TokenType.DASH, createNode=Operator.withValue),
         MaxPrecedenceExpressionParser, #TODO statement here
-        createNode=lambda chain, dash, stmt: Loop.withValues(chain, dash, stmt)
+        createNode=Loop.withValues
     )
 
     return Parser.oneOf(
