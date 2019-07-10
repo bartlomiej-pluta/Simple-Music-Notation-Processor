@@ -21,6 +21,7 @@ class TokenType(Enum):
     INTEGER = 'integer'
     STRING = 'string'
     NOTE = 'note'
+    BOOL = 'bool'
     TYPE = 'type'
     FUNCTION = 'function'
     RETURN = 'return'
