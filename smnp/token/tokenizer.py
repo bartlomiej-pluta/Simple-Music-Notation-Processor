@@ -12,6 +12,8 @@ from smnp.token.tools import defaultTokenizer, separated, regexPatternTokenizer
 from smnp.token.type import TokenType
 
 tokenizers = (
+    defaultTokenizer(TokenType.ARROW),
+
     # Double-character operators
     relationOperatorTokenizer,
     defaultTokenizer(TokenType.DOUBLE_ASTERISK),
@@ -27,7 +29,6 @@ tokenizers = (
     defaultTokenizer(TokenType.CLOSE_ANGLE),
     defaultTokenizer(TokenType.ASTERISK),
     defaultTokenizer(TokenType.ASSIGN),
-    defaultTokenizer(TokenType.ARROW),
     defaultTokenizer(TokenType.COMMA),
     defaultTokenizer(TokenType.SLASH),
     defaultTokenizer(TokenType.MINUS),
