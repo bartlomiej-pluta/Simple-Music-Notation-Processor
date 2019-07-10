@@ -53,9 +53,10 @@ class ExpressionNode(Node):
         from smnp.ast.node.bool import BoolLiteralNode
 
         from smnp.ast.node.identifier import IdentifierNode
+        from smnp.ast.node.string import StringLiteralNode
         return Parser.oneOf(
             #IntegerLiteralNode.parse,
-            #StringLiteralNode.parse,
+            StringLiteralNode.parse,
             #NoteLiteralNode.parse,
             BoolLiteralNode.parse,
             IdentifierNode.parse,

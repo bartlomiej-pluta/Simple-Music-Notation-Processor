@@ -55,12 +55,14 @@ class RelationOperatorNode(ExpressionNode):
 
     @staticmethod
     def _relationRhs():
-        # TODO doAssert
         from smnp.ast.node.bool import BoolLiteralNode
         from smnp.ast.node.identifier import IdentifierNode
 
-        return Parser.oneOf(
+        from smnp.ast.node.string import StringLiteralNode
+        return Parser.doAssert(Parser.oneOf(
             BoolLiteralNode.accessParser(),
             BoolLiteralNode.literalParser(),
-            IdentifierNode.literalParser()
-        )
+            IdentifierNode.literalParser(),
+            StringLiteralNode.accessParser(),
+            StringLiteralNode.literalParser()
+        ), "expression")
