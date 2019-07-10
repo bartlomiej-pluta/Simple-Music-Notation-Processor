@@ -47,7 +47,7 @@ class Node:
         self._print(first=True)
 
     def _print(self, prefix="", last=True, first=False):
-        print(prefix, '' if first else '└─' if last else '├─', self.__class__.__name__, sep="")
+        print(prefix, '' if first else '└─' if last else '├─', self.__class__.__name__, f" (line {self.pos[0]+1}, col {self.pos[1]+1})", sep="")
         prefix += '   ' if last else '│  '
         for i, child in enumerate(self.children):
             last = i == len(self.children) - 1

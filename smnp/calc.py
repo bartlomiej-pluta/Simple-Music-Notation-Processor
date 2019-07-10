@@ -31,7 +31,7 @@ class Operation(Node):
         return self[2]
 
 def atom():
-    return Parser.terminalParser(TokenType.INTEGER, lambda val, pos: Atom(val, pos))
+    return Parser.oneOfTerminals(TokenType.INTEGER, TokenType.NOTE, TokenType.STRING, createNode=lambda val, pos: Atom(val, pos))
 
 def chain():
     return Parser.leftAssociativeOperatorParser(atom(), [TokenType.DOT], atom(), lambda left, op, right: Operation(left, op, right, op.pos), name="chain")
@@ -60,8 +60,7 @@ def evaluate(node):
 
 def draft():
 
-    tokens = tokenize(['2**3/2 + 10 - 2'])
+    tokens = tokenize(['"fesf fe" + "fsefsef" + "fsefs"'])
     e = expr()
     node = e(tokens).node
     node.print()
-    print(evaluate(node))

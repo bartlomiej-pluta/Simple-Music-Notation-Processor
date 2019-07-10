@@ -5,8 +5,8 @@ from smnp.error.syntax import SyntaxException
 
 
 def parse(input):
-    from smnp.ast.node.program import Program
-    return Program.parse(input).node
+    from smnp.ast.node.program import ProgramParser
+    return ProgramParser(input).node
 
 
 class Parser:
@@ -58,7 +58,7 @@ class Parser:
 
             return ParseResult.FAIL()
 
-        return Parser(parse, expectedType.name.lower())
+        return Parser(parse, name=expectedType.name.lower())
 
     # oneOf -> a | b | c | ...
     @staticmethod
