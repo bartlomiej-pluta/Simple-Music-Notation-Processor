@@ -1,4 +1,3 @@
-from smnp.ast.node.ret import ReturnNode
 from smnp.error.runtime import RuntimeException
 from smnp.runtime.evaluator import Evaluator, evaluate
 from smnp.runtime.evaluators.expression import expressionEvaluator
@@ -38,9 +37,17 @@ class BodyEvaluator(Evaluator):
     @classmethod
     def evaluator(cls, node, environment):
         for child in node.children:
-            if type(child) == ReturnNode:
-                x = expressionEvaluator(doAssert=True)(child.value, environment).value #TODO check if it isn't necessary to verify 'result' attr of EvaluatioNResult
-                return x
-            else:
-                evaluate(child, environment)
+            evaluate(child, environment)
+            if environment.callStack[-1].value is not None:
+                return environment.callStack[-1].value
 
+
+class ReturnEvaluator(Evaluator):
+
+    @classmethod
+    def evaluator(cls, node, environment):
+        if len(environment.callStack) > 0:
+            returnValue = expressionEvaluator(doAssert=True)(node.value, environment)
+            environment.callStack[-1].value = returnValue.value
+        else:
+            raise RuntimeException("Cannot use 'return' statement outside a function or method", node.pos, environment)

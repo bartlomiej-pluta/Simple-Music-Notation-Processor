@@ -18,6 +18,9 @@ def _function(env, parameter):
     elif parameter.value == "methods":
         print(env.methodsToString())
         return
+    elif parameter.value == "callstack":
+        print(env.callStackToString())
+        return
 
     raise IllegalArgumentException(f"Unknown parameter '{parameter.value}'")
 

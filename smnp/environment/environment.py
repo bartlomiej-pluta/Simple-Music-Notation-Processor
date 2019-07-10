@@ -11,6 +11,7 @@ class Environment():
         self.methods = methods
         self.customFunctions = []
         self.customMethods = []
+        self.callStack = []
 
     def invokeMethod(self, object, name, args):
         builtinMethodResult = self._invokeBuiltinMethod(object, name, args)
@@ -26,7 +27,9 @@ class Environment():
     def _invokeBuiltinMethod(self, object, name, args):
         for method in self.methods:
             if method.name == name:
+                self.callStack.append(CallStackItem(name))
                 ret = method.call(self, [object, *args])
+                self.callStack.pop(-1)
                 if ret is not None:
                     return (True, ret)
 
@@ -39,7 +42,9 @@ class Environment():
                 if signatureCheckresult[0]:
                     self.scopes.append({argName: argValue for argName, argValue in zip(method.arguments, list(signatureCheckresult[1:]))})
                     self.scopes[-1][method.alias] = object
+                    self.callStack.append(CallStackItem(name))
                     result = BodyEvaluator.evaluate(method.body, self).value  # TODO check if it isn't necessary to verify 'result' attr of EvaluatioNResult
+                    self.callStack.pop(-1)
                     self.scopes.pop(-1)
                     return (True, result)
                 raise IllegalFunctionInvocationException(f"{method.name}{method.signature.string}",
@@ -60,7 +65,9 @@ class Environment():
     def _invokeBuiltinFunction(self, name, args):
         for function in self.functions:
             if function.name == name:
+                self.callStack.append(CallStackItem(name))
                 ret = function.call(self, args)
+                self.callStack.pop(-1)
                 if ret is not None:
                     return (True, ret)
 
@@ -72,7 +79,9 @@ class Environment():
                 signatureCheckresult = function.signature.check(args)
                 if signatureCheckresult[0]:
                     self.scopes.append({ argName: argValue for argName, argValue in zip(function.arguments, list(signatureCheckresult[1:])) })
+                    self.callStack.append(CallStackItem(name))
                     result = BodyEvaluator.evaluate(function.body, self).value #TODO check if it isn't necessary to verify 'result' attr of EvaluatioNResult
+                    self.callStack.pop(-1)
                     self.scopes.pop(-1)
                     return (True, result)
                 raise IllegalFunctionInvocationException(f"{function.name}{function.signature.string}", f"{name}{types(args)}")
@@ -138,6 +147,9 @@ class Environment():
     def customMethodsToString(self):
         return "Custom Methods:\n" + ("\n".join([ f"  {function.name}(...)" for function in self.customMethods ]))
 
+    def callStackToString(self):
+        return "Call Stack:\n" + ("\n".join([ f"  [{i}]: {function.function}(...)" for i, function in reversed(list(enumerate(self.callStack))) ]))
+
     def extend(self, environment):
         self.scopes[0].update(environment.scopes[0])
         self.customFunctions.extend(environment.customFunctions)
@@ -145,10 +157,16 @@ class Environment():
 
 
     def __str__(self):
-        return f"{self.scopesToString()}\n{self.functionsToString()}\n{self.methodsToString()}\n{self.customFunctionsToString()}\n{self.customMethodsToString()}"
+        return f"{self.scopesToString()}\n{self.functionsToString()}\n{self.methodsToString()}\n{self.customFunctionsToString()}\n{self.customMethodsToString()}\n{self.callStackToString()}"
 
     def __repr__(self):
         return self.__str__()
+
+
+class CallStackItem:
+    def __init__(self, function):
+        self.function = function
+        self.value = None
 
 
 class CustomFunction:

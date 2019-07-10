@@ -2,8 +2,9 @@ from smnp.error.base import SmnpException
 
 
 class RuntimeException(SmnpException):
-    def __init__(self, msg, pos):
+    def __init__(self, msg, pos, environment=None):
         super().__init__(msg, pos)
+        self.environment = environment
 
     def _title(self):
         return "Runtime Error"
