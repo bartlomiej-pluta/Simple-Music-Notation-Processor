@@ -11,3 +11,7 @@ class NoteLiteralNode(LiteralNode, LeftAssociativeOperatorNode):
     @classmethod
     def _getTokenType(cls):
         return TokenType.NOTE
+
+    @classmethod
+    def _lhsParser(cls):
+        return cls.literalParser()

@@ -45,22 +45,23 @@ class LeftAssociativeOperatorNode(ExpressionNode):
             return node
 
         return Parser.leftAssociativeOperatorParser(
-            cls._literalParser(),
+            cls._lhsParser(),
             TokenType.DOT,
-            cls._parseAccessingProperty(),
+            cls._rhsParser(),
             createNode=createNode
         )(input)
 
     @classmethod
-    def _literalParser(cls):
-        pass
+    def _lhsParser(cls):
+        raise RuntimeError(f"LHS parser is not implemented in {cls.__name__}")
 
     @staticmethod
-    def _parseAccessingProperty():
+    def _rhsParser():
         from smnp.ast.node.identifier import IdentifierNode
 
         return Parser.oneOf(
-            IdentifierNode._literalParser(),
+            # TODO!!!
+            IdentifierNode._lhsParser(),
             IdentifierNode._functionCallParser(),
             exception=lambda input: SyntaxException(f"Expected property name or method call, found '{input.current().rawValue}'", input.currentPos())
         )

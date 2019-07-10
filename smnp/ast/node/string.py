@@ -11,3 +11,7 @@ class StringLiteralNode(LiteralNode, LeftAssociativeOperatorNode):
     @classmethod
     def _getTokenType(cls):
         return TokenType.STRING
+
+    @classmethod
+    def _lhsParser(cls):
+        return cls.literalParser()

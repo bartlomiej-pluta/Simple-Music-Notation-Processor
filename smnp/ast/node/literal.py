@@ -13,6 +13,6 @@ class LiteralNode(ExpressionNode):
         return value
 
     @classmethod
-    def _literalParser(cls):
+    def literalParser(cls):
         createNode = lambda val, pos: cls.withValue(cls._processValue(val), pos)
         return Parser.terminalParser(cls._getTokenType(), createNode)

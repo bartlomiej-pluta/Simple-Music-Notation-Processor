@@ -12,7 +12,7 @@ class IdentifierNode(LeftAssociativeOperatorNode):
         self.children = [None]
 
     @classmethod
-    def _literalParser(cls):
+    def _lhsParser(cls):
         return Parser.oneOf(
             IdentifierNode._functionCallParser(),
             IdentifierNode._assignmentParser(),

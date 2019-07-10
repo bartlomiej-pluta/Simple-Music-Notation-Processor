@@ -35,7 +35,7 @@ class MapEntry(ExpressionNode):
 class MapNode(LeftAssociativeOperatorNode):
 
     @classmethod
-    def _literalParser(cls):
+    def _lhsParser(cls):
         return abstractIterableParser(MapNode, TokenType.OPEN_CURLY, TokenType.CLOSE_CURLY, cls._entryParser())
 
     @classmethod
@@ -56,9 +56,9 @@ class MapNode(LeftAssociativeOperatorNode):
     @classmethod
     def _keyParser(cls):
         return Parser.oneOf(
-            IntegerLiteralNode._literalParser(),
-            StringLiteralNode._literalParser(),
-            NoteLiteralNode._literalParser(),
-            BoolLiteralNode._literalParser(),
+            IntegerLiteralNode.literalParser(),
+            StringLiteralNode.literalParser(),
+            NoteLiteralNode.literalParser(),
+            BoolLiteralNode.literalParser(),
             TypeNode.parse
         )

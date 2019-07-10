@@ -9,7 +9,11 @@ class IntegerLiteralNode(LeftAssociativeOperatorNode):
         self.children = [None]
 
     @classmethod
-    def _literalParser(cls):
+    def _lhsParser(cls):
+        return cls.literalParser()
+
+    @classmethod
+    def literalParser(cls):
         return Parser.oneOf(
             cls._negativeIntegerParser(),
             cls._positiveIntegerParser()

@@ -8,6 +8,6 @@ from smnp.token.type import TokenType
 class ListNode(LeftAssociativeOperatorNode):
 
     @classmethod
-    def _literalParser(cls):
+    def _lhsParser(cls):
         return abstractIterableParser(ListNode, TokenType.OPEN_SQUARE, TokenType.CLOSE_SQUARE,
                                       Parser.doAssert(ExpressionNode.parse, "expression"))
