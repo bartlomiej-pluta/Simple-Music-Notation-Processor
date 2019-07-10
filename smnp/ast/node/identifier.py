@@ -14,7 +14,7 @@ class IdentifierNode(AccessNode):
     @classmethod
     def _literalParser(cls):
         return Parser.oneOf(
-            IdentifierNode._functionCallParser(),
+            IdentifierNode.functionCallParser(),
             IdentifierNode._assignmentParser(),
             IdentifierNode.identifierParser()
         )
@@ -35,7 +35,7 @@ class IdentifierNode(AccessNode):
         )
 
     @staticmethod
-    def _functionCallParser():
+    def functionCallParser():
         def createNode(name, arguments):
             node = FunctionCallNode(name.pos)
             node.name = name

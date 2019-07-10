@@ -17,7 +17,6 @@ class BoolLiteralNode(LiteralNode, AccessNode, RelationOperatorNode):
     @classmethod
     def _parse(cls, input):
         x = Parser.oneOf(
-
             cls.relationParser(),
             cls.accessParser(),
             cls.literalParser()
@@ -25,9 +24,9 @@ class BoolLiteralNode(LiteralNode, AccessNode, RelationOperatorNode):
         return x
 
     @classmethod
-    def _accessLiteralParser(cls):
+    def _accessLhs(cls):
         return cls.literalParser()
 
     @classmethod
-    def _relationLiteralParser(cls):
+    def _relationLhs(cls):
         return cls.literalParser()
