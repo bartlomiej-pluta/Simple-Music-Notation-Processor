@@ -93,21 +93,49 @@ class Parser:
 
     # leftAssociative -> left | left OP right
     @staticmethod
-    def leftAssociativeOperatorParser(leftParser, operatorTokenType, rightParser, createNode):
+    def leftAssociativeOperatorParser(leftParser, operatorTokenTypes, rightParser, createNode):
         from smnp.ast.node.operator import OperatorNode
+
         def parse(input):
+            operatorParser = Parser.oneOfTerminals(*operatorTokenTypes, createNode=lambda val, pos: OperatorNode.withChildren([val], pos))
             left = leftParser(input)
             if left.result:
-                operator = Parser.terminalParser(operatorTokenType, lambda val, pos: OperatorNode.withChildren([val], pos))(input)
+                operator = operatorParser(input)
                 while operator.result:
                     right = rightParser(input)
                     left = ParseResult.OK(createNode(left.node, operator.node, right.node))
-                    operator = Parser.terminalParser(operatorTokenType, lambda val, pos: OperatorNode.withChildren([val], pos))(input)
+                    operator = operatorParser(input)
                 return left
 
             return ParseResult.FAIL()
 
         return parse
+
+    @staticmethod
+    def oneOfTerminals(*tokenTypes, createNode=None):
+        return Parser.oneOf(*[ Parser.terminalParser(expectedType, createNode=createNode) for expectedType in tokenTypes ])
+
+    # leftAssociative -> left OP right | right
+    @staticmethod
+    def leftAssociativeOperatorOrRightParser(leftParser, operatorTokenType, rightParser, createNode):
+        from smnp.ast.node.operator import OperatorNode
+        def parse(input):
+            left = leftParser(input)
+            oneAtLeast = False
+            if left.result:
+                operator = Parser.terminalParser(operatorTokenType, lambda val, pos: OperatorNode.withChildren([val], pos))(input)
+                while operator.result:
+                    oneAtLeast = True
+                    right = rightParser(input)
+                    left = ParseResult.OK(createNode(left.node, operator.node, right.node))
+                    operator = Parser.terminalParser(operatorTokenType, lambda val, pos: OperatorNode.withChildren([val], pos))(input)
+
+                if oneAtLeast:
+                    return left
+
+            return ParseResult.FAIL()
+
+        return Parser.oneOf(parse, rightParser)
 
     # loop -> start item* end
     @staticmethod
@@ -153,6 +181,10 @@ class Parser:
             return ParseResult.OK(NoneNode())
 
         return parse
+
+    @staticmethod
+    def epsilon():
+        return lambda *args: ParseResult.OK(NoneNode())
 
     @staticmethod
     def many(parser, createNode):

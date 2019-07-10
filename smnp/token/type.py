@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class TokenType(Enum):
+    DOUBLE_ASTERISK = '**'
     OPEN_CURLY = '{'
     CLOSE_CURLY = '}'
     OPEN_PAREN = '('
@@ -14,7 +15,9 @@ class TokenType(Enum):
     ASSIGN = '='
     ARROW = '->'
     COMMA = ','
+    SLASH = '/'
     MINUS = '-'
+    PLUS = '+'
     DOTS = '...'
     AMP = '&'
     DOT = '.'
