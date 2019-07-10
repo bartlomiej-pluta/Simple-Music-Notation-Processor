@@ -1,4 +1,4 @@
-from smnp.ast.node.access import AccessNode
+from smnp.ast.node.access import LeftAssociativeOperatorNode
 from smnp.ast.node.assignment import AssignmentNode
 from smnp.ast.node.expression import ExpressionNode
 from smnp.ast.node.invocation import FunctionCallNode, ArgumentsListNode
@@ -6,10 +6,10 @@ from smnp.ast.parser import Parser
 from smnp.token.type import TokenType
 
 
-class IdentifierNode(AccessNode):
+class IdentifierNode(LeftAssociativeOperatorNode):
     def __init__(self, pos):
         super().__init__(pos)
-        del self.children[1]
+        self.children = [None]
 
     @classmethod
     def _literalParser(cls):

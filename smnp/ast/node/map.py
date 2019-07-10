@@ -1,4 +1,4 @@
-from smnp.ast.node.access import AccessNode
+from smnp.ast.node.access import LeftAssociativeOperatorNode
 from smnp.ast.node.bool import BoolLiteralNode
 from smnp.ast.node.expression import ExpressionNode
 from smnp.ast.node.integer import IntegerLiteralNode
@@ -31,7 +31,7 @@ class MapEntry(ExpressionNode):
     def value(self, value):
         self[1] = value
 
-class MapNode(AccessNode):
+class MapNode(LeftAssociativeOperatorNode):
 
     @classmethod
     def _literalParser(cls):

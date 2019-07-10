@@ -1,7 +1,8 @@
-from smnp.ast.node.access import AccessNode
+from smnp.ast.node.access import LeftAssociativeOperatorNode
 from smnp.ast.node.expression import ExpressionNode
 from smnp.ast.node.iterable import abstractIterableParser
 from smnp.ast.node.model import Node
+from smnp.ast.node.none import NoneNode
 from smnp.ast.parser import Parser
 from smnp.token.type import TokenType
 
@@ -14,9 +15,10 @@ class ArgumentsListNode(Node):
                                       Parser.doAssert(ExpressionNode.parse, "expression"))(input)
 
 
-class FunctionCallNode(AccessNode):
+class FunctionCallNode(LeftAssociativeOperatorNode):
     def __init__(self, pos):
         super().__init__(pos)
+        self.children = [NoneNode(), NoneNode()]
 
     @property
     def name(self):

@@ -1,14 +1,14 @@
 from smnp.ast.node.expression import ExpressionNode
-from smnp.ast.node.ignore import IgnoredNode
+from smnp.ast.node.none import NoneNode
 from smnp.ast.parser import Parser
 from smnp.error.syntax import SyntaxException
 from smnp.token.type import TokenType
 
 
-class AccessNode(ExpressionNode):
+class LeftAssociativeOperatorNode(ExpressionNode):
     def __init__(self, pos):
         super().__init__(pos)
-        self.children.append(IgnoredNode(pos))
+        self.children = [NoneNode(), NoneNode(), NoneNode()]
 
     @property
     def left(self):
@@ -19,18 +19,27 @@ class AccessNode(ExpressionNode):
         self[0] = value
 
     @property
-    def right(self):
+    def operator(self):
         return self[1]
+
+    @operator.setter
+    def operator(self, value):
+        self[1] = value
+
+    @property
+    def right(self):
+        return self[2]
 
     @right.setter
     def right(self, value):
-        self[1] = value
+        self[2] = value
 
     @classmethod
     def _parse(cls, input):
-        def createNode(left, right):
-            node = AccessNode(right.pos)
+        def createNode(left, operator, right):
+            node = LeftAssociativeOperatorNode(right.pos)
             node.left = left
+            node.operator = operator
             node.right = right
             return node
 

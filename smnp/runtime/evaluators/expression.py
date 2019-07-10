@@ -1,4 +1,4 @@
-from smnp.ast.node.access import AccessNode
+from smnp.ast.node.access import LeftAssociativeOperatorNode
 from smnp.ast.node.assignment import AssignmentNode
 from smnp.ast.node.asterisk import AsteriskNode
 from smnp.ast.node.bool import BoolLiteralNode
@@ -39,7 +39,7 @@ def expressionEvaluator(doAssert=False):
                 Evaluator.forNodes(TypeEvaluator.evaluate, TypeNode),
                 Evaluator.forNodes(IdentifierEvaluator.evaluate, IdentifierNode),
                 Evaluator.forNodes(ListEvaluator.evaluate, ListNode),
-                Evaluator.forNodes(AccessEvaluator.evaluate, AccessNode),
+                Evaluator.forNodes(AccessEvaluator.evaluate, LeftAssociativeOperatorNode),
                 Evaluator.forNodes(AssignmentEvaluator.evaluate, AssignmentNode),
                 Evaluator.forNodes(AsteriskEvaluator.evaluate, AsteriskNode),
                 Evaluator.forNodes(MapEvaluator.evaluate, MapNode)

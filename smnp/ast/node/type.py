@@ -1,4 +1,4 @@
-from smnp.ast.node.access import AccessNode
+from smnp.ast.node.access import LeftAssociativeOperatorNode
 from smnp.ast.node.iterable import abstractIterableParser
 from smnp.ast.node.model import Node
 from smnp.ast.parser import Parser
@@ -24,7 +24,7 @@ class TypeSpecifiers(Node):
     pass
 
 
-class TypeNode(AccessNode):
+class TypeNode(LeftAssociativeOperatorNode):
     def __init__(self, pos):
         super().__init__(pos)
 

@@ -1,12 +1,12 @@
-from smnp.ast.node.access import AccessNode
+from smnp.ast.node.access import LeftAssociativeOperatorNode
 from smnp.ast.parser import Parser
 from smnp.token.type import TokenType
 
 
-class IntegerLiteralNode(AccessNode):
+class IntegerLiteralNode(LeftAssociativeOperatorNode):
     def __init__(self, pos):
         super().__init__(pos)
-        del self.children[1]
+        self.children = [None]
 
     @classmethod
     def _literalParser(cls):

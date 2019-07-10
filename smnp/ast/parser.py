@@ -1,6 +1,7 @@
 from smnp.ast.node.ignore import IgnoredNode
 from smnp.ast.node.model import ParseResult, Node
 from smnp.ast.node.none import NoneNode
+from smnp.ast.node.operator import OperatorNode
 from smnp.error.syntax import SyntaxException
 
 
@@ -97,10 +98,11 @@ class Parser:
         def parse(input):
             left = leftParser(input)
             if left.result:
-                while Parser.terminalParser(operatorTokenType)(input).result:
+                operator = Parser.terminalParser(operatorTokenType, lambda val, pos: OperatorNode.withChildren([val], pos))(input)
+                while operator.result:
                     right = rightParser(input)
-                    left = ParseResult.OK(createNode(left.node, right.node))
-
+                    left = ParseResult.OK(createNode(left.node, operator.node, right.node))
+                    operator = Parser.terminalParser(operatorTokenType, lambda val, pos: OperatorNode.withChildren([val], pos))(input)
                 return left
 
             return ParseResult.FAIL()
