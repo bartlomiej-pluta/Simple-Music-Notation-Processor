@@ -38,9 +38,12 @@ class NoteLiteral(Atom):
 class BoolLiteral(Atom):
     pass
 
-def AtomParser(input):
-    from smnp.ast.node.identifier import IdentifierParser
 
+class TypeLiteral(Atom):
+    pass
+
+
+def LiteralParser(input):
     integerParser = Parser.oneOf(
         Parser.terminalParser(TokenType.INTEGER, lambda val, pos: IntegerLiteral.withValue(int(val), pos)),
         Parser.allOf(
@@ -50,11 +53,25 @@ def AtomParser(input):
         )
     )
 
-    parser = Parser.oneOf(
+    return Parser.oneOf(
         integerParser,
         Parser.terminalParser(TokenType.STRING, lambda val, pos: StringLiteral.withValue(val, pos)),
         Parser.terminalParser(TokenType.NOTE, lambda val, pos: NoteLiteral.withValue(val, pos)),
         Parser.terminalParser(TokenType.BOOL, lambda val, pos: BoolLiteral.withValue(val, pos)),
+        Parser.terminalParser(TokenType.TYPE, lambda val, pos: TypeLiteral.withValue(val, pos)),
+    )(input)
+
+
+def AtomParser(input):
+    from smnp.ast.node.identifier import IdentifierParser
+
+
+    parser = Parser.oneOf(
+        LiteralParser,
+        Parser.terminalParser(TokenType.STRING, lambda val, pos: StringLiteral.withValue(val, pos)),
+        Parser.terminalParser(TokenType.NOTE, lambda val, pos: NoteLiteral.withValue(val, pos)),
+        Parser.terminalParser(TokenType.BOOL, lambda val, pos: BoolLiteral.withValue(val, pos)),
+        Parser.terminalParser(TokenType.TYPE, lambda val, pos: TypeLiteral.withValue(val, pos)),
         IdentifierParser,
     )
 

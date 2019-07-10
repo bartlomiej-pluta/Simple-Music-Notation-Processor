@@ -1,20 +1,12 @@
-from smnp.ast.node.bool import BoolLiteralNode
-from smnp.ast.node.expression import ExpressionNode
-from smnp.ast.node.integer import IntegerLiteralNode
+from smnp.ast.node.atom import LiteralParser
 from smnp.ast.node.iterable import abstractIterableParser
-from smnp.ast.node.none import NoneNode
-from smnp.ast.node.note import NoteLiteralNode
-from smnp.ast.node.operator import LeftAssociativeOperatorNode
-from smnp.ast.node.string import StringLiteralNode
-from smnp.ast.node.type import TypeNode
+from smnp.ast.node.model import Node
+from smnp.ast.node.operator import BinaryOperator, Operator
 from smnp.ast.parser import Parser
 from smnp.token.type import TokenType
 
 
-class MapEntry(ExpressionNode):
-    def __init__(self, pos):
-        super().__init__(pos)
-        self.children = [NoneNode(), NoneNode()]
+class MapEntry(BinaryOperator):
 
     @property
     def key(self):
@@ -26,39 +18,29 @@ class MapEntry(ExpressionNode):
 
     @property
     def value(self):
-        return self[1]
+        return self[2]
 
     @value.setter
     def value(self, value):
-        self[1] = value
+        self[2] = value
 
-class MapNode(LeftAssociativeOperatorNode):
 
-    @classmethod
-    def _lhsParser(cls):
-        return abstractIterableParser(MapNode, TokenType.OPEN_CURLY, TokenType.CLOSE_CURLY, cls._entryParser())
+class Map(Node):
+    pass
 
-    @classmethod
-    def _entryParser(cls):
-        def createNode(key, arrow, value):
-            node = MapEntry(key.pos)
-            node.key = key
-            node.value = value
-            return node
 
-        return Parser.allOf(
-            cls._keyParser(),
-            Parser.terminalParser(TokenType.ARROW),
-            ExpressionNode.parse,
-            createNode=createNode
-        )
+def MapParser(input):
+    from smnp.ast.node.expression import MaxPrecedenceExpressionParser
+    keyParser = LiteralParser
+    valueParser = MaxPrecedenceExpressionParser
 
-    @classmethod
-    def _keyParser(cls):
-        return Parser.oneOf(
-            IntegerLiteralNode.literalParser(),
-            StringLiteralNode.literalParser(),
-            NoteLiteralNode.literalParser(),
-            BoolLiteralNode.literalParser(),
-            TypeNode.parse
-        )
+    mapEntryParser = Parser.allOf(
+        keyParser,
+        Parser.terminalParser(TokenType.ARROW, createNode=Operator.withValue),
+        valueParser,
+        createNode=MapEntry.withValues
+    )
+
+    mapParser = abstractIterableParser(Map, TokenType.OPEN_CURLY, TokenType.CLOSE_CURLY, mapEntryParser)
+
+    return Parser(mapParser, "map", [mapParser])(input)
