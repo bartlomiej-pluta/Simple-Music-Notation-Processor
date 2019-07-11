@@ -1,11 +1,3 @@
-# from smnp.ast.node.identifier import Identifier
-# from smnp.ast.node.model import Node
-# from smnp.ast.node.none import NoneNode
-# from smnp.ast.node.string import StringLiteralNode
-# from smnp.ast.node.type import TypeNode
-# from smnp.ast.parser import Parser
-# from smnp.token.type import TokenType
-#
 from smnp.ast.node.atom import StringParser
 from smnp.ast.node.model import Node
 from smnp.ast.parser import Parser

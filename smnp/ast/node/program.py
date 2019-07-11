@@ -4,6 +4,7 @@ from smnp.ast.node.imports import ImportParser
 from smnp.ast.node.model import Node, ParseResult
 from smnp.ast.node.statement import StatementParser
 from smnp.ast.parser import Parser
+from smnp.error.syntax import SyntaxException
 
 
 class Program(Node):
@@ -13,15 +14,19 @@ class Program(Node):
 def ProgramParser(input):
     def parse(input):
         root = Program()
+
+        # Start Symbol
+        startSymbolParser = Parser.oneOf(
+            ImportParser,
+            FunctionDefinitionParser,
+            ExtendParser,
+            StatementParser,
+            exception=lambda inp: SyntaxException(f"Invalid statement: {inp.currentToEndOfLine()}", inp.current().pos),
+            name="start symbol"
+        )
+
         while input.hasCurrent():
-            result = Parser.oneOf(
-                # Start Symbol
-                ImportParser,
-                FunctionDefinitionParser,
-                ExtendParser,
-                StatementParser,
-                exception=RuntimeError("Nie znam tego wyrazenia")
-            )(input)
+            result = startSymbolParser(input)
 
             if result.result:
                 root.append(result.node)
@@ -29,21 +34,3 @@ def ProgramParser(input):
         return ParseResult.OK(root)
 
     return Parser(parse, name="program")(input)
-    # @classmethod
-    # def _parse(cls, input):
-    #     def parseToken(input):
-    #         return Parser.oneOf(
-    #             FunctionDefinitionNode.parse,
-    #             ExtendNode.parse,
-    #             ExpressionNode.parse,
-    #             ImportNode.parse,
-    #             StatementNode.parse,
-    #             exception = SyntaxException(f"Invalid statement: {input.currentToEndOfLine()}", input.current().pos)
-    #         )(input)
-    #
-    #     root = Program()
-    #     while input.hasCurrent():
-    #         result = parseToken(input)
-    #         if result.result:
-    #             root.append(result.node)
-    #     return ParseResult.OK(root)

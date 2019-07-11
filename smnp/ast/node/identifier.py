@@ -54,8 +54,6 @@ def IdentifierLiteralParser(input):
 
 
 def IdentifierParser(input):
-
-
     functionCallParser = Parser.allOf(
         IdentifierLiteralParser,
         abstractIterableParser(ArgumentsList, TokenType.OPEN_PAREN, TokenType.CLOSE_PAREN, ExpressionParser),

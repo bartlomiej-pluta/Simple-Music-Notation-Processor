@@ -19,13 +19,12 @@ def ExpressionParser(input):
         lambda left, op, right: Expression.withValue(BinaryOperator.withValues(left, op, right))
     )
 
-    expr2 =  Parser.leftAssociativeOperatorParser(
+    expr2 = Parser.leftAssociativeOperatorParser(
         expr1,
         [TokenType.RELATION, TokenType.OPEN_ANGLE, TokenType.CLOSE_ANGLE],
         expr1,
         lambda left, op, right: Expression.withValue(BinaryOperator.withValues(left, op, right))
     )
-
 
     expr3 = Parser.leftAssociativeOperatorParser(
         expr2,
@@ -33,7 +32,6 @@ def ExpressionParser(input):
         expr2,
         lambda left, op, right: Expression.withValue(BinaryOperator.withValues(left, op, right))
     )
-
 
     expr4 = Parser.leftAssociativeOperatorParser(
         expr3,

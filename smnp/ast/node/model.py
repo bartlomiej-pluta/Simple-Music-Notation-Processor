@@ -28,21 +28,6 @@ class Node:
     def pop(self, index):
         return self.children.pop(index)
 
-    @classmethod
-    def _parse(cls, input):
-        pass
-
-    @classmethod
-    def parse(cls, input):
-        result = cls._parse(input)
-        if result is None:
-            return ParseResult.FAIL()
-
-        if not isinstance(result, ParseResult):
-            raise RuntimeError(f"_parse() method of '{cls.__name__}' class haven't returned ParseResult object")
-
-        return result
-
     def print(self):
         self._print(first=True)
 
