@@ -30,9 +30,9 @@ class Map(Node):
 
 
 def MapParser(input):
-    from smnp.ast.node.expression import MaxPrecedenceExpressionParser
+    from smnp.ast.node.expression import ExpressionParser
     keyParser = LiteralParser
-    valueParser = MaxPrecedenceExpressionParser
+    valueParser = ExpressionParser
 
     mapEntryParser = Parser.allOf(
         keyParser,

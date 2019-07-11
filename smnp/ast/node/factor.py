@@ -17,7 +17,7 @@ class Loop(BinaryOperator):
 
 
 def FactorParser(input):
-    from smnp.ast.node.expression import MaxPrecedenceExpressionParser
+    from smnp.ast.node.expression import ExpressionParser
     from smnp.ast.node.statement import StatementParser
 
     powerFactor = Parser.leftAssociativeOperatorParser(
@@ -30,7 +30,7 @@ def FactorParser(input):
 
     exprFactor = Parser.allOf(
         Parser.terminalParser(TokenType.OPEN_PAREN),
-        MaxPrecedenceExpressionParser,
+        ExpressionParser,
         Parser.terminalParser(TokenType.CLOSE_PAREN),
         createNode=lambda open, expr, close: expr,
         name="grouping parentheses"

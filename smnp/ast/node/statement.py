@@ -1,4 +1,3 @@
-from smnp.ast.node.expression import MaxPrecedenceExpressionParser
 from smnp.ast.node.model import Node
 from smnp.ast.parser import Parser
 
@@ -10,11 +9,12 @@ class Statement(Node):
 def StatementParser(input):
     from smnp.ast.node.block import BlockParser
     from smnp.ast.node.condition import IfElseStatementParser
+    from smnp.ast.node.expression import ExpressionParser
 
     parser = Parser.oneOf(
         IfElseStatementParser,
         BlockParser,
-        MaxPrecedenceExpressionParser
+        ExpressionParser
     )
 
     return Parser(parser, "statement", parser)(input)

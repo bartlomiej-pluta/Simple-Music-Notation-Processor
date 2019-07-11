@@ -1,5 +1,5 @@
 from smnp.ast.node.atom import Atom
-from smnp.ast.node.expression import MaxPrecedenceExpressionParser
+from smnp.ast.node.expression import ExpressionParser
 from smnp.ast.node.iterable import abstractIterableParser
 from smnp.ast.node.model import Node
 from smnp.ast.node.none import NoneNode
@@ -54,14 +54,14 @@ def IdentifierParser(input):
 
     functionCallParser = Parser.allOf(
         identifierLiteralParser,
-        abstractIterableParser(ArgumentsList, TokenType.OPEN_PAREN, TokenType.CLOSE_PAREN, MaxPrecedenceExpressionParser),
+        abstractIterableParser(ArgumentsList, TokenType.OPEN_PAREN, TokenType.CLOSE_PAREN, ExpressionParser),
         createNode=lambda name, arguments: FunctionCall.withChildren(name, arguments)
     )
 
     assignmentParser = Parser.allOf(
         identifierLiteralParser,
         Parser.terminalParser(TokenType.ASSIGN, createNode=Operator.withValue),
-        MaxPrecedenceExpressionParser,
+        ExpressionParser,
         createNode=lambda identifier, assign, expr: Assignment.withValues(identifier, assign, expr)
     )
 

@@ -10,54 +10,47 @@ class Expression(Valuable):
 
 
 def ExpressionParser(input):
-    return Parser.leftAssociativeOperatorParser(
+    expr1 = Parser.leftAssociativeOperatorParser(
         TermParser,
         [TokenType.PLUS, TokenType.MINUS],
         TermParser,
         lambda left, op, right: Expression.withValue(BinaryOperator.withValues(left, op, right))
-    )(input)
+    )
 
-
-def Expression2Parser(input):
-    return Parser.leftAssociativeOperatorParser(
-        ExpressionParser,
+    expr2 =  Parser.leftAssociativeOperatorParser(
+        expr1,
         [TokenType.RELATION],
-        ExpressionParser,
+        expr1,
         lambda left, op, right: Expression.withValue(BinaryOperator.withValues(left, op, right))
-    )(input)
+    )
 
 
-def Expression3Parser(input):
-    return Parser.leftAssociativeOperatorParser(
-        Expression2Parser,
+    expr3 = Parser.leftAssociativeOperatorParser(
+        expr2,
         [TokenType.AND],
-        Expression2Parser,
+        expr2,
         lambda left, op, right: Expression.withValue(BinaryOperator.withValues(left, op, right))
-    )(input)
+    )
 
 
-def Expression4Parser(input):
-    from smnp.ast.node.condition import IfElse
-    exprParser = Parser.leftAssociativeOperatorParser(
-        Expression3Parser,
+    expr4 = Parser.leftAssociativeOperatorParser(
+        expr3,
         [TokenType.OR],
-        Expression3Parser,
+        expr3,
         lambda left, op, right: Expression.withValue(BinaryOperator.withValues(left, op, right))
     )
 
     ifElseExpression = Parser.allOf(
-        exprParser,
+        expr4,
         Parser.terminalParser(TokenType.IF),
-        Expression4Parser,
+        expr4,
         Parser.terminalParser(TokenType.ELSE),
-        Expression4Parser,
+        expr4,
         createNode=lambda ifNode, _, condition, __, elseNode: IfElse.createNode(ifNode, condition, elseNode)
     )
 
     return Parser.oneOf(
         ifElseExpression,
-        exprParser,
+        expr4,
     )(input)
 
-
-MaxPrecedenceExpressionParser = Expression4Parser

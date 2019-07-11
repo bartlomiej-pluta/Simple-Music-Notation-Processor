@@ -8,6 +8,6 @@ class List(Node):
 
 
 def ListParser(input):
-    from smnp.ast.node.expression import MaxPrecedenceExpressionParser
+    from smnp.ast.node.expression import ExpressionParser
     return abstractIterableParser(List, TokenType.OPEN_SQUARE, TokenType.CLOSE_SQUARE,
-                                    MaxPrecedenceExpressionParser)(input)
+                                    ExpressionParser)(input)
