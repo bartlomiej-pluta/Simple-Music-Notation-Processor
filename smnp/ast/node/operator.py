@@ -2,6 +2,35 @@ from smnp.ast.node.model import Node
 from smnp.ast.node.none import NoneNode
 
 
+class UnaryOperator(Node):
+    def __init__(self, pos):
+        super().__init__(pos)
+        self.children=[NoneNode(), NoneNode()]
+
+    @property
+    def operator(self):
+        return self[0]
+
+    @operator.setter
+    def operator(self, value):
+        self[0] = value
+
+    @property
+    def value(self):
+        return self[1]
+
+    @value.setter
+    def value(self, value):
+        self[1] = value
+
+    @classmethod
+    def withValues(cls, operator, value):
+        node = cls(operator.pos)
+        node.operator = operator
+        node.value = value
+        return node
+
+
 class BinaryOperator(Node):
     def __init__(self, pos):
         super().__init__(pos)
