@@ -123,5 +123,6 @@ def FunctionDefinitionParser(input):
         IdentifierLiteralParser,
         ArgumentsDeclarationParser,
         BlockParser,
-        createNode=lambda _, name, args, body: FunctionDefinition.withValues(name, args, body)
+        createNode=lambda _, name, args, body: FunctionDefinition.withValues(name, args, body),
+        name="function definition"
     )(input)

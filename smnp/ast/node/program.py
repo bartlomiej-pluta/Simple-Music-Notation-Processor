@@ -1,3 +1,4 @@
+from smnp.ast.node.extend import ExtendParser
 from smnp.ast.node.function import FunctionDefinitionParser
 from smnp.ast.node.imports import ImportParser
 from smnp.ast.node.model import Node, ParseResult
@@ -17,6 +18,7 @@ def ProgramParser(input):
                 # Start Symbol
                 ImportParser,
                 FunctionDefinitionParser,
+                ExtendParser,
                 StatementParser,
                 exception=RuntimeError("Nie znam tego wyrazenia")
             )(input)
