@@ -90,59 +90,6 @@ def abstractIterableParser(iterableNodeType, openTokenType, closeTokenType, item
 
     return toFlatDesiredNode(iterableNodeType, abstractIterableParser)
 
-        #
-        # @classmethod
-        # def _parse(cls, input):
-        #     return Parser.oneOf(
-        #         AbstractIterableTail._parser1(input),
-        #         AbstractIterableTail._parser2(input),
-        #     )(input)
-        #
-        # @staticmethod
-        # def _parser1(input):
-        #     return Parser.terminalParser(closeTokenType)
-        #
-       
-
-        # class AbstractIterableNode(ExpressionNode):
-        # @classmethod
-        # def _parse(cls, input):
-        #     return Parser.oneOf(
-        #         AbstractIterableNode._parser1(input),
-        #         AbstractIterableNode._parser2(input)
-        #     )(input)
-        #
-        # @staticmethod
-        # def _parser1(input):
-        #     def emptyIterable(openToken, closeToken):
-        #         node = AbstractIterableNode(openToken.pos)
-        #         node.value = openToken
-        #         node.next = closeToken
-        #         return node
-        #
-        #     return Parser.allOf(
-        #         Parser.terminalParser(openTokenType),
-        #         Parser.terminalParser(closeTokenType),
-        #         createNode=emptyIterable
-        #     )
-        #
-        # @staticmethod
-        # def _parser2(input):
-        #     def createNode(openParen, expr, iterableTail):
-        #         node = AbstractIterableNode(openParen.pos)
-        #         node.value = expr
-        #         node.next = iterableTail
-        #         return node
-        #
-        #     return Parser.allOf(
-        #         Parser.terminalParser(openTokenType, lambda val, pos: Node(pos)),
-        #         itemParser,
-        #         AbstractIterableTail.parse,
-        #         createNode=createNode
-        #     )
-
-    #return toFlatDesiredNode(iterableNodeType, AbstractIterableNode.parse)
-
 
 def toFlatDesiredNode(iterableNodeType, parser):
     def parse(input):
