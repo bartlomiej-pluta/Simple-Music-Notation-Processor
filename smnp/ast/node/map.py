@@ -36,7 +36,7 @@ def MapParser(input):
 
     mapEntryParser = Parser.allOf(
         keyParser,
-        Parser.terminalParser(TokenType.ARROW, createNode=Operator.withValue),
+        Parser.terminal(TokenType.ARROW, createNode=Operator.withValue),
         valueParser,
         createNode=MapEntry.withValues
     )

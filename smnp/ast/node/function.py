@@ -102,7 +102,7 @@ def ArgumentParser(input):
     return Parser.allOf(
         Parser.optional(TypeParser),
         IdentifierLiteralParser,
-        Parser.optional(Parser.terminalParser(TokenType.DOTS, lambda val, pos: True)),
+        Parser.optional(Parser.terminal(TokenType.DOTS, lambda val, pos: True)),
         createNode=createNode,
         name="function argument"
     )(input)
@@ -119,7 +119,7 @@ def ArgumentsDeclarationParser(input):
 
 def FunctionDefinitionParser(input):
     return Parser.allOf(
-        Parser.terminalParser(TokenType.FUNCTION),
+        Parser.terminal(TokenType.FUNCTION),
         IdentifierLiteralParser,
         ArgumentsDeclarationParser,
         BlockParser,

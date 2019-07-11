@@ -45,8 +45,8 @@ def abstractIterableParser(iterableNodeType, openTokenType, closeTokenType, item
             return node
 
         return Parser.allOf(
-            Parser.terminalParser(openTokenType),
-            Parser.terminalParser(closeTokenType),
+            Parser.terminal(openTokenType),
+            Parser.terminal(closeTokenType),
             createNode=createNode
         )(input)
 
@@ -58,7 +58,7 @@ def abstractIterableParser(iterableNodeType, openTokenType, closeTokenType, item
             return node
 
         return Parser.allOf(
-            Parser.terminalParser(openTokenType),
+            Parser.terminal(openTokenType),
             itemParser,
             abstractIterableTailParser,
             createNode=createNode
@@ -78,14 +78,14 @@ def abstractIterableParser(iterableNodeType, openTokenType, closeTokenType, item
             return node
 
         return Parser.allOf(
-            Parser.terminalParser(TokenType.COMMA, doAssert=True),
+            Parser.terminal(TokenType.COMMA, doAssert=True),
             itemParser,
             abstractIterableTailParser,
             createNode=createNode
         )(input)
 
     def closeIterable(input):
-        return Parser.terminalParser(closeTokenType)(input)
+        return Parser.terminal(closeTokenType)(input)
 
 
     return toFlatDesiredNode(iterableNodeType, abstractIterableParser)

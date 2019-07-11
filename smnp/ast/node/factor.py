@@ -29,9 +29,9 @@ def FactorParser(input):
     )
 
     exprFactor = Parser.allOf(
-        Parser.terminalParser(TokenType.OPEN_PAREN),
+        Parser.terminal(TokenType.OPEN_PAREN),
         ExpressionParser,
-        Parser.terminalParser(TokenType.CLOSE_PAREN),
+        Parser.terminal(TokenType.CLOSE_PAREN),
         createNode=lambda open, expr, close: expr,
         name="grouping parentheses"
     )
@@ -43,7 +43,7 @@ def FactorParser(input):
     )
 
     notOperator = Parser.allOf(
-        Parser.terminalParser(TokenType.NOT, Operator.withValue),
+        Parser.terminal(TokenType.NOT, Operator.withValue),
         factorParser,
         createNode=NotOperator.withValues,
         name="not"
@@ -51,7 +51,7 @@ def FactorParser(input):
 
     loopFactor = Parser.allOf(
         factorParser,
-        Parser.terminalParser(TokenType.DASH, createNode=Operator.withValue),
+        Parser.terminal(TokenType.DASH, createNode=Operator.withValue),
         StatementParser,
         createNode=Loop.withValues,
         name="dash-loop"

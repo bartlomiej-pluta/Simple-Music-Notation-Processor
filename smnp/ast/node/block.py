@@ -10,8 +10,8 @@ class Block(Node):
 
 def BlockParser(input):
     return Parser.loop(
-        Parser.terminalParser(TokenType.OPEN_CURLY),
+        Parser.terminal(TokenType.OPEN_CURLY),
         Parser.doAssert(StatementParser, f"statement or '{TokenType.CLOSE_CURLY.key}'"),
-        Parser.terminalParser(TokenType.CLOSE_CURLY),
+        Parser.terminal(TokenType.CLOSE_CURLY),
         createNode=lambda open, statements, close: Block.withChildren(statements, open.pos)
     )(input)

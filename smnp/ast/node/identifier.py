@@ -50,7 +50,7 @@ class Assignment(BinaryOperator):
 
 
 def IdentifierLiteralParser(input):
-    return Parser.terminalParser(TokenType.IDENTIFIER, createNode=Identifier.withValue)(input)
+    return Parser.terminal(TokenType.IDENTIFIER, createNode=Identifier.withValue)(input)
 
 
 def IdentifierParser(input):
@@ -64,7 +64,7 @@ def IdentifierParser(input):
 
     assignmentParser = Parser.allOf(
         IdentifierLiteralParser,
-        Parser.terminalParser(TokenType.ASSIGN, createNode=Operator.withValue),
+        Parser.terminal(TokenType.ASSIGN, createNode=Operator.withValue),
         ExpressionParser,
         createNode=lambda identifier, assign, expr: Assignment.withValues(identifier, assign, expr)
     )

@@ -41,7 +41,7 @@ class Parser:
 
     # a -> A
     @staticmethod
-    def terminalParser(expectedType, createNode=None, doAssert=False):
+    def terminal(expectedType, createNode=None, doAssert=False):
         def provideNode(value, pos):
             if createNode is None:
                 return IgnoredNode(pos)
@@ -140,7 +140,7 @@ class Parser:
 
     @staticmethod
     def oneOfTerminals(*tokenTypes, createNode=None):
-        return Parser.oneOf(*[ Parser.terminalParser(expectedType, createNode=createNode) for expectedType in tokenTypes ], name='|'.join([t.value for t in tokenTypes]))
+        return Parser.oneOf(*[Parser.terminal(expectedType, createNode=createNode) for expectedType in tokenTypes], name='|'.join([t.value for t in tokenTypes]))
 
     # loop -> start item* end
     @staticmethod

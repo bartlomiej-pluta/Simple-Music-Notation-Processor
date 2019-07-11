@@ -34,7 +34,7 @@ class Import(Node):
 
 def ImportParser(input):
     return Parser.allOf(
-        Parser.terminalParser(TokenType.IMPORT),
+        Parser.terminal(TokenType.IMPORT),
         StringParser,
         createNode=lambda imp, source: Import.withValue(source),
         name="import"

@@ -45,10 +45,10 @@ class TypeLiteral(Atom):
 
 def IntegerParser(input):
     return Parser.oneOf(
-        Parser.terminalParser(TokenType.INTEGER, lambda val, pos: IntegerLiteral.withValue(int(val), pos)),
+        Parser.terminal(TokenType.INTEGER, lambda val, pos: IntegerLiteral.withValue(int(val), pos)),
         Parser.allOf(
-            Parser.terminalParser(TokenType.MINUS),
-            Parser.terminalParser(TokenType.INTEGER, lambda val, pos: IntegerLiteral.withValue(int(val), pos)),
+            Parser.terminal(TokenType.MINUS),
+            Parser.terminal(TokenType.INTEGER, lambda val, pos: IntegerLiteral.withValue(int(val), pos)),
             createNode=lambda minus, integer: IntegerLiteral.withValue(-integer.value, minus.pos),
             name="negative integer"
         )
@@ -56,19 +56,19 @@ def IntegerParser(input):
 
 
 def StringParser(input):
-    return Parser.terminalParser(TokenType.STRING, createNode=StringLiteral.withValue)(input)
+    return Parser.terminal(TokenType.STRING, createNode=StringLiteral.withValue)(input)
 
 
 def NoteParser(input):
-    return Parser.terminalParser(TokenType.NOTE, createNode=NoteLiteral.withValue)(input)
+    return Parser.terminal(TokenType.NOTE, createNode=NoteLiteral.withValue)(input)
 
 
 def BoolParser(input):
-    return Parser.terminalParser(TokenType.BOOL, createNode=BoolLiteral.withValue)(input)
+    return Parser.terminal(TokenType.BOOL, createNode=BoolLiteral.withValue)(input)
 
 
 def TypeLiteralParser(input):
-    return Parser.terminalParser(TokenType.TYPE, createNode=TypeLiteral.withValue)(input)
+    return Parser.terminal(TokenType.TYPE, createNode=TypeLiteral.withValue)(input)
 
 
 def LiteralParser(input):
