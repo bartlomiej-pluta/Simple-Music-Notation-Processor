@@ -49,17 +49,21 @@ class Assignment(BinaryOperator):
     pass
 
 
+def IdentifierLiteralParser(input):
+    return Parser.terminalParser(TokenType.IDENTIFIER, createNode=Identifier.withValue)(input)
+
+
 def IdentifierParser(input):
-    identifierLiteralParser = Parser.terminalParser(TokenType.IDENTIFIER, createNode=Identifier.withValue)
+
 
     functionCallParser = Parser.allOf(
-        identifierLiteralParser,
+        IdentifierLiteralParser,
         abstractIterableParser(ArgumentsList, TokenType.OPEN_PAREN, TokenType.CLOSE_PAREN, ExpressionParser),
         createNode=lambda name, arguments: FunctionCall.withChildren(name, arguments)
     )
 
     assignmentParser = Parser.allOf(
-        identifierLiteralParser,
+        IdentifierLiteralParser,
         Parser.terminalParser(TokenType.ASSIGN, createNode=Operator.withValue),
         ExpressionParser,
         createNode=lambda identifier, assign, expr: Assignment.withValues(identifier, assign, expr)
@@ -68,5 +72,5 @@ def IdentifierParser(input):
     return Parser.oneOf(
         assignmentParser,
         functionCallParser,
-        identifierLiteralParser
+        IdentifierLiteralParser
     )(input)
