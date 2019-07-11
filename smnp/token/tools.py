@@ -16,10 +16,10 @@ def regexPatternTokenizer(type, pattern):
     return tokenizer
 
 
-def keywordsTokenizer(type, *keywords):
+def keywordsTokenizer(type, *keywords, mapKeyword=lambda x: x):
     def tokenizer(input, current, line):
         for keyword in keywords:
-            result = keywordTokenizer(type, keyword)(input, current, line)
+            result = keywordTokenizer(type, keyword, mapKeyword)(input, current, line)
             if result[0] > 0:
                 return result
         return (0, None)
@@ -27,10 +27,10 @@ def keywordsTokenizer(type, *keywords):
     return tokenizer
 
 
-def keywordTokenizer(type, keyword):
+def keywordTokenizer(type, keyword, mapKeyword=lambda x: x):
     def tokenizer(input, current, line):
         if len(input) >= current+len(keyword) and input[current:current+len(keyword)] == keyword:
-            return (len(keyword), Token(type, keyword, (line, current)))
+            return (len(keyword), Token(type, mapKeyword(keyword), (line, current)))
         return (0, None)
     return tokenizer
 

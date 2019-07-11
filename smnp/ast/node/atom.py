@@ -67,7 +67,7 @@ def BoolParser(input):
     return Parser.terminalParser(TokenType.BOOL, createNode=BoolLiteral.withValue)(input)
 
 
-def TypeParser(input):
+def TypeLiteralParser(input):
     return Parser.terminalParser(TokenType.TYPE, createNode=TypeLiteral.withValue)(input)
 
 
@@ -77,7 +77,7 @@ def LiteralParser(input):
         StringParser,
         NoteParser,
         BoolParser,
-        TypeParser,
+        TypeLiteralParser,
         name="literal"
     )(input)
 

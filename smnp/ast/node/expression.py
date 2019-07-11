@@ -21,7 +21,7 @@ def ExpressionParser(input):
 
     expr2 =  Parser.leftAssociativeOperatorParser(
         expr1,
-        [TokenType.RELATION],
+        [TokenType.RELATION, TokenType.OPEN_ANGLE, TokenType.CLOSE_ANGLE],
         expr1,
         lambda left, op, right: Expression.withValue(BinaryOperator.withValues(left, op, right))
     )

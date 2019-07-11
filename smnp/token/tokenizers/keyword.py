@@ -3,7 +3,7 @@ from smnp.token.type import TokenType
 from smnp.type.model import Type
 
 
-typeTokenizer = separated(keywordsTokenizer(TokenType.TYPE, *[type.name.lower() for type in Type]))
+typeTokenizer = separated(keywordsTokenizer(TokenType.TYPE, *[type.name.lower() for type in Type], mapKeyword=lambda value: Type[value.upper()]))
 
 
 
