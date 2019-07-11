@@ -8,5 +8,11 @@ from smnp.token.type import TokenType
 class Term(Valuable):
     pass
 
-TermParser = Parser.leftAssociativeOperatorParser(FactorParser, [TokenType.ASTERISK, TokenType.SLASH], FactorParser,
-                                                    lambda left, op, right: Term.withValue(BinaryOperator.withValues(left, op, right)))
+
+def TermParser(input):
+    return Parser.leftAssociativeOperatorParser(
+        FactorParser,
+        [TokenType.ASTERISK, TokenType.SLASH],
+        FactorParser,
+        lambda left, op, right: Term.withValue(BinaryOperator.withValues(left, op, right))
+    )(input)

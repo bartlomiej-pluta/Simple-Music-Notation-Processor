@@ -10,6 +10,8 @@ class Expression(Valuable):
 
 
 def ExpressionParser(input):
+    from smnp.ast.node.condition import IfElse
+
     expr1 = Parser.leftAssociativeOperatorParser(
         TermParser,
         [TokenType.PLUS, TokenType.MINUS],

@@ -8,22 +8,23 @@ class Program(Node):
     def __init__(self):
         super().__init__((-1, -1))
 
-def parse(input):
-    root = Program()
-    while input.hasCurrent():
-        result = Parser.oneOf(
-            # Start Symbol
-            ImportParser,
-            StatementParser,
-            exception=RuntimeError("Nie znam tego wyrazenia")
-        )(input)
+def ProgramParser(input):
+    def parse(input):
+        root = Program()
+        while input.hasCurrent():
+            result = Parser.oneOf(
+                # Start Symbol
+                ImportParser,
+                StatementParser,
+                exception=RuntimeError("Nie znam tego wyrazenia")
+            )(input)
 
-        if result.result:
-            root.append(result.node)
+            if result.result:
+                root.append(result.node)
 
-    return ParseResult.OK(root)
+        return ParseResult.OK(root)
 
-ProgramParser = Parser(parse, name="program")
+    return Parser(parse, name="program")(input)
     # @classmethod
     # def _parse(cls, input):
     #     def parseToken(input):

@@ -9,5 +9,10 @@ class List(Node):
 
 def ListParser(input):
     from smnp.ast.node.expression import ExpressionParser
-    return abstractIterableParser(List, TokenType.OPEN_SQUARE, TokenType.CLOSE_SQUARE,
-                                    ExpressionParser)(input)
+
+    return abstractIterableParser(
+        List,
+        TokenType.OPEN_SQUARE,
+        TokenType.CLOSE_SQUARE,
+        ExpressionParser
+    )(input)

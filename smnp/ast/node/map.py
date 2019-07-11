@@ -41,6 +41,10 @@ def MapParser(input):
         createNode=MapEntry.withValues
     )
 
-    mapParser = abstractIterableParser(Map, TokenType.OPEN_CURLY, TokenType.CLOSE_CURLY, mapEntryParser)
+    return abstractIterableParser(
+        Map,
+        TokenType.OPEN_CURLY,
+        TokenType.CLOSE_CURLY,
+        mapEntryParser
+    )(input)
 
-    return Parser(mapParser, "map", [mapParser])(input)

@@ -10,12 +10,18 @@ from smnp.token.type import TokenType
 class Chain(Valuable):
     pass
 
-itemParser = Parser.oneOf(
-    ListParser,
-    MapParser,
-    AtomParser,
-)
 
-ChainParser = Parser.leftAssociativeOperatorParser(itemParser, [TokenType.DOT], itemParser,
-                                                   lambda left, op, right: Chain.withValue(BinaryOperator.withValues(left, op, right)))
+def ChainParser(input):
+    itemParser = Parser.oneOf(
+        ListParser,
+        MapParser,
+        AtomParser,
+    )
+
+    return Parser.leftAssociativeOperatorParser(
+        itemParser,
+        [TokenType.DOT],
+        itemParser,
+        lambda left, op, right: Chain.withValue(BinaryOperator.withValues(left, op, right))
+    )(input)
 
