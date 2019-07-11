@@ -1,5 +1,5 @@
 from smnp.ast.node.model import Node
-from smnp.ast.parser import TerminalParser, OneOfParser, AllOfParser
+from smnp.ast.parser import TerminalParser, OneOfParser, AllOfParser, OptionalParser, LoopParser
 from smnp.error.base import SmnpException
 from smnp.token.tokenizer import tokenize
 from smnp.token.type import TokenType
@@ -7,29 +7,35 @@ from smnp.token.type import TokenType
 
 def main():
     try:
-        #stdLibraryEnv = loadStandardLibrary()
-        #Interpreter.interpretFile(sys.argv[1], printTokens=True, printAst=True, execute=False, baseEnvironment=None)
-        #draft()
+        # stdLibraryEnv = loadStandardLibrary()
+        # Interpreter.interpretFile(sys.argv[1], printTokens=True, printAst=True, execute=False, baseEnvironment=None)
+        # draft()
 
-        def node(*items):
-            n = Node((-1, -1))
-            n.children = items
-            return n
+        class TestNode(Node):
+            def __init__(self, children):
+                super().__init__((-1, -1))
+                self.children = children
 
-        tokens = tokenize(['=x'])
-        parser = AllOfParser(
-            OneOfParser(
-                TerminalParser(TokenType.ASSIGN),
-                TerminalParser(TokenType.ASTERISK),
-                name="assignOrAsterisk"
+        tokens = tokenize(['{*1^*1^}'])
+        parser = LoopParser(
+            TerminalParser(TokenType.OPEN_CURLY),
+            AllOfParser(
+                OneOfParser(
+                    TerminalParser(TokenType.ASSIGN),
+                    TerminalParser(TokenType.ASTERISK),
+                    name="assignOrAsterisk"
+                ),
+                OptionalParser(TerminalParser(TokenType.INTEGER), name="optInt"),
+                TerminalParser(TokenType.DASH),
+                name="aoaInt",
+                createNode=lambda a, b, c: TestNode([a, b, c])
             ),
-            TerminalParser(TokenType.INTEGER),
-            name="aoaInt",
-            createNode=node
+            TerminalParser(TokenType.CLOSE_CURLY),
+            createNode=lambda a, b, c: TestNode([a, b, c]),
+            name="block",
         )
         print(parser.grammar())
         res = parser.parse(tokens)
-
 
         print()
         if res.result:

@@ -1,5 +1,6 @@
 from smnp.ast.node.ignore import IgnoredNode
 from smnp.ast.node.model import ParseResult, Node
+from smnp.ast.node.none import NoneNode
 from smnp.error.syntax import SyntaxException
 
 
@@ -29,7 +30,12 @@ class Parser(object):
     def grammar(self):
         rules = []
         self._grammarRules(rules)
-        return "\n".join(rules)
+        return "\n".join(self._uniq(rules))
+
+    def _uniq(self, seq):
+        seen = set()
+        seen_add = seen.add
+        return [x for x in seq if not (x in seen or seen_add(x))]
 
     def _grammarRules(self, output):
         output.append(f"class '{self.__class__.__name__}' does not implement _grammarRules() method")
@@ -42,6 +48,37 @@ class Parser(object):
 
     def __repr__(self):
         return self.__str__()
+
+
+class Parsers:
+
+    @staticmethod
+    def terminal(expectedType, createNode=lambda val, pos: IgnoredNode(pos), doAssert=False):
+        return TerminalParser(expectedType, createNode, doAssert)
+
+    @staticmethod
+    def oneOf(*parsers, name, exception=None):
+        return OneOfParser(*parsers, name=name, exception=exception)
+
+    @staticmethod
+    def allOf(*parsers, createNode, exception=None, name):
+        return AllOfParser(*parsers, createNode=createNode, exception=exception, name=name)
+
+    @staticmethod
+    def leftAssociativeOperatorParser(leftParser, operatorTokenTypes, rightParser, createNode, name):
+        return LeftAssociativeOperatorParser(leftParser, operatorTokenTypes, rightParser, createNode, name)
+
+    @staticmethod
+    def many(itemParser, createNode, name):
+        return ManyParser(itemParser, createNode, name)
+
+    @staticmethod
+    def optional(parser, name):
+        return OptionalParser(parser, name)
+
+    @staticmethod
+    def loop(startParser, itemParser, endParser, createNode, name):
+        return LoopParser(startParser, itemParser, endParser, createNode, name)
 
 
 class TerminalParser(Parser):
@@ -65,6 +102,7 @@ class TerminalParser(Parser):
             raise SyntaxException(f"Expected '{self.expectedType.key}'{found}", input.currentPos())
 
         return ParseResult.FAIL()
+
 
 
 class OneOfParser(Parser):
@@ -134,175 +172,107 @@ class AllOfParser(Parser):
         output.append(self.name + ' -> ' + ' '.join([ parser.name for parser in self.parsers ]))
         [ parser._grammarRules(output) for parser in self.parsers ]
 
-# def allOf(*parsers, createNode, exception=None, name="all"):
-#     if len(parsers) == 0:
-#         raise RuntimeError("Pass one parser at least")
-#
-#     def extendedParser(input):
-#         snap = input.snapshot()
-#
-#         results = []
-#
-#         for parser in parsers:
-#             result = parser(input)
-#
-#             if not result.result:
-#                 if exception is not None:
-#                     if callable(exception):
-#                         raise exception(input)
-#                     else:
-#                         raise exception
-#
-#                 input.reset(snap)
-#                 return ParseResult.FAIL()
-#
-#             results.append(result.node)
-#
-#         node = createNode(*results)
-#         if not isinstance(node, Node):
-#             raise RuntimeError("Function 'createNode' haven't returned a Node object. Probably forget to pass 'return'")
-#
-#         return ParseResult.OK(node)
-#
-#
-#     return Parser(extendedParser, name=name, parsers=parsers)
-#
+
+class LeftAssociativeOperatorParser(Parser):
+    def __init__(self, leftParser, operatorTokenTypes, rightParser, createNode, name):
+        from smnp.ast.node.operator import Operator
+
+        super().__init__(name)
+        self.leftParser = leftParser
+        self.rightParser = rightParser
+        self.createNode = createNode
+        self.operators = operatorTokenTypes
+
+        operatorParsers = [ TerminalParser(expectedType, createNode=lambda val, pos: Operator.withValue(val, pos)) for expectedType in operatorTokenTypes ]
+        self.operatorParser = OneOfParser(*operatorParsers, name="not important")
+
+    def _parse(self, input):
+        snap = input.snapshot()
+        left = self.leftParser.parse(input)
+        if left.result:
+            operator = self.operatorParser.parse(input)
+            while operator.result:
+                right = self.rightParser.parse(input)
+                left = ParseResult.OK(self.createNode(left.node, operator.node, right.node))
+                operator = self.operatorParser.parse(input)
+            return left
+
+        return ParseResult.FAIL()
 
 
-# def o
-# # a -> A
-# @staticmethod
-# def terminalParser(expectedType, createNode=None, doAssert=False):
-#     def provideNode(value, pos):
-#         if createNode is None:
-#             return IgnoredNode(pos)
-#         return createNode(value, pos)
-#
-#     def parse(input):
-#         if input.hasCurrent() and input.current().type == expectedType:
-#             token = input.current()
-#             input.ahead()
-#             return ParseResult.OK(provideNode(token.value, token.pos))
-#         elif doAssert:
-#             found = f", found '{input.current().rawValue}'" if input.hasCurrent() else ""
-#             raise SyntaxException(f"Expected '{expectedType.key}'{found}", input.currentPos())
-#
-#         return ParseResult.FAIL()
-#
-#     return Parser(parse, name=expectedType.name.lower())
-#
-# # oneOf -> a | b | c | ...
-# @staticmethod
-# def oneOf(*parsers, exception=None, name="or"):
-#     def combinedParser(input):
-#         snap = input.snapshot()
-#         for parser in parsers:
-#             value = parser(input)
-#             if value.result:
-#                 return value
-#
-#         if exception is not None:
-#             if callable(exception):
-#                 raise exception(input)
-#             else:
-#                 raise exception
-#
-#
-#         input.reset(snap)
-#         return ParseResult.FAIL()
-#
-#     return Parser(combinedParser, name=name, parsers=parsers)
-#
-# # allOf -> a b c ...
-# @staticmethod
+    def _grammarRules(self, output):
+        output.append('\n'.join([f"{self.name} -> {self.leftParser.name} {operator.name.lower()} {self.rightParser.name} | {self.leftParser.name}" for operator in self.operators]))
+        self.leftParser._grammarRules(output)
+        self.rightParser._grammarRules(output)
 
-#
-# # leftAssociative -> left | left OP right
-# @staticmethod
-# def leftAssociativeOperatorParser(leftParser, operatorTokenTypes, rightParser, createNode, name="leftAssoc"):
-#     from smnp.ast.node.operator import Operator
-#
-#     def parse(input):
-#         operatorParser = Parser.oneOfTerminals(*operatorTokenTypes, createNode=lambda val, pos: Operator.withChildren([val], pos))
-#         left = leftParser(input)
-#         if left.result:
-#             operator = operatorParser(input)
-#             while operator.result:
-#                 right = rightParser(input)
-#                 left = ParseResult.OK(createNode(left.node, operator.node, right.node))
-#                 operator = operatorParser(input)
-#             return left
-#
-#         return ParseResult.FAIL()
-#
-#     return Parser(parse, name=name, parsers=[leftParser, '|'.join([t.value for t in operatorTokenTypes]), rightParser])
-#
-# @staticmethod
-# def oneOfTerminals(*tokenTypes, createNode=None):
-#     return Parser.oneOf(*[ Parser.terminalParser(expectedType, createNode=createNode) for expectedType in tokenTypes ], name='|'.join([t.value for t in tokenTypes]))
-#
-# # loop -> start item* end
-# @staticmethod
-# def loop(startParser, itemParser, endParser, createNode, name="loop"):
-#     def parse(input):
-#         items = []
-#         start = startParser(input)
-#         if start.result:
-#             while True:
-#                 end = endParser(input)
-#                 if end.result:
-#                     return ParseResult.OK(createNode(start.node, items, end.node))
-#                 item = itemParser(input)
-#                 if not item.result:
-#                     return ParseResult.FAIL()
-#                 items.append(item.node)
-#
-#         return ParseResult.FAIL()
-#
-#     return Parser(parse, name, parsers=[startParser, itemParser, endParser])
-#
-# @staticmethod
-# def doAssert(parser, expected, name="!!"):
-#     def parse(input):
-#         result = parser(input)
-#
-#         if not result.result:
-#             found = f", found '{input.current().rawValue}'" if input.hasCurrent() else ''
-#
-#             raise SyntaxException(f"Expected {expected}{found}", input.currentPos())
-#
-#         return result
-#
-#     return Parser(parse, name, parsers=parser)
-#
-# @staticmethod
-# def optional(parser, name="??"):
-#     def parse(input):
-#         result = parser(input)
-#         if result.result:
-#             return result
-#
-#         return ParseResult.OK(NoneNode())
-#
-#     return Parser(parse, name, parsers=[parser])
-#
-# @staticmethod
-# def epsilon():
-#     return lambda *args: ParseResult.OK(NoneNode())
-#
-# @staticmethod
-# def many(parser, createNode, name="*"):
-#     def parse(input):
-#         results = []
-#         snap = input.snapshot()
-#         pos = input.currentPos()
-#         while True:
-#             result = parser(input)
-#             if result.result:
-#                 results.append(result.node)
-#                 snap = input.snapshot()
-#             else:
-#                 input.reset(snap)
-#                 return ParseResult.OK(createNode(results, pos) if len(results) > 0 else NoneNode())
-#
-#     return Parser(parse, name, parsers=[parser])
+
+class ManyParser(Parser):
+    def __init__(self, itemParser, createNode, name):
+        super().__init__(name)
+        self.itemParser = itemParser
+        self.createNode = createNode
+
+    def _parse(self, input):
+        snap = input.snapshot()
+
+        parsedItems = []
+        pos = input.currentPos()
+        while True:
+            result = self.itemParser.parse(input)
+            if result.result:
+                parsedItems.append(result.node)
+                snap = input.snapshot()
+            else:
+                input.reset(snap)
+                return ParseResult.OK(self.createNode(parsedItems, pos) if len(parsedItems) > 0 else NoneNode())
+
+    def _grammarRules(self, output):
+        output.append(f"{self.name} -> {self.itemParser.name}*")
+        self.itemParser._grammarRules(output)
+
+
+class OptionalParser(Parser):
+    def __init__(self, parser, name):
+        super().__init__(name)
+        self.parser = parser
+
+    def _parse(self, input):
+        result = self.parser.parse(input)
+        if result.result:
+            return result
+
+        return ParseResult.OK(NoneNode())
+
+    def _grammarRules(self, output):
+        output.append(f"{self.name} -> {self.parser.name}?")
+
+
+class LoopParser(Parser):
+    def __init__(self, startParser, itemParser, endParser, createNode, name):
+        super().__init__(name)
+        self.startParser = startParser
+        self.itemParser = itemParser
+        self.endParser = endParser
+        self.createNode = createNode
+
+    def _parse(self, input):
+        items = []
+        start = self.startParser.parse(input)
+        if start.result:
+            while True:
+                end = self.endParser.parse(input)
+                if end.result:
+                    return ParseResult.OK(self.createNode(start.node, items, end.node))
+                item = self.itemParser.parse(input)
+                if not item.result:
+                    return ParseResult.FAIL()
+                items.append(item.node)
+
+        return ParseResult.FAIL()
+
+    def _grammarRules(self, output):
+        output.append(f"{self.name} -> {self.startParser.name} {self.itemParser.name}* {self.endParser.name}")
+        self.startParser._grammarRules(output)
+        self.itemParser._grammarRules(output)
+        self.endParser._grammarRules(output)
+
