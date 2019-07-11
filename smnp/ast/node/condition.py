@@ -1,5 +1,9 @@
+from smnp.ast.node.expression import MaxPrecedenceExpressionParser
 from smnp.ast.node.model import Node
 from smnp.ast.node.none import NoneNode
+from smnp.ast.node.statement import StatementParser
+from smnp.ast.parser import Parser
+from smnp.token.type import TokenType
 
 
 class IfElse(Node):
@@ -40,3 +44,31 @@ class IfElse(Node):
         return node
 
 
+def IfElseStatementParser(input):
+    ifStatementParser = Parser.allOf(
+        Parser.terminalParser(TokenType.IF),
+        Parser.terminalParser(TokenType.OPEN_PAREN),
+        MaxPrecedenceExpressionParser,
+        Parser.terminalParser(TokenType.CLOSE_PAREN),
+        StatementParser,
+        createNode=lambda _, __, condition, ___, ifStatement: IfElse.createNode(ifStatement, condition),
+        name="if statement"
+    )
+
+    ifElseStatementParser = Parser.allOf(
+        Parser.terminalParser(TokenType.IF),
+        Parser.terminalParser(TokenType.OPEN_PAREN),
+        MaxPrecedenceExpressionParser,
+        Parser.terminalParser(TokenType.CLOSE_PAREN),
+        StatementParser,
+        Parser.terminalParser(TokenType.ELSE),
+        StatementParser,
+        createNode=lambda _, __, condition, ___, ifStatement, ____, elseStatement: IfElse.createNode(ifStatement, condition, elseStatement),
+        name="if-else statement"
+    )
+
+    return Parser.oneOf(
+        ifElseStatementParser,
+        ifStatementParser,
+        name="if-else/if statement"
+    )(input)

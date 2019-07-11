@@ -10,7 +10,9 @@ class Statement(Node):
 def StatementParser(input):
     from smnp.ast.node.block import BlockParser
 
+    from smnp.ast.node.condition import IfElseStatementParser
     parser = Parser.oneOf(
+        IfElseStatementParser,
         BlockParser,
         MaxPrecedenceExpressionParser
     )

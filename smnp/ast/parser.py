@@ -115,7 +115,6 @@ class Parser:
             return ParseResult.OK(node)
 
 
-
         return Parser(extendedParser, name=name, parsers=parsers)
 
 

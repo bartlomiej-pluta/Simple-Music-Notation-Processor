@@ -1,4 +1,3 @@
-from smnp.ast.node.condition import IfElse
 from smnp.ast.node.operator import BinaryOperator
 from smnp.ast.node.term import TermParser
 from smnp.ast.node.valuable import Valuable
@@ -38,6 +37,7 @@ def Expression3Parser(input):
 
 
 def Expression4Parser(input):
+    from smnp.ast.node.condition import IfElse
     exprParser = Parser.leftAssociativeOperatorParser(
         Expression3Parser,
         [TokenType.OR],
