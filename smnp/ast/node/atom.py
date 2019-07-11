@@ -43,32 +43,52 @@ class TypeLiteral(Atom):
     pass
 
 
-def LiteralParser(input):
-    integerParser = Parser.oneOf(
+def IntegerParser(input):
+    return Parser.oneOf(
         Parser.terminalParser(TokenType.INTEGER, lambda val, pos: IntegerLiteral.withValue(int(val), pos)),
         Parser.allOf(
             Parser.terminalParser(TokenType.MINUS),
             Parser.terminalParser(TokenType.INTEGER, lambda val, pos: IntegerLiteral.withValue(int(val), pos)),
-            createNode=lambda minus, integer: IntegerLiteral.withValue(-integer.value, minus.pos)
+            createNode=lambda minus, integer: IntegerLiteral.withValue(-integer.value, minus.pos),
+            name="negative integer"
         )
-    )
+    )(input)
 
+
+def StringParser(input):
+    return Parser.terminalParser(TokenType.STRING, createNode=StringLiteral.withValue)(input)
+
+
+def NoteParser(input):
+    return Parser.terminalParser(TokenType.NOTE, createNode=NoteLiteral.withValue)(input)
+
+
+def BoolParser(input):
+    return Parser.terminalParser(TokenType.BOOL, createNode=BoolLiteral.withValue)(input)
+
+
+def TypeParser(input):
+    return Parser.terminalParser(TokenType.TYPE, createNode=TypeLiteral.withValue)(input)
+
+
+def LiteralParser(input):
     return Parser.oneOf(
-        integerParser,
-        Parser.terminalParser(TokenType.STRING, createNode=StringLiteral.withValue),
-        Parser.terminalParser(TokenType.NOTE, createNode=NoteLiteral.withValue),
-        Parser.terminalParser(TokenType.BOOL, createNode=BoolLiteral.withValue),
-        Parser.terminalParser(TokenType.TYPE, createNode=TypeLiteral.withValue),
+        IntegerParser,
+        StringParser,
+        NoteParser,
+        BoolParser,
+        TypeParser,
+        name="literal"
     )(input)
 
 
 def AtomParser(input):
     from smnp.ast.node.identifier import IdentifierParser
 
-
-    parser = Parser.oneOf(
+    return Parser.oneOf(
         LiteralParser,
         IdentifierParser,
-    )
+        name="atom"
+    )(input)
 
-    return Parser(parser, "atom", parser)(input)
+

@@ -1,3 +1,4 @@
+from smnp.ast.node.imports import ImportParser
 from smnp.ast.node.model import Node, ParseResult
 from smnp.ast.node.statement import StatementParser
 from smnp.ast.parser import Parser
@@ -12,6 +13,7 @@ def parse(input):
     while input.hasCurrent():
         result = Parser.oneOf(
             # Start Symbol
+            ImportParser,
             StatementParser,
             exception=RuntimeError("Nie znam tego wyrazenia")
         )(input)
