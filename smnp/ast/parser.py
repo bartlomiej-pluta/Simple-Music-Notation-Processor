@@ -81,6 +81,18 @@ class Parsers:
         return LoopParser(startParser, itemParser, endParser, createNode, name)
 
 
+class DecoratorParser(Parser):
+    def __init__(self, wrapper, parser):
+        super().__init__(parser.name)
+        self.wrapper = wrapper
+        self.parser = parser
+        self._grammarRules = parser._grammarRules
+
+    def _parse(self, input):
+        result = self.parser.parse(input)
+        return self.wrapper(result)
+
+
 class TerminalParser(Parser):
 
     def __init__(self, expectedType, createNode=lambda val, pos: IgnoredNode(pos), doAssert=False):

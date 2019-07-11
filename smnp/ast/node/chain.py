@@ -1,3 +1,4 @@
+from smnp.ast.node.list import ListParser
 from smnp.ast.node.operator import BinaryOperator
 from smnp.ast.node.valuable import Valuable
 from smnp.ast.parser import Parsers
@@ -15,7 +16,7 @@ def ChainParser():
     from smnp.ast.node.atom import AtomParser
 
     itemParser = Parsers.oneOf(
-        #ListParser,
+        ListParser,
         #MapParser,
         AtomParser,
         name="chainItem"

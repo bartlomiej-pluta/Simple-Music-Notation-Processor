@@ -1,4 +1,6 @@
 from smnp.ast.node.atom import AtomParser
+from smnp.ast.node.chain import ChainParser
+from smnp.ast.node.list import ListParser
 from smnp.ast.node.model import Node
 from smnp.error.base import SmnpException
 from smnp.token.tokenizer import tokenize
@@ -15,9 +17,9 @@ def main():
                 super().__init__((-1, -1))
                 self.children = children
 
-        tokens = tokenize(['"fsfsvd" "Fsefs"'])
-        parser = AtomParser()
-        print(parser.grammar())
+        tokens = tokenize(['[1, 2]'])
+        parser = ListParser()
+        #print(parser.grammar())
         res = parser.parse(tokens)
 
         print()

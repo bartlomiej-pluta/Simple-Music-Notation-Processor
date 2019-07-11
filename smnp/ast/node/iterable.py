@@ -1,7 +1,7 @@
 from smnp.ast.node.ignore import IgnoredNode
 from smnp.ast.node.model import Node, ParseResult
 from smnp.ast.node.none import NoneNode
-from smnp.ast.parser import Parsers
+from smnp.ast.parser import Parsers, DecoratorParser
 from smnp.token.type import TokenType
 
 
@@ -31,14 +31,14 @@ def abstractIterableParser(iterableNodeType, openTokenType, closeTokenType, item
     class AbstractIterableTail(AbstractIterable):
         pass
 
-    def abstractIterableParser(input):
+    def abstractIterableParser():
         return Parsers.oneOf(
-            emptyIterable,
-            openIterable,
+            emptyIterable(),
+            openIterable(),
             name=name
-        )(input)
+        )
 
-    def emptyIterable(input):
+    def emptyIterable():
         def createNode(open, close):
             node = AbstractIterable(open.pos)
             node.value = open
@@ -50,9 +50,9 @@ def abstractIterableParser(iterableNodeType, openTokenType, closeTokenType, item
             Parsers.terminal(closeTokenType),
             createNode=createNode,
             name=name+"Empty"
-        )(input)
+        )
 
-    def openIterable(input):
+    def openIterable():
         def createNode(open, item, tail):
             node = AbstractIterable(open.pos)
             node.value = item
@@ -62,19 +62,19 @@ def abstractIterableParser(iterableNodeType, openTokenType, closeTokenType, item
         return Parsers.allOf(
             Parsers.terminal(openTokenType),
             itemParser,
-            abstractIterableTailParser,
+            abstractIterableTailParser(),
             createNode=createNode,
             name=name+"Open"
-        )(input)
+        )
 
-    def abstractIterableTailParser(input):
+    def abstractIterableTailParser():
         return Parsers.oneOf(
-            closeIterable,
-            nextItem,
+            closeIterable(),
+            nextItem(),
             name=name+"Tail"
-        )(input)
+        )
 
-    def nextItem(input):
+    def nextItem():
         def createNode(comma, item, tail):
             node = AbstractIterableTail(item.pos)
             node.value = item
@@ -84,22 +84,21 @@ def abstractIterableParser(iterableNodeType, openTokenType, closeTokenType, item
         return Parsers.allOf(
             Parsers.terminal(TokenType.COMMA, doAssert=True),
             itemParser,
-            abstractIterableTailParser,
+            abstractIterableTailParser(),
             name=name+"NextItem",
             createNode=createNode
-        )(input)
+        )
 
-    def closeIterable(input):
-        return Parsers.terminal(closeTokenType)(input)
+    def closeIterable():
+        return Parsers.terminal(closeTokenType)
 
 
-    return toFlatDesiredNode(iterableNodeType, abstractIterableParser)
+    return abstractIterableParser()
+    #return toFlatDesiredNode(iterableNodeType, abstractIterableParser())
 
 
 def toFlatDesiredNode(iterableNodeType, parser):
-    def parse(input):
-        result = parser(input)
-
+    def wrapper(result):
         if result.result:
             value = flattenList(result.node)
             node = iterableNodeType(result.node.pos)
@@ -110,7 +109,7 @@ def toFlatDesiredNode(iterableNodeType, parser):
 
         return ParseResult.FAIL()
 
-    #return Parser(parse, "flat", [parser])
+    return DecoratorParser(wrapper, parser)
 
 
 def flattenList(node, output=None):
