@@ -16,7 +16,7 @@ class Valuable(Node):
         self[0] = value
 
     @classmethod
-    def withValue(cls, value):
-        node = cls(value.pos)
+    def withValue(cls, value, pos=None):
+        node = cls(value.pos if pos is None else pos)
         node.value = value
         return node

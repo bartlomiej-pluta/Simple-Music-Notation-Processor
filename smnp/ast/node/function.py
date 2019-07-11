@@ -1,8 +1,10 @@
-from smnp.ast.node.block import BlockParser
+from smnp.ast.node.block import Block
 from smnp.ast.node.identifier import IdentifierLiteralParser
 from smnp.ast.node.iterable import abstractIterableParser
 from smnp.ast.node.model import Node
 from smnp.ast.node.none import NoneNode
+from smnp.ast.node.ret import ReturnParser
+from smnp.ast.node.statement import StatementParser
 from smnp.ast.node.type import TypeParser, Type
 from smnp.ast.parser import Parser
 from smnp.token.type import TokenType
@@ -122,7 +124,22 @@ def FunctionDefinitionParser(input):
         Parser.terminal(TokenType.FUNCTION),
         IdentifierLiteralParser,
         ArgumentsDeclarationParser,
-        BlockParser,
+        MethodBodyParser,
         createNode=lambda _, name, args, body: FunctionDefinition.withValues(name, args, body),
         name="function definition"
+    )(input)
+
+def MethodBodyParser(input):
+    bodyItem = Parser.oneOf(
+        StatementParser,
+        ReturnParser,
+        name="function body item"
+    )
+
+    return Parser.loop(
+        Parser.terminal(TokenType.OPEN_CURLY),
+        bodyItem,
+        Parser.terminal(TokenType.CLOSE_CURLY),
+        createNode=lambda open, statements, close: Block.withChildren(statements, open.pos),
+        name="function body"
     )(input)
