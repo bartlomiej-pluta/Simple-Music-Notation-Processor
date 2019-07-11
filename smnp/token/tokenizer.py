@@ -51,9 +51,11 @@ tokenizers = (
     separated(defaultTokenizer(TokenType.EXTEND)),
     separated(defaultTokenizer(TokenType.IMPORT)),
     separated(defaultTokenizer(TokenType.FROM)),
+    separated(defaultTokenizer(TokenType.ELSE)),
     separated(defaultTokenizer(TokenType.AND)),
     separated(defaultTokenizer(TokenType.NOT)),
     separated(defaultTokenizer(TokenType.AS)),
+    separated(defaultTokenizer(TokenType.IF)),
     separated(defaultTokenizer(TokenType.OR)),
 
     # Identifier (couldn't be before keywords!)
