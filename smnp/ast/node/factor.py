@@ -12,6 +12,7 @@ class Factor(Valuable):
 class NotOperator(UnaryOperator):
     pass
 
+
 class Loop(BinaryOperator):
     pass
 
