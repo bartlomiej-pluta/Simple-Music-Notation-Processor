@@ -1,8 +1,7 @@
+from smnp.ast.node.atom import AtomParser
 from smnp.ast.node.model import Node
-from smnp.ast.parser import TerminalParser, OneOfParser, AllOfParser, OptionalParser, LoopParser
 from smnp.error.base import SmnpException
 from smnp.token.tokenizer import tokenize
-from smnp.token.type import TokenType
 
 
 def main():
@@ -16,24 +15,8 @@ def main():
                 super().__init__((-1, -1))
                 self.children = children
 
-        tokens = tokenize(['{*1^*1^}'])
-        parser = LoopParser(
-            TerminalParser(TokenType.OPEN_CURLY),
-            AllOfParser(
-                OneOfParser(
-                    TerminalParser(TokenType.ASSIGN),
-                    TerminalParser(TokenType.ASTERISK),
-                    name="assignOrAsterisk"
-                ),
-                OptionalParser(TerminalParser(TokenType.INTEGER), name="optInt"),
-                TerminalParser(TokenType.DASH),
-                name="aoaInt",
-                createNode=lambda a, b, c: TestNode([a, b, c])
-            ),
-            TerminalParser(TokenType.CLOSE_CURLY),
-            createNode=lambda a, b, c: TestNode([a, b, c]),
-            name="block",
-        )
+        tokens = tokenize(['"fsfsvd" "Fsefs"'])
+        parser = AtomParser()
         print(parser.grammar())
         res = parser.parse(tokens)
 

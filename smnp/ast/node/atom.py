@@ -1,6 +1,7 @@
 from smnp.ast.node.model import Node
-from smnp.ast.parser import Parser
+from smnp.ast.parser import Parsers
 from smnp.token.type import TokenType
+from smnp.util.singleton import SingletonParser
 
 
 class Atom(Node):
@@ -43,52 +44,60 @@ class TypeLiteral(Atom):
     pass
 
 
-def IntegerParser(input):
-    return Parser.oneOf(
-        Parser.terminalParser(TokenType.INTEGER, lambda val, pos: IntegerLiteral.withValue(int(val), pos)),
-        Parser.allOf(
-            Parser.terminalParser(TokenType.MINUS),
-            Parser.terminalParser(TokenType.INTEGER, lambda val, pos: IntegerLiteral.withValue(int(val), pos)),
+@SingletonParser
+def IntegerParser():
+    return Parsers.oneOf(
+        Parsers.terminal(TokenType.INTEGER, lambda val, pos: IntegerLiteral.withValue(int(val), pos)),
+        Parsers.allOf(
+            Parsers.terminal(TokenType.MINUS),
+            Parsers.terminal(TokenType.INTEGER, lambda val, pos: IntegerLiteral.withValue(int(val), pos)),
             createNode=lambda minus, integer: IntegerLiteral.withValue(-integer.value, minus.pos),
-            name="negative integer"
-        )
-    )(input)
+            name="negativeInteger"
+        ),
+        name="int"
+    )
 
 
-def StringParser(input):
-    return Parser.terminalParser(TokenType.STRING, createNode=StringLiteral.withValue)(input)
+@SingletonParser
+def StringParser():
+    return Parsers.terminal(TokenType.STRING, createNode=StringLiteral.withValue)
 
 
-def NoteParser(input):
-    return Parser.terminalParser(TokenType.NOTE, createNode=NoteLiteral.withValue)(input)
+@SingletonParser
+def NoteParser():
+    return Parsers.terminal(TokenType.NOTE, createNode=NoteLiteral.withValue)
 
 
-def BoolParser(input):
-    return Parser.terminalParser(TokenType.BOOL, createNode=BoolLiteral.withValue)(input)
+@SingletonParser
+def BoolParser():
+    return Parsers.terminal(TokenType.BOOL, createNode=BoolLiteral.withValue)
 
 
-def TypeParser(input):
-    return Parser.terminalParser(TokenType.TYPE, createNode=TypeLiteral.withValue)(input)
+@SingletonParser
+def TypeParser():
+    return Parsers.terminal(TokenType.TYPE, createNode=TypeLiteral.withValue)
 
 
-def LiteralParser(input):
-    return Parser.oneOf(
-        IntegerParser,
-        StringParser,
-        NoteParser,
-        BoolParser,
-        TypeParser,
+@SingletonParser
+def LiteralParser():
+    return Parsers.oneOf(
+        IntegerParser(),
+        StringParser(),
+        NoteParser(),
+        BoolParser(),
+        TypeParser(),
         name="literal"
-    )(input)
+    )
 
 
-def AtomParser(input):
+@SingletonParser
+def AtomParser():
     from smnp.ast.node.identifier import IdentifierParser
 
-    return Parser.oneOf(
-        LiteralParser,
-        IdentifierParser,
+    return Parsers.oneOf(
+        LiteralParser(),
+        IdentifierParser(),
         name="atom"
-    )(input)
+    )
 
 

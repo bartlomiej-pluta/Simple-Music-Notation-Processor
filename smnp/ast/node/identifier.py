@@ -1,11 +1,10 @@
 from smnp.ast.node.atom import Atom
-from smnp.ast.node.expression import MaxPrecedenceExpressionParser
-from smnp.ast.node.iterable import abstractIterableParser
 from smnp.ast.node.model import Node
 from smnp.ast.node.none import NoneNode
 from smnp.ast.node.operator import BinaryOperator, Operator
-from smnp.ast.parser import Parser
+from smnp.ast.parser import Parsers
 from smnp.token.type import TokenType
+from smnp.util.singleton import SingletonParser
 
 
 class Identifier(Atom):
@@ -49,24 +48,28 @@ class Assignment(BinaryOperator):
     pass
 
 
-def IdentifierParser(input):
-    identifierLiteralParser = Parser.terminalParser(TokenType.IDENTIFIER, createNode=Identifier.withValue)
+@SingletonParser
+def IdentifierParser():
+    identifierLiteralParser = Parsers.terminal(TokenType.IDENTIFIER, createNode=Identifier.withValue)
 
-    functionCallParser = Parser.allOf(
+    functionCallParser = Parsers.allOf(
         identifierLiteralParser,
-        abstractIterableParser(ArgumentsList, TokenType.OPEN_PAREN, TokenType.CLOSE_PAREN, MaxPrecedenceExpressionParser),
-        createNode=lambda name, arguments: FunctionCall.withChildren(name, arguments)
+        #abstractIterableParser(ArgumentsList, TokenType.OPEN_PAREN, TokenType.CLOSE_PAREN, MaxPrecedenceExpressionParser),
+        createNode=lambda name, arguments: FunctionCall.withChildren(name, arguments),
+        name="functionCall"
     )
 
-    assignmentParser = Parser.allOf(
+    assignmentParser = Parsers.allOf(
         identifierLiteralParser,
-        Parser.terminalParser(TokenType.ASSIGN, createNode=Operator.withValue),
-        MaxPrecedenceExpressionParser,
-        createNode=lambda identifier, assign, expr: Assignment.withValues(identifier, assign, expr)
+        Parsers.terminal(TokenType.ASSIGN, createNode=Operator.withValue),
+        #MaxPrecedenceExpressionParser,
+        createNode=lambda identifier, assign, expr: Assignment.withValues(identifier, assign, expr),
+        name="assignment"
     )
 
-    return Parser.oneOf(
+    return Parsers.oneOf(
         assignmentParser,
         functionCallParser,
-        identifierLiteralParser
-    )(input)
+        identifierLiteralParser,
+        name="idExpr"
+    )

@@ -1,8 +1,7 @@
-from smnp.ast.node.atom import LiteralParser
 from smnp.ast.node.iterable import abstractIterableParser
 from smnp.ast.node.model import Node
 from smnp.ast.node.operator import BinaryOperator, Operator
-from smnp.ast.parser import Parser
+from smnp.ast.parser import Parsers
 from smnp.token.type import TokenType
 
 
@@ -30,17 +29,19 @@ class Map(Node):
 
 
 def MapParser(input):
-    from smnp.ast.node.expression import MaxPrecedenceExpressionParser
+    from smnp.ast.node.atom import LiteralParser
+    #from smnp.ast.node.expression import MaxPrecedenceExpressionParser
     keyParser = LiteralParser
-    valueParser = MaxPrecedenceExpressionParser
+    #valueParser = MaxPrecedenceExpressionParser
 
-    mapEntryParser = Parser.allOf(
+    mapEntryParser = Parsers.allOf(
         keyParser,
-        Parser.terminalParser(TokenType.ARROW, createNode=Operator.withValue),
-        valueParser,
-        createNode=MapEntry.withValues
+        Parsers.terminal(TokenType.ARROW, createNode=Operator.withValue),
+        #valueParser,
+        createNode=MapEntry.withValues,
+        name="mapEntry"
     )
 
-    mapParser = abstractIterableParser(Map, TokenType.OPEN_CURLY, TokenType.CLOSE_CURLY, mapEntryParser)
+    return abstractIterableParser(Map, TokenType.OPEN_CURLY, TokenType.CLOSE_CURLY, mapEntryParser)
 
-    return Parser(mapParser, "map", [mapParser])(input)
+
