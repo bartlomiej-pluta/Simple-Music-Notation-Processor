@@ -21,8 +21,6 @@ class Or(BinaryOperator):
 
 
 def ExpressionParser(input):
-    from smnp.ast.node.condition import IfElse
-
     expr1 = Parser.leftAssociativeOperatorParser(
         TermParser,
         [TokenType.PLUS, TokenType.MINUS],
@@ -44,24 +42,10 @@ def ExpressionParser(input):
         lambda left, op, right: And.withValues(left, op, right)
     )
 
-    expr4 = Parser.leftAssociativeOperatorParser(
+    return Parser.leftAssociativeOperatorParser(
         expr3,
         [TokenType.OR],
         expr3,
         lambda left, op, right: Or.withValues(left, op, right)
-    )
-
-    ifElseExpression = Parser.allOf(
-        expr4,
-        Parser.terminal(TokenType.IF),
-        Parser.doAssert(expr4, "expression"),
-        Parser.terminal(TokenType.ELSE, doAssert=True),
-        Parser.doAssert(expr4, "expression"),
-        createNode=lambda ifNode, _, condition, __, elseNode: IfElse.createNode(ifNode, condition, elseNode)
-    )
-
-    return Parser.oneOf(
-        ifElseExpression,
-        expr4,
     )(input)
 
