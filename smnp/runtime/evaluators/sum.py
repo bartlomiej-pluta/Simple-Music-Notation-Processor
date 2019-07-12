@@ -17,6 +17,12 @@ class SumEvaluator(Evaluator):
         if left.type == right.type == Type.STRING:
             return cls.stringEvaluator(left, node.operator, right)
 
+        if left.type == right.type == Type.LIST:
+            return cls.listEvaluator(left, node.operator, right)
+
+        if left.type == right.type == Type.MAP:
+            return cls.mapEvaluator(left, node.operator, right)
+
         raise RuntimeException(f"Operator {node.operator.value} is not supported by {left.type.name.lower()} and {right.type.name.lower()} types", node.operator.pos)
 
     @classmethod
@@ -36,5 +42,25 @@ class SumEvaluator(Evaluator):
 
         if operator.value == "-":
             raise RuntimeException(f"Operator {operator.value} is not supported by string types", operator.pos)
+
+        raise RuntimeError("This line should never be reached")
+
+    @classmethod
+    def listEvaluator(cls, left, operator, right):
+        if operator.value == "+":
+            return Type.list(left.value + right.value)
+
+        if operator.value == "-":
+            raise RuntimeException(f"Operator {operator.value} is not supported by list types", operator.pos)
+
+        raise RuntimeError("This line should never be reached")
+
+    @classmethod
+    def mapEvaluator(cls, left, operator, right):
+        if operator.value == "+":
+            return Type.map({**left.value, **right.value})
+
+        if operator.value == "-":
+            raise RuntimeException(f"Operator {operator.value} is not supported by map types", operator.pos)
 
         raise RuntimeError("This line should never be reached")
