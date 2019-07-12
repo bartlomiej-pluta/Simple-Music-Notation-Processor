@@ -8,7 +8,7 @@ from smnp.token.tokenizers.note import noteTokenizer
 from smnp.token.tokenizers.relation import relationOperatorTokenizer
 from smnp.token.tokenizers.string import stringTokenizer
 from smnp.token.tokenizers.whitespace import whitespacesTokenizer
-from smnp.token.tools import defaultTokenizer, separated, regexPatternTokenizer
+from smnp.token.tools import defaultTokenizer, separated, regexPatternTokenizer, mapValue
 from smnp.token.type import TokenType
 
 tokenizers = (
@@ -39,7 +39,7 @@ tokenizers = (
     defaultTokenizer(TokenType.DOT),
 
     # Types
-    separated(regexPatternTokenizer(TokenType.INTEGER, r'\d')),
+    mapValue(separated(regexPatternTokenizer(TokenType.INTEGER, r'\d')), int),
     stringTokenizer,
     noteTokenizer,
     boolTokenizer,

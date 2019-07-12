@@ -50,3 +50,14 @@ def separated(tokenizer, end=r"\W"):
         return (0, None)
 
     return separated
+
+
+def mapValue(tokenizer, mapper):
+    def tokenize(input, current, line):
+        consumedChars, token = tokenizer(input, current, line)
+        if consumedChars > 0:
+            return (consumedChars, Token(token.type, mapper(token.value), token.pos))
+
+        return (0, None)
+
+    return tokenize

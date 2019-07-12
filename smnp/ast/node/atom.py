@@ -44,15 +44,7 @@ class TypeLiteral(Atom):
 
 
 def IntegerParser(input):
-    return Parser.oneOf(
-        Parser.terminal(TokenType.INTEGER, lambda val, pos: IntegerLiteral.withValue(int(val), pos)),
-        Parser.allOf(
-            Parser.terminal(TokenType.MINUS),
-            Parser.terminal(TokenType.INTEGER, lambda val, pos: IntegerLiteral.withValue(int(val), pos)),
-            createNode=lambda minus, integer: IntegerLiteral.withValue(-integer.value, minus.pos),
-            name="negative integer"
-        )
-    )(input)
+    return Parser.terminal(TokenType.INTEGER, createNode=IntegerLiteral.withValue)(input)
 
 
 def StringParser(input):
