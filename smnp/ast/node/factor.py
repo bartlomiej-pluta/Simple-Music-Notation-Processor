@@ -48,15 +48,7 @@ def FactorParser(input):
     from smnp.ast.node.statement import StatementParser
     from smnp.ast.node.identifier import IdentifierLiteralParser
 
-    powerFactor = Parser.leftAssociativeOperatorParser(
-        ChainParser,
-        [TokenType.DOUBLE_ASTERISK],
-        ChainParser,
-        lambda left, op, right: Factor.withValue(BinaryOperator.withValues(left, op, right)),
-        name="power operator"
-    )
-
-    exprFactor = Parser.allOf(
+    parentheses = Parser.allOf(
         Parser.terminal(TokenType.OPEN_PAREN),
         ExpressionParser,
         Parser.terminal(TokenType.CLOSE_PAREN),
@@ -64,15 +56,23 @@ def FactorParser(input):
         name="grouping parentheses"
     )
 
-    factorParser = Parser.oneOf(
-        powerFactor,
-        exprFactor,
-        name="basic factor"
+    factorOperands = Parser.oneOf(
+        parentheses,
+        ChainParser,
+        name="factor operands"
+    )
+
+    powerFactor = Parser.leftAssociativeOperatorParser(
+        factorOperands,
+        [TokenType.DOUBLE_ASTERISK],
+        factorOperands,
+        lambda left, op, right: Factor.withValue(BinaryOperator.withValues(left, op, right)),
+        name="power operator"
     )
 
     notOperator = Parser.allOf(
         Parser.terminal(TokenType.NOT, Operator.withValue),
-        factorParser,
+        powerFactor,
         createNode=NotOperator.withValues,
         name="not"
     )
@@ -88,7 +88,7 @@ def FactorParser(input):
     )
 
     loopFactor = Parser.allOf(
-        factorParser,
+        powerFactor,
         Parser.optional(loopParameters),
         Parser.terminal(TokenType.DASH, createNode=Operator.withValue),
         StatementParser,
@@ -99,5 +99,6 @@ def FactorParser(input):
     return Parser.oneOf(
         loopFactor,
         notOperator,
-        factorParser
+        powerFactor,
+        name="factor"
     )(input)
