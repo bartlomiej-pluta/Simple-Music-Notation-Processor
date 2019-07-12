@@ -13,5 +13,5 @@ def stringTokenizer(input, current, line):
             char = input[current + consumedChars]
             value += char
             consumedChars += 1
-        return (consumedChars, Token(TokenType.STRING, value[1:len(value)-1], (line, current)))
+        return (consumedChars, Token(TokenType.STRING, value[1:len(value)-1], (line, current), value))
     return (0, None)
