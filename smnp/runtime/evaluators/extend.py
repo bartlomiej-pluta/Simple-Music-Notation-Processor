@@ -17,11 +17,11 @@ class ExtendEvaluator(Evaluator):
     @classmethod
     def _typeToMethodSignature(cls, node):
         if type(node.specifiers) == NoneNode:
-            return signature(ofType(node.type))
+            return signature(ofType(node.type.value))
 
-        elif node.type == Type.LIST:
+        elif node.type.value == Type.LIST:
             return signature(listSpecifier(node.specifiers[0]))
-        elif node.type == Type.MAP:
+        elif node.type.value == Type.MAP:
             return signature(mapSpecifier(node.specifiers[0], node.specifiers[1]))
 
     @classmethod

@@ -1,5 +1,6 @@
 from smnp.ast.node.block import Block
 from smnp.ast.node.condition import IfElse
+from smnp.ast.node.extend import Extend
 from smnp.ast.node.function import FunctionDefinition
 from smnp.ast.node.imports import Import
 from smnp.ast.node.program import Program
@@ -75,6 +76,7 @@ def evaluate(node, environment):
     from smnp.runtime.evaluators.imports import ImportEvaluator
     from smnp.runtime.evaluators.function import FunctionDefinitionEvaluator
     from smnp.runtime.evaluators.function import ReturnEvaluator
+    from smnp.runtime.evaluators.extend import ExtendEvaluator
     result = Evaluator.oneOf(
         Evaluator.forNodes(ProgramEvaluator.evaluate, Program),
         Evaluator.forNodes(IfElseStatementEvaluator.evaluate, IfElse),
@@ -82,6 +84,7 @@ def evaluate(node, environment):
         Evaluator.forNodes(ImportEvaluator.evaluate, Import),
         Evaluator.forNodes(FunctionDefinitionEvaluator.evaluate, FunctionDefinition),
         Evaluator.forNodes(ReturnEvaluator.evaluate, Return),
+        Evaluator.forNodes(ExtendEvaluator.evaluate, Extend),
         #Evaluator.forNodes(ImportEvaluator.evaluate, ImportNode),
         #Evaluator.forNodes(FunctionDefinitionEvaluator.evaluate, FunctionDefinitionNode),
         #Evaluator.forNodes(ExtendEvaluator.evaluate, ExtendNode),
