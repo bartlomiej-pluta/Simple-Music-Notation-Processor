@@ -7,5 +7,5 @@ class ImportEvaluator(Evaluator):
     @classmethod
     def evaluator(cls, node, environment):
         source = node.source
-        newEnvironment = Interpreter.interpretFile(source.value)
+        newEnvironment = Interpreter.interpretFile(source.value, baseEnvironment=environment)
         environment.extend(newEnvironment)

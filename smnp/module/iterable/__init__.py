@@ -1,4 +1,4 @@
-from smnp.module.iterable.function import combine, flat, map, range, get
+from smnp.module.iterable.function import combine, map, range, get
 
-functions = [ combine.function, flat.function, map.function, range.function ]
+functions = [ combine.function, map.function, range.function ]
 methods = [ get.function ]
