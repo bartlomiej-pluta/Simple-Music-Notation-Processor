@@ -1,10 +1,12 @@
 from smnp.ast.node.atom import StringLiteral, IntegerLiteral, NoteLiteral, BoolLiteral, TypeLiteral
+from smnp.ast.node.identifier import Identifier
 from smnp.ast.node.list import List
 from smnp.ast.node.map import Map
 from smnp.error.runtime import RuntimeException
 from smnp.runtime.evaluator import Evaluator
 from smnp.runtime.evaluators.expression import expressionEvaluator
 from smnp.runtime.evaluators.iterable import abstractIterableEvaluator
+from smnp.runtime.tools.error import updatePos
 from smnp.type.model import Type
 
 
@@ -66,6 +68,16 @@ class MapEvaluator(Evaluator):
         return Type.map(map)
 
 
+class IdentifierEvaluator(Evaluator):
+
+    @classmethod
+    def evaluator(cls, node, environment):
+        try:
+            return environment.findVariable(node.value)
+        except RuntimeException as e:
+            raise updatePos(e, node)
+
+
 class AtomEvaluator(Evaluator):
 
     @classmethod
@@ -76,6 +88,7 @@ class AtomEvaluator(Evaluator):
             Evaluator.forNodes(NoteEvaluator.evaluate, NoteLiteral),
             Evaluator.forNodes(BoolEvaluator.evaluate, BoolLiteral),
             Evaluator.forNodes(TypeEvaluator.evaluate, TypeLiteral),
+            Evaluator.forNodes(IdentifierEvaluator.evaluate, Identifier),
             Evaluator.forNodes(ListEvaluator.evaluate, List),
             Evaluator.forNodes(MapEvaluator.evaluate, Map)
         )(node, environment).value
