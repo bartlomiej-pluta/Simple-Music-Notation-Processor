@@ -13,12 +13,16 @@ class LoopEvaluator(Evaluator):
         parameters = [ identifier.value for identifier in node.parameters ] if type(node.parameters) != NoneNode() else []
 
         try:
+            environment.scopes.append({})
+
             output = {
                 Type.INTEGER: cls.numberEvaluator,
                 Type.BOOL: cls.boolEvaluator,
                 Type.LIST: cls.listEvaluator,
                 Type.MAP: cls.mapEvaluator
             }[iterator.type](node, environment, iterator, parameters)
+
+            environment.scopes.pop(-1)
         except KeyError:
             raise RuntimeException(f"The {iterator.type.name.lower()} type cannot stand as an iterator for loop statement", node.left.pos)
 
@@ -28,7 +32,6 @@ class LoopEvaluator(Evaluator):
     def numberEvaluator(cls, node, environment, evaluatedIterator, parameters):
         output = []
 
-        environment.scopes.append({})
 
         if len(parameters) > 1:
             raise RuntimeException(f"Loop with numeric iterator can handle only one parameter", node.parameters.pos)
@@ -39,15 +42,13 @@ class LoopEvaluator(Evaluator):
 
             output.append(evaluate(node.right, environment).value)
 
-        environment.scopes.pop(-1)
+
 
         return output
 
     @classmethod
     def boolEvaluator(cls, node, environment, evaluatedIterator, parameters):
         output = []
-
-        environment.scopes.append({})
 
         if len(parameters) > 0:
             raise RuntimeException(f"Loop with logic iterator can't' handle any parameters", node.parameters.pos)
@@ -56,8 +57,6 @@ class LoopEvaluator(Evaluator):
         while condition.value:
             output.append(evaluate(node.right, environment).value)
             condition = expressionEvaluator(doAssert=True)(node.left, environment).value
-
-        environment.scopes.pop(-1)
 
         return output
 
@@ -76,8 +75,6 @@ class LoopEvaluator(Evaluator):
                 environment.scopes[-1][parameters[1]] = value
 
             output.append(evaluate(node.right, environment).value)
-
-        environment.scopes.pop(-1)
 
         return output
 
@@ -103,7 +100,5 @@ class LoopEvaluator(Evaluator):
                 i += 1
 
             output.append(evaluate(node.right, environment).value)
-
-        environment.scopes.pop(-1)
 
         return output
