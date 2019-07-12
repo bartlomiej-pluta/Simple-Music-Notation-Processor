@@ -1,6 +1,4 @@
 from smnp.ast.node.atom import AtomParser
-from smnp.ast.node.list import ListParser
-from smnp.ast.node.map import MapParser
 from smnp.ast.node.operator import BinaryOperator, UnaryOperator, Operator
 from smnp.ast.node.valuable import Valuable
 from smnp.ast.parser import Parser
@@ -16,28 +14,24 @@ class MinusOperator(UnaryOperator):
 
 
 def ChainParser(input):
-    chain1 = Parser.oneOf(
-        ListParser,
-        MapParser,
-        AtomParser,
-    )
-
     minusOperator = Parser.allOf(
         Parser.terminal(TokenType.MINUS, createNode=Operator.withValue),
-        chain1,
+        Parser.doAssert(AtomParser, "atom"),
         createNode=MinusOperator.withValues,
         name="minus"
     )
 
-    chain2 = Parser.oneOf(
+    atom2 = Parser.oneOf(
         minusOperator,
-        chain1
+        AtomParser,
+        name="atom2"
     )
 
     return Parser.leftAssociativeOperatorParser(
-        chain2,
+        atom2,
         [TokenType.DOT],
-        chain2,
-        lambda left, op, right: Chain.withValue(BinaryOperator.withValues(left, op, right))
+        Parser.doAssert(atom2, "atom"),
+        createNode=lambda left, op, right: Chain.withValue(BinaryOperator.withValues(left, op, right)),
+        name="chain"
     )(input)
 

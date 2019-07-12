@@ -76,10 +76,14 @@ def LiteralParser(input):
 
 def AtomParser(input):
     from smnp.ast.node.identifier import IdentifierParser
+    from smnp.ast.node.list import ListParser
+    from smnp.ast.node.map import MapParser
 
     return Parser.oneOf(
         LiteralParser,
         IdentifierParser,
+        ListParser,
+        MapParser,
         name="atom"
     )(input)
 
