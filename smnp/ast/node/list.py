@@ -1,5 +1,6 @@
 from smnp.ast.node.iterable import abstractIterableParser
 from smnp.ast.node.model import Node
+from smnp.ast.parser import Parser
 from smnp.token.type import TokenType
 
 
@@ -14,5 +15,5 @@ def ListParser(input):
         List,
         TokenType.OPEN_SQUARE,
         TokenType.CLOSE_SQUARE,
-        ExpressionParser
+        Parser.doAssert(ExpressionParser, "expression")
     )(input)

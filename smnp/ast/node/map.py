@@ -36,8 +36,8 @@ def MapParser(input):
 
     mapEntryParser = Parser.allOf(
         keyParser,
-        Parser.terminal(TokenType.ARROW, createNode=Operator.withValue),
-        valueParser,
+        Parser.terminal(TokenType.ARROW, createNode=Operator.withValue, doAssert=True),
+        Parser.doAssert(valueParser, "expression"),
         createNode=MapEntry.withValues
     )
 
