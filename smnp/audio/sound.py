@@ -10,6 +10,9 @@ class Sound:
     def play(self):
         sd.play(self.data, self.fs, blocking=True)
 
+    def __eq__(self, other):
+        return self.file == other.file and self.data == other.data
+
     def __str__(self):
         return f"sound[{self.file}]"
 
