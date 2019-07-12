@@ -207,3 +207,14 @@ class Parser:
                     return ParseResult.OK(createNode(results, pos) if len(results) > 0 else NoneNode())
 
         return Parser(parse, name, parsers=[parser])
+
+    @staticmethod
+    def wrap(parser, createNode):
+        def parse(input):
+            result = parser(input)
+            if result.result:
+                return ParseResult.OK(createNode(result.node))
+
+            return result
+
+        return parse
