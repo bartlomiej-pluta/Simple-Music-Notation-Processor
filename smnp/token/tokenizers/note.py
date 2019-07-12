@@ -14,7 +14,7 @@ def noteTokenizer(input, current, line):
     rawValue = ''
     if input[current] == '@':
         rawValue += input[current+consumedChars]
-        consumedChars += 1
+        consumedChars += 1  # TODO: Check if next item does even exist
         if input[current+consumedChars] in ('C', 'c', 'D', 'd', 'E', 'e', 'F', 'f', 'G', 'g', 'A', 'a', 'H', 'h', 'B', 'b'):
             rawValue += input[current + consumedChars]
             notePitch = input[current+consumedChars]

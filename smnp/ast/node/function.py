@@ -103,7 +103,7 @@ def ArgumentParser(input):
 
     return Parser.allOf(
         Parser.optional(TypeParser),
-        IdentifierLiteralParser,
+        Parser.doAssert(IdentifierLiteralParser, "argument name"),
         Parser.optional(Parser.terminal(TokenType.DOTS, lambda val, pos: True)),
         createNode=createNode,
         name="function argument"
@@ -115,24 +115,26 @@ def ArgumentsDeclarationParser(input):
         ArgumentsDeclaration,
         TokenType.OPEN_PAREN,
         TokenType.CLOSE_PAREN,
-        ArgumentParser
+        Parser.doAssert(ArgumentParser, "function/method argument")
     )(input)
 
 
 def FunctionDefinitionParser(input):
     return Parser.allOf(
         Parser.terminal(TokenType.FUNCTION),
-        IdentifierLiteralParser,
-        ArgumentsDeclarationParser,
-        MethodBodyParser,
+        Parser.doAssert(IdentifierLiteralParser, "function/method name"),
+        Parser.doAssert(ArgumentsDeclarationParser, "function/method arguments"),
+        Parser.doAssert(MethodBodyParser, "function/method body"),
         createNode=lambda _, name, args, body: FunctionDefinition.withValues(name, args, body),
         name="function definition"
     )(input)
 
+
 def MethodBodyParser(input):
     bodyItem = Parser.oneOf(
-        StatementParser,
         ReturnParser,
+        StatementParser,
+        assertExpected="statement",
         name="function body item"
     )
 

@@ -27,7 +27,7 @@ class Import(Node):
 def ImportParser(input):
     return Parser.allOf(
         Parser.terminal(TokenType.IMPORT),
-        StringParser,
+        Parser.doAssert(StringParser, "import source as string"),
         createNode=lambda imp, source: Import.withValue(source),
         name="import"
     )(input)
