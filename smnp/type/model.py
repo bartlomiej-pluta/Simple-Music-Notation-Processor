@@ -73,6 +73,7 @@ class Type(Enum):
     def void():
         return Value(Type.VOID, None)
 
+
 def _failStringify(t):
     raise RuntimeException(f"Not able to interpret {t.name}'", None)
 
