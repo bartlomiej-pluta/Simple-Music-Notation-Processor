@@ -62,13 +62,17 @@ class Parser:
 
     # oneOf -> a | b | c | ...
     @staticmethod
-    def oneOf(*parsers, exception=None, name="or"):
+    def oneOf(*parsers, assertExpected=None, exception=None, name="or"):
         def combinedParser(input):
             snap = input.snapshot()
             for parser in parsers:
                 value = parser(input)
                 if value.result:
                     return value
+
+            if assertExpected is not None:
+                found = f", found '{input.current().rawValue}'" if input.hasCurrent() else ""
+                raise SyntaxException(f"Expected {assertExpected}{found}", input.currentPos())
 
             if exception is not None:
                 if callable(exception):
