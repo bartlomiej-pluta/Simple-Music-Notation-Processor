@@ -1,5 +1,5 @@
 from smnp.ast.node.none import NoneNode
-from smnp.ast.node.type import TypeNode, TypeSpecifier
+from smnp.ast.node.type import Type, TypesList
 from smnp.error.runtime import RuntimeException
 from smnp.function.signature import varargSignature, signature
 from smnp.runtime.tools.error import updatePos
@@ -16,9 +16,9 @@ def argumentsNodeToMethodSignature(node):
         argumentsCount = len(node.children)
         for i, child in enumerate(node.children):
             matchers = {
-                TypeNode: (lambda c: c.type, typeMatcher),
+                Type: (lambda c: c.type, typeMatcher),
                 NoneNode: (lambda c: c.type, lambda c: allTypes()),
-                TypeSpecifier: (lambda c: c, multipleTypeMatcher)
+                TypesList: (lambda c: c, multipleTypeMatcher)
             }
             evaluatedMatcher = matchers[type(child.type)][1](matchers[type(child.type)][0](child))
             if child.vararg:
