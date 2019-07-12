@@ -9,15 +9,15 @@ from smnp.token.tokenizer import tokenize
 class Interpreter:
 
     @staticmethod
-    def interpretString(string, printTokens=False, printAst=False, baseEnvironment=None):
-        return Interpreter._interpret(string.splitlines(), printTokens, printAst, baseEnvironment)
+    def interpretString(string, printTokens=False, printAst=False, execute=True, baseEnvironment=None):
+        return Interpreter._interpret(string.splitlines(), printTokens, printAst, execute, baseEnvironment)
 
     @staticmethod
-    def interpretFile(file, printTokens=False, printAst=False, baseEnvironment=None):
-        return Interpreter._interpret(readLines(file), printTokens, printAst, baseEnvironment)
+    def interpretFile(file, printTokens=False, printAst=False, execute=True, baseEnvironment=None):
+        return Interpreter._interpret(readLines(file), printTokens, printAst, execute, baseEnvironment)
 
     @staticmethod
-    def _interpret(lines, printTokens=False, printAst=False, baseEnvironment=None):
+    def _interpret(lines, printTokens=False, printAst=False, execute=True, baseEnvironment=None):
         environment = createEnvironment()
         if baseEnvironment is not None:
             environment.extend(baseEnvironment)
@@ -31,7 +31,8 @@ class Interpreter:
             if printAst:
                 ast.print()
 
-            evaluate(ast, environment)
+            if execute:
+                evaluate(ast, environment)
 
             return environment
         except RuntimeException as e:

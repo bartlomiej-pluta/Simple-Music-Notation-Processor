@@ -13,6 +13,7 @@ class Type(Enum):
     MAP = (dict, lambda x: '{' + ', '.join(f"'{k.stringify()}' -> '{v.stringify()}'" for k, v in x.items()) + '}')
     PERCENT = (float, lambda x: f"{int(x * 100)}%")
     NOTE = (Note, lambda x: x.note.name)
+    BOOL = (bool, lambda x: str(x).lower())
     SOUND = (Sound, lambda x: x.file)
     TYPE = (None, lambda x: x.name.lower())
     VOID = (type(None), lambda x: _failStringify(Type.VOID))
@@ -54,6 +55,10 @@ class Type(Enum):
         })
 
     @staticmethod
+    def bool(value):
+        return Value(Type.BOOL, value, {})
+
+    @staticmethod
     def sound(value):
         return Value(Type.SOUND, value, {
             "file": Type.string(value.file),
@@ -67,6 +72,7 @@ class Type(Enum):
     @staticmethod
     def void():
         return Value(Type.VOID, None)
+
 
 def _failStringify(t):
     raise RuntimeException(f"Not able to interpret {t.name}'", None)

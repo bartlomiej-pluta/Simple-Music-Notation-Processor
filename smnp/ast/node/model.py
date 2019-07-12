@@ -28,26 +28,11 @@ class Node:
     def pop(self, index):
         return self.children.pop(index)
 
-    @classmethod
-    def _parse(cls, input):
-        pass
-
-    @classmethod
-    def parse(cls, input):
-        result = cls._parse(input)
-        if result is None:
-            return ParseResult.FAIL()
-
-        if not isinstance(result, ParseResult):
-            raise RuntimeError(f"_parse() method of '{cls.__name__}' class haven't returned ParseResult object")
-
-        return result
-
     def print(self):
         self._print(first=True)
 
     def _print(self, prefix="", last=True, first=False):
-        print(prefix, '' if first else '└─' if last else '├─', self.__class__.__name__, sep="")
+        print(prefix, '' if first else '└─' if last else '├─', self.__class__.__name__, f" (line {self.pos[0]+1}, col {self.pos[1]+1})", sep="")
         prefix += '   ' if last else '│  '
         for i, child in enumerate(self.children):
             last = i == len(self.children) - 1

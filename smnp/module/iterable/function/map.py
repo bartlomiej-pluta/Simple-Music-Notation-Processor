@@ -4,7 +4,7 @@ from smnp.type.model import Type
 from smnp.type.signature.matcher.list import listOfMatchers, listMatches
 from smnp.type.signature.matcher.type import allTypes, ofTypes
 
-_signature1 = varargSignature(listMatches(ofTypes(Type.INTEGER, Type.STRING, Type.NOTE, Type.TYPE), allTypes()))
+_signature1 = varargSignature(listMatches(ofTypes(Type.INTEGER, Type.STRING, Type.NOTE, Type.BOOL, Type.TYPE), allTypes()))
 def _function1(env, vararg):
     map = {}
     for entry in vararg:
@@ -14,7 +14,7 @@ def _function1(env, vararg):
     return Type.map(map)
 
 
-_signature2 = signature(listOfMatchers(listMatches(ofTypes(Type.INTEGER, Type.STRING, Type.NOTE, Type.TYPE), allTypes())))
+_signature2 = signature(listOfMatchers(listMatches(ofTypes(Type.INTEGER, Type.STRING, Type.NOTE, Type.BOOL, Type.TYPE), allTypes())))
 def _function2(env, list):
     map = {}
     for entry in list.value:

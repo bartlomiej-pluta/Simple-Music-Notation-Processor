@@ -6,17 +6,17 @@ from smnp.type.signature.matcher.type import ofType
 
 _signature1 = signature(ofType(Type.INTEGER))
 def _function1(env, upper):
-    return Type.list(list(range(upper.value + 1)))
+    return Type.list([ Type.integer(i) for i in range(upper.value + 1)])
 
 
 _signature2 = signature(ofType(Type.INTEGER), ofType(Type.INTEGER))
 def _function2(env, lower, upper):
-    return Type.list(list(range(lower.value, upper.value + 1)))
+    return Type.list([ Type.integer(i) for i in range(lower.value, upper.value + 1)])
 
 
 _signature3 = signature(ofType(Type.INTEGER), ofType(Type.INTEGER), ofType(Type.INTEGER))
 def _function3(env, lower, upper, step):
-    return Type.list(list(range(lower.value, upper.value + 1, step.value)))
+    return Type.list([ Type.integer(i) for i in range(lower.value, upper.value + 1, step.value)])
 
 
 _signature4 = signature(ofType(Type.NOTE), ofType(Type.NOTE))

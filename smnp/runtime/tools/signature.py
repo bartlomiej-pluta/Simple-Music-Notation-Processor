@@ -1,5 +1,6 @@
+from smnp.ast.node import type as ast
 from smnp.ast.node.none import NoneNode
-from smnp.ast.node.type import TypeNode, TypeSpecifier
+from smnp.ast.node.type import TypesList
 from smnp.error.runtime import RuntimeException
 from smnp.function.signature import varargSignature, signature
 from smnp.runtime.tools.error import updatePos
@@ -16,9 +17,9 @@ def argumentsNodeToMethodSignature(node):
         argumentsCount = len(node.children)
         for i, child in enumerate(node.children):
             matchers = {
-                TypeNode: (lambda c: c.type, typeMatcher),
+                ast.Type: (lambda c: c.type, typeMatcher),
                 NoneNode: (lambda c: c.type, lambda c: allTypes()),
-                TypeSpecifier: (lambda c: c, multipleTypeMatcher)
+                TypesList: (lambda c: c, multipleTypeMatcher)
             }
             evaluatedMatcher = matchers[type(child.type)][1](matchers[type(child.type)][0](child))
             if child.vararg:
@@ -49,10 +50,10 @@ def multipleTypeMatcher(typeNode):
 
 def typeMatcher(typeNode):
     if type(typeNode.specifiers) == NoneNode:
-        return ofType(typeNode.type)
-    elif typeNode.type == Type.LIST and len(typeNode.specifiers) == 1:
+        return ofType(typeNode.type.value)
+    elif typeNode.type.value == Type.LIST and len(typeNode.specifiers) == 1:
         return listSpecifier(typeNode.specifiers[0])
-    elif typeNode.type == Type.MAP and len(typeNode.specifiers) == 2:
+    elif typeNode.type.value == Type.MAP and len(typeNode.specifiers) == 2:
         return mapSpecifier(typeNode.specifiers[0], typeNode.specifiers[1])
 
     raise RuntimeException("Unknown type", typeNode.pos)  # Todo: Improve pointing position

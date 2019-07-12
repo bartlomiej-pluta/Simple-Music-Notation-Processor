@@ -8,7 +8,7 @@ class Token:
         self.rawValue = rawValue
 
     def __str__(self):
-        return "Token(" + str(self.type) + ", '" + str(self.value) + "', " + str(self.pos) + ")"
+        return "{" + str(self.type.name) + ", '" + str(self.value) + "', " + str(self.pos) + "}"
 
     def __repr__(self):
         return self.__str__()

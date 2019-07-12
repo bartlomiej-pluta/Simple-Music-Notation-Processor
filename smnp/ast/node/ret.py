@@ -1,32 +1,17 @@
-from smnp.ast.node.expression import ExpressionNode
-from smnp.ast.node.none import NoneNode
-from smnp.ast.node.statement import StatementNode
+from smnp.ast.node.expression import ExpressionParser
+from smnp.ast.node.valuable import Valuable
 from smnp.ast.parser import Parser
 from smnp.token.type import TokenType
 
 
-class ReturnNode(StatementNode):
-    def __init__(self, pos):
-        super().__init__(pos)
-        self.children.append(NoneNode())
+class Return(Valuable):
+    pass
 
-    @property
-    def value(self):
-        return self[0]
 
-    @value.setter
-    def value(self, value):
-        self[0] = value
-
-    @classmethod
-    def _parse(cls, input):
-        def createNode(ret, value):
-            node = ReturnNode(ret.pos)
-            node.value = value
-            return node
-
-        return Parser.allOf(
-            Parser.terminalParser(TokenType.RETURN),
-            Parser.doAssert(ExpressionNode.parse, "expression"),
-            createNode=createNode
-        )(input)
+def ReturnParser(input):
+    return Parser.allOf(
+        Parser.terminal(TokenType.RETURN),
+        Parser.optional(ExpressionParser),
+        createNode=lambda ret, val: Return.withValue(val, ret.pos),
+        name="return"
+    )(input)
