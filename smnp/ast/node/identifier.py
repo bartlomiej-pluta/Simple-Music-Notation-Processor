@@ -56,14 +56,14 @@ def IdentifierLiteralParser(input):
 def IdentifierParser(input):
     functionCallParser = Parser.allOf(
         IdentifierLiteralParser,
-        abstractIterableParser(ArgumentsList, TokenType.OPEN_PAREN, TokenType.CLOSE_PAREN, ExpressionParser),
+        abstractIterableParser(ArgumentsList, TokenType.OPEN_PAREN, TokenType.CLOSE_PAREN, Parser.doAssert(ExpressionParser, "expression")),
         createNode=lambda name, arguments: FunctionCall.withChildren(name, arguments)
     )
 
     assignmentParser = Parser.allOf(
         IdentifierLiteralParser,
         Parser.terminal(TokenType.ASSIGN, createNode=Operator.withValue),
-        ExpressionParser,
+        Parser.doAssert(ExpressionParser, "expression"),
         createNode=lambda identifier, assign, expr: Assignment.withValues(identifier, assign, expr)
     )
 

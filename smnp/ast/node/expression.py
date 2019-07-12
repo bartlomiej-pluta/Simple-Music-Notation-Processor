@@ -43,9 +43,9 @@ def ExpressionParser(input):
     ifElseExpression = Parser.allOf(
         expr4,
         Parser.terminal(TokenType.IF),
-        expr4,
-        Parser.terminal(TokenType.ELSE),
-        expr4,
+        Parser.doAssert(expr4, "expression"),
+        Parser.terminal(TokenType.ELSE, doAssert=True),
+        Parser.doAssert(expr4, "expression"),
         createNode=lambda ifNode, _, condition, __, elseNode: IfElse.createNode(ifNode, condition, elseNode)
     )
 
