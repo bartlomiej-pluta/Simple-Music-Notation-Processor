@@ -69,6 +69,7 @@ class Parser:
                 value = parser(input)
                 if value.result:
                     return value
+                input.reset(snap)
 
             if assertExpected is not None:
                 found = f", found '{input.current().rawValue}'" if input.hasCurrent() else ""
@@ -79,7 +80,6 @@ class Parser:
                     raise exception(input)
                 else:
                     raise exception
-
 
             input.reset(snap)
             return ParseResult.FAIL()
