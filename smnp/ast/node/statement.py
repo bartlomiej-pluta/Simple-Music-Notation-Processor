@@ -11,9 +11,11 @@ def StatementParser(input):
     from smnp.ast.node.condition import IfElseStatementParser
     from smnp.ast.node.expression import ExpressionParser
 
+    from smnp.ast.node.ret import ReturnParser
     return Parser.oneOf(
         IfElseStatementParser,
         ExpressionParser,
         BlockParser,
+        ReturnParser,
         name="statement"
     )(input)
