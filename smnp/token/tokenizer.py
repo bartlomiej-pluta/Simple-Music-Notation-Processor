@@ -51,6 +51,7 @@ tokenizers = (
     separated(defaultTokenizer(TokenType.EXTEND)),
     separated(defaultTokenizer(TokenType.IMPORT)),
     separated(defaultTokenizer(TokenType.FROM)),
+    separated(defaultTokenizer(TokenType.WITH)),
     separated(defaultTokenizer(TokenType.ELSE)),
     separated(defaultTokenizer(TokenType.AND)),
     separated(defaultTokenizer(TokenType.NOT)),

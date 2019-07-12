@@ -36,6 +36,7 @@ class TokenType(Enum):
     EXTEND = 'extend'
     IMPORT = 'import'
     FROM = 'from'
+    WITH = 'with'
     ELSE = 'else'
     IF = 'if'
     AS = 'as'

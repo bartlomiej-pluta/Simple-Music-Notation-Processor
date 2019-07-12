@@ -45,14 +45,34 @@ class Extend(Node):
         node.methods = methods
         return node
 
+
 def ExtendParser(input):
-    return Parser.allOf(
+
+    simpleExtend = Parser.allOf(
+        Parser.terminal(TokenType.EXTEND),
+        TypeParser,
+        Parser.terminal(TokenType.AS),
+        IdentifierLiteralParser,
+        Parser.terminal(TokenType.WITH),
+        Parser.wrap(FunctionDefinitionParser, lambda method: Block.withChildren([ method ], method.pos)),
+        createNode=lambda extend, type, _, variable, __, methods: Extend.withValues(extend.pos, type, variable, methods),
+        name="simple extend"
+    )
+
+    multiExtend = Parser.allOf(
         Parser.terminal(TokenType.EXTEND),
         TypeParser,
         Parser.terminal(TokenType.AS),
         IdentifierLiteralParser,
         MethodsDeclarationParser,
         createNode=lambda extend, type, _, variable, methods: Extend.withValues(extend.pos, type, variable, methods),
+        name="multiple extend"
+    )
+
+
+    return Parser.oneOf(
+        simpleExtend,
+        multiExtend,
         name="extend"
     )(input)
 
