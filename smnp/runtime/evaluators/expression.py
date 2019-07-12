@@ -1,4 +1,4 @@
-from smnp.ast.node.factor import NotOperator
+from smnp.ast.node.factor import NotOperator, Power
 from smnp.ast.node.identifier import FunctionCall
 from smnp.ast.node.unit import MinusOperator, Access
 from smnp.error.runtime import RuntimeException
@@ -14,11 +14,13 @@ def expressionEvaluator(doAssert=False):
         from smnp.runtime.evaluators.atom import AtomEvaluator
         from smnp.runtime.evaluators.access import AccessEvaluator
         from smnp.runtime.evaluators.negation import NotEvaluator
+        from smnp.runtime.evaluators.power import PowerEvaluator
         result = Evaluator.oneOf(
             Evaluator.forNodes(FunctionCallEvaluator.evaluate, FunctionCall),
             Evaluator.forNodes(MinusEvaluator.evaluate, MinusOperator),
             Evaluator.forNodes(AccessEvaluator.evaluate, Access),
             Evaluator.forNodes(NotEvaluator.evaluate, NotOperator),
+            Evaluator.forNodes(PowerEvaluator.evaluate, Power),
             AtomEvaluator.evaluate
         )(node, environment)
 

@@ -3,16 +3,14 @@ from smnp.ast.node.model import Node
 from smnp.ast.node.none import NoneNode
 from smnp.ast.node.operator import BinaryOperator, Operator, UnaryOperator
 from smnp.ast.node.unit import UnitParser
-from smnp.ast.node.valuable import Valuable
 from smnp.ast.parser import Parser
 from smnp.token.type import TokenType
 
-
-class Factor(Valuable):
+class NotOperator(UnaryOperator):
     pass
 
 
-class NotOperator(UnaryOperator):
+class Power(BinaryOperator):
     pass
 
 
@@ -66,7 +64,7 @@ def FactorParser(input):
         factorOperands,
         [TokenType.DOUBLE_ASTERISK],
         factorOperands,
-        lambda left, op, right: Factor.withValue(BinaryOperator.withValues(left, op, right)),
+        lambda left, op, right: Power.withValues(left, op, right),
         name="power operator"
     )
 
