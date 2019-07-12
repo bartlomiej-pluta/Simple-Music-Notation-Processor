@@ -1,3 +1,6 @@
+from smnp.ast.node.atom import StringLiteral, IntegerLiteral, NoteLiteral, BoolLiteral, TypeLiteral
+from smnp.ast.node.list import List
+from smnp.ast.node.map import Map
 from smnp.error.runtime import RuntimeException
 from smnp.runtime.evaluator import Evaluator
 from smnp.runtime.evaluators.expression import expressionEvaluator
@@ -61,3 +64,18 @@ class MapEvaluator(Evaluator):
             map[key] = exprEvaluator(entry.value, environment).value
 
         return Type.map(map)
+
+
+class AtomEvaluator(Evaluator):
+
+    @classmethod
+    def evaluator(cls, node, environment):
+        return Evaluator.oneOf(
+            Evaluator.forNodes(StringEvaluator.evaluate, StringLiteral),
+            Evaluator.forNodes(IntegerEvaluator.evaluate, IntegerLiteral),
+            Evaluator.forNodes(NoteEvaluator.evaluate, NoteLiteral),
+            Evaluator.forNodes(BoolEvaluator.evaluate, BoolLiteral),
+            Evaluator.forNodes(TypeEvaluator.evaluate, TypeLiteral),
+            Evaluator.forNodes(ListEvaluator.evaluate, List),
+            Evaluator.forNodes(MapEvaluator.evaluate, Map)
+        )(node, environment).value
