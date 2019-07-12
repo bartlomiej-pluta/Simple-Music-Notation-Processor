@@ -47,20 +47,20 @@ class IfElse(Node):
 def IfElseStatementParser(input):
     ifStatementParser = Parser.allOf(
         Parser.terminal(TokenType.IF),
-        Parser.terminal(TokenType.OPEN_PAREN),
-        ExpressionParser,
-        Parser.terminal(TokenType.CLOSE_PAREN),
-        StatementParser,
+        Parser.doAssert(Parser.terminal(TokenType.OPEN_PAREN), TokenType.OPEN_PAREN.key),
+        Parser.doAssert(ExpressionParser, "expression"),
+        Parser.doAssert(Parser.terminal(TokenType.CLOSE_PAREN), TokenType.CLOSE_PAREN.key),
+        Parser.doAssert(StatementParser, "statement"),
         createNode=lambda _, __, condition, ___, ifStatement: IfElse.createNode(ifStatement, condition),
         name="if statement"
     )
 
     ifElseStatementParser = Parser.allOf(
         Parser.terminal(TokenType.IF),
-        Parser.terminal(TokenType.OPEN_PAREN),
-        ExpressionParser,
-        Parser.terminal(TokenType.CLOSE_PAREN),
-        StatementParser,
+        Parser.doAssert(Parser.terminal(TokenType.OPEN_PAREN), TokenType.OPEN_PAREN.key),
+        Parser.doAssert(ExpressionParser, "expression"),
+        Parser.doAssert(Parser.terminal(TokenType.CLOSE_PAREN), TokenType.CLOSE_PAREN.key),
+        Parser.doAssert(StatementParser, "statement"),
         Parser.terminal(TokenType.ELSE),
         StatementParser,
         createNode=lambda _, __, condition, ___, ifStatement, ____, elseStatement: IfElse.createNode(ifStatement, condition, elseStatement),

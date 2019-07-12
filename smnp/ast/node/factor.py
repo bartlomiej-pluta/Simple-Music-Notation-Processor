@@ -1,8 +1,8 @@
-from smnp.ast.node.chain import ChainParser
 from smnp.ast.node.iterable import abstractIterableParser
 from smnp.ast.node.model import Node
 from smnp.ast.node.none import NoneNode
 from smnp.ast.node.operator import BinaryOperator, Operator, UnaryOperator
+from smnp.ast.node.unit import UnitParser
 from smnp.ast.node.valuable import Valuable
 from smnp.ast.parser import Parser
 from smnp.token.type import TokenType
@@ -50,7 +50,7 @@ def FactorParser(input):
 
     parentheses = Parser.allOf(
         Parser.terminal(TokenType.OPEN_PAREN),
-        ExpressionParser,
+        Parser.doAssert(ExpressionParser, "expression"),
         Parser.terminal(TokenType.CLOSE_PAREN),
         createNode=lambda open, expr, close: expr,
         name="grouping parentheses"
@@ -58,7 +58,7 @@ def FactorParser(input):
 
     factorOperands = Parser.oneOf(
         parentheses,
-        ChainParser,
+        UnitParser,
         name="factor operands"
     )
 

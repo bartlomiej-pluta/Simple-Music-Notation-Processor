@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class TokenType(Enum):
-    RELATION = 'relation'
+    RELATION = '==, !=, >=, <='
     DOUBLE_ASTERISK = '**'
     OPEN_CURLY = '{'
     CLOSE_CURLY = '}'
