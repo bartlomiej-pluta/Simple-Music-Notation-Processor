@@ -54,17 +54,17 @@ def ExtendParser(input):
         Parser.terminal(TokenType.AS),
         IdentifierLiteralParser,
         Parser.terminal(TokenType.WITH),
-        Parser.wrap(FunctionDefinitionParser, lambda method: Block.withChildren([ method ], method.pos)),
+        Parser.doAssert(Parser.wrap(FunctionDefinitionParser, lambda method: Block.withChildren([ method ], method.pos)), "method definition"),
         createNode=lambda extend, type, _, variable, __, methods: Extend.withValues(extend.pos, type, variable, methods),
         name="simple extend"
     )
 
     multiExtend = Parser.allOf(
         Parser.terminal(TokenType.EXTEND),
-        TypeParser,
-        Parser.terminal(TokenType.AS),
-        IdentifierLiteralParser,
-        MethodsDeclarationParser,
+        Parser.doAssert(TypeParser, "type being extended"),
+        Parser.terminal(TokenType.AS, doAssert=True),
+        Parser.doAssert(IdentifierLiteralParser, "variable name"),
+        Parser.doAssert(MethodsDeclarationParser, f"block with methods definitions or '{TokenType.WITH.key}' keyword"),
         createNode=lambda extend, type, _, variable, methods: Extend.withValues(extend.pos, type, variable, methods),
         name="multiple extend"
     )
@@ -80,7 +80,7 @@ def ExtendParser(input):
 def MethodsDeclarationParser(input):
     return Parser.loop(
         Parser.terminal(TokenType.OPEN_CURLY),
-        FunctionDefinitionParser,
+        Parser.doAssert(FunctionDefinitionParser, f"method definition or '{TokenType.CLOSE_CURLY.key}'"),
         Parser.terminal(TokenType.CLOSE_CURLY),
         createNode=lambda open, methods, close: Block.withChildren(methods, open.pos),
         name="methods block"

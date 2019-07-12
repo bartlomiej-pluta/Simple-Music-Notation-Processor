@@ -134,13 +134,12 @@ def MethodBodyParser(input):
     bodyItem = Parser.oneOf(
         ReturnParser,
         StatementParser,
-        assertExpected="statement",
         name="function body item"
     )
 
     return Parser.loop(
         Parser.terminal(TokenType.OPEN_CURLY),
-        bodyItem,
+        Parser.doAssert(bodyItem, f"statement or '{TokenType.CLOSE_CURLY.key}'"),
         Parser.terminal(TokenType.CLOSE_CURLY),
         createNode=lambda open, statements, close: Block.withChildren(statements, open.pos),
         name="function body"
