@@ -1,5 +1,7 @@
 from smnp.ast.node.atom import StringLiteral, IntegerLiteral, NoteLiteral, BoolLiteral, TypeLiteral
 from smnp.ast.node.identifier import FunctionCall
+from smnp.ast.node.list import List
+from smnp.ast.node.map import Map
 from smnp.error.runtime import RuntimeException
 from smnp.runtime.evaluator import Evaluator
 from smnp.type.model import Type
@@ -14,6 +16,8 @@ def expressionEvaluator(doAssert=False):
             from smnp.runtime.evaluators.atom import BoolEvaluator
 
             from smnp.runtime.evaluators.function import FunctionCallEvaluator
+            from smnp.runtime.evaluators.atom import ListEvaluator
+            from smnp.runtime.evaluators.atom import MapEvaluator
             result =  Evaluator.oneOf(
                 Evaluator.forNodes(FunctionCallEvaluator.evaluate, FunctionCall),
                 Evaluator.forNodes(StringEvaluator.evaluate, StringLiteral),
@@ -21,6 +25,8 @@ def expressionEvaluator(doAssert=False):
                 Evaluator.forNodes(NoteEvaluator.evaluate, NoteLiteral),
                 Evaluator.forNodes(BoolEvaluator.evaluate, BoolLiteral),
                 Evaluator.forNodes(TypeEvaluator.evaluate, TypeLiteral),
+                Evaluator.forNodes(ListEvaluator.evaluate, List),
+                Evaluator.forNodes(MapEvaluator.evaluate, Map)
                 # Evaluator.forNodes(IdentifierEvaluator.evaluate, Identifier),
                 # Evaluator.forNodes(ListEvaluator.evaluate, List),
                 # Evaluator.forNodes(AccessEvaluator.evaluate, LeftAssociativeOperatorNode),
