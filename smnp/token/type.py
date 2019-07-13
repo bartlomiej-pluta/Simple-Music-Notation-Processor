@@ -35,6 +35,7 @@ class TokenType(Enum):
     RETURN = 'return'
     EXTEND = 'extend'
     IMPORT = 'import'
+    THROW = 'throw'
     FROM = 'from'
     WITH = 'with'
     ELSE = 'else'

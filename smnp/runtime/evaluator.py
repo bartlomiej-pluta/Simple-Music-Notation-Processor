@@ -5,6 +5,7 @@ from smnp.ast.node.function import FunctionDefinition
 from smnp.ast.node.imports import Import
 from smnp.ast.node.program import Program
 from smnp.ast.node.ret import Return
+from smnp.ast.node.throw import Throw
 from smnp.error.runtime import RuntimeException
 from smnp.type.model import Type
 
@@ -69,7 +70,6 @@ class EvaluationResult():
 
 def evaluate(node, environment):
     from smnp.runtime.evaluators.program import ProgramEvaluator
-
     from smnp.runtime.evaluators.expression import expressionEvaluator
     from smnp.runtime.evaluators.condition import IfElseStatementEvaluator
     from smnp.runtime.evaluators.block import BlockEvaluator
@@ -77,6 +77,8 @@ def evaluate(node, environment):
     from smnp.runtime.evaluators.function import FunctionDefinitionEvaluator
     from smnp.runtime.evaluators.function import ReturnEvaluator
     from smnp.runtime.evaluators.extend import ExtendEvaluator
+    from smnp.runtime.evaluators.throw import ThrowEvaluator
+
     result = Evaluator.oneOf(
         Evaluator.forNodes(ProgramEvaluator.evaluate, Program),
         Evaluator.forNodes(IfElseStatementEvaluator.evaluate, IfElse),
@@ -85,6 +87,7 @@ def evaluate(node, environment):
         Evaluator.forNodes(FunctionDefinitionEvaluator.evaluate, FunctionDefinition),
         Evaluator.forNodes(ReturnEvaluator.evaluate, Return),
         Evaluator.forNodes(ExtendEvaluator.evaluate, Extend),
+        Evaluator.forNodes(ThrowEvaluator.evaluate, Throw),
         #Evaluator.forNodes(ImportEvaluator.evaluate, ImportNode),
         #Evaluator.forNodes(FunctionDefinitionEvaluator.evaluate, FunctionDefinitionNode),
         #Evaluator.forNodes(ExtendEvaluator.evaluate, ExtendNode),

@@ -50,6 +50,7 @@ tokenizers = (
     separated(defaultTokenizer(TokenType.RETURN)),
     separated(defaultTokenizer(TokenType.EXTEND)),
     separated(defaultTokenizer(TokenType.IMPORT)),
+    separated(defaultTokenizer(TokenType.THROW)),
     separated(defaultTokenizer(TokenType.FROM)),
     separated(defaultTokenizer(TokenType.WITH)),
     separated(defaultTokenizer(TokenType.ELSE)),
