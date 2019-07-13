@@ -51,7 +51,7 @@ class Type(Enum):
             "pitch": Type.string(str(value.note)),
             "octave": Type.integer(value.octave),
             "duration": Type.integer(value.duration),
-            "dot": Type.string('.' if value.dot else '')
+            "dot": Type.bool(value.dot)
         })
 
     @staticmethod

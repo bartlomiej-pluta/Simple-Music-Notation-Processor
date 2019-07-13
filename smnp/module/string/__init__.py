@@ -1,4 +1,4 @@
-from smnp.module.string.function import concat
+from smnp.module.string.function import concat, stringify
 
 functions = [ concat.function ]
-methods = []
+methods = [ stringify.function ]

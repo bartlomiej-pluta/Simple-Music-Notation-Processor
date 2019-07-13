@@ -16,7 +16,7 @@ class NotePitch(Enum):
     A = 9
     AIS = 10
     H = 11
-    
+
     def toFrequency(self):
         return {
             NotePitch.C: 16.35,
@@ -32,19 +32,23 @@ class NotePitch(Enum):
             NotePitch.AIS: 29.17,
             NotePitch.H: 30.87
         }[self]
-    
+
     def __str__(self):
         return self.name
-    
+
     def __repr__(self):
         return self.__str__()
-    
+
     @staticmethod
     def toPitch(string):
-        try:            
+        if string.lower() in stringToPitch:
             return stringToPitch[string.lower()]
-        except KeyError as e:
-            raise NoteException(f"Note '{string}' does not exist")
+
+        if string.upper() in NotePitch:
+            return NotePitch[string.upper()]
+
+        raise NoteException(f"Note '{string}' does not exist")
+
 
 stringToPitch = {
     'cb': NotePitch.H,

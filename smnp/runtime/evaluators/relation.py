@@ -21,11 +21,11 @@ class RelationEvaluator(Evaluator):
 
     @classmethod
     def equalOperatorEvaluator(cls, left, operator, right):
-        return Type.bool(left.value == right.value)
+        return Type.bool(left.type == right.type and left.value == right.value)
 
     @classmethod
     def notEqualOperatorEvaluator(cls, left, operator, right):
-        return Type.bool(left.value != right.value)
+        return Type.bool(left.type != right.type or left.value != right.value)
 
     @classmethod
     def otherRelationOperatorsEvaluator(cls, left, operator, right):
