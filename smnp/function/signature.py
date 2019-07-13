@@ -41,7 +41,7 @@ def doesNotMatchVararg(basicSignature):
 
 def signature(*signature):
     def check(args):
-        if len(args) not in [len(signature), len([ matcher for matcher in signature if not matcher.optional ])]:
+        if len(args) > len(signature) or len(args) < len([ matcher for matcher in signature if not matcher.optional ]):
             return doesNotMatch(signature)
 
         for s, a in zip(signature, args):
