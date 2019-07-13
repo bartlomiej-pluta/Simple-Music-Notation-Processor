@@ -44,7 +44,7 @@ class NotePitch(Enum):
         if string.lower() in stringToPitch:
             return stringToPitch[string.lower()]
 
-        if string.upper() in NotePitch:
+        if string.upper() in NotePitch.__members__:
             return NotePitch[string.upper()]
 
         raise NoteException(f"Note '{string}' does not exist")
