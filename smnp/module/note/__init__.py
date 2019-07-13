@@ -1,4 +1,4 @@
-from smnp.module.note.function import transpose, semitones, interval, note
+from smnp.module.note.function import note
 
-functions = [ semitones.function, interval.function, transpose.function, note.function ]
+functions = [ note.function ]
 methods = []
