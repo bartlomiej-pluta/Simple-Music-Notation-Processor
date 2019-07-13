@@ -1,4 +1,5 @@
 from smnp.ast.node.block import BlockParser
+from smnp.ast.node.expression import ExpressionParser
 from smnp.ast.node.identifier import IdentifierLiteralParser
 from smnp.ast.node.iterable import abstractIterableParser
 from smnp.ast.node.model import Node
@@ -16,7 +17,7 @@ class Argument(Node):
 
     def __init__(self, pos):
         super().__init__(pos)
-        self.children = [NoneNode(), NoneNode(), False]
+        self.children = [NoneNode(), NoneNode(), False, NoneNode()]
 
     @property
     def type(self):
@@ -47,6 +48,14 @@ class Argument(Node):
     def vararg(self, value):
         self[2] = value
 
+
+    @property
+    def optionalValue(self):
+        return self[3]
+
+    @optionalValue.setter
+    def optionalValue(self, value):
+        self[3] = value
 
 class VarargNode(Node):
     pass
@@ -90,7 +99,7 @@ class FunctionDefinition(Node):
         return node
 
 
-def ArgumentParser(input):
+def RegularArgumentParser(input):
     def createNode(type, variable, vararg):
         pos = type.pos if isinstance(type, Type) else variable.pos
         node = Argument(pos)
@@ -104,6 +113,33 @@ def ArgumentParser(input):
         Parser.doAssert(IdentifierLiteralParser, "argument name"),
         Parser.optional(Parser.terminal(TokenType.DOTS, lambda val, pos: True)),
         createNode=createNode,
+        name="regular function argument"
+    )(input)
+
+
+def OptionalArgumentParser(input):
+    def createNode(type, variable, _, optional):
+        pos = type.pos if isinstance(type, Type) else variable.pos
+        node = Argument(pos)
+        node.type = type
+        node.variable = variable
+        node.optionalValue = optional
+        return node
+
+    return Parser.allOf(
+        Parser.optional(TypeParser),
+        Parser.doAssert(IdentifierLiteralParser, "argument name"),
+        Parser.terminal(TokenType.ASSIGN),
+        Parser.doAssert(ExpressionParser, "expression"),
+        createNode=createNode,
+        name="optional function argument"
+    )(input)
+
+
+def ArgumentParser(input):
+    return Parser.oneOf(
+        OptionalArgumentParser,
+        RegularArgumentParser,
         name="function argument"
     )(input)
 
