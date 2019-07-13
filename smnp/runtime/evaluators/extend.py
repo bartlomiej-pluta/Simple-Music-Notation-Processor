@@ -1,7 +1,8 @@
 from smnp.ast.node.none import NoneNode
 from smnp.function.signature import signature
 from smnp.runtime.evaluator import Evaluator
-from smnp.runtime.tools.signature import argumentsNodeToMethodSignature, listSpecifier, mapSpecifier
+from smnp.runtime.tools.signature import argumentsNodeToMethodSignature, listSpecifier, mapSpecifier, \
+    evaluateDefaultArguments
 from smnp.type.model import Type
 from smnp.type.signature.matcher.type import ofType
 
@@ -34,6 +35,7 @@ class ExtendEvaluator(Evaluator):
         name = node.name.value
         signature = argumentsNodeToMethodSignature(node.arguments)
         arguments = [arg.variable.value for arg in node.arguments]
+        defaultArguments = evaluateDefaultArguments(node.arguments, environment)
         body = node.body
-        environment.addCustomMethod(type, variable, name, signature, arguments, body)
+        environment.addCustomMethod(type, variable, name, signature, arguments, body, defaultArguments)
 

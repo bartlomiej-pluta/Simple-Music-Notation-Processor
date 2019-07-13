@@ -40,7 +40,8 @@ class Environment():
             if method.typeSignature.check([object])[0] and method.name == name: #Todo sprawdzic sygnature typu
                 signatureCheckresult = method.signature.check(args)
                 if signatureCheckresult[0]:
-                    self.scopes.append({argName: argValue for argName, argValue in zip(method.arguments, list(signatureCheckresult[1:]))})
+                    self.scopes.append(method.defaultArgs)
+                    self.scopes[-1].update({argName: argValue for argName, argValue in zip(method.arguments, list(signatureCheckresult[1:]))})
                     self.scopes[-1][method.alias] = object
                     self.callStack.append(CallStackItem(name))
                     result = Type.void()
@@ -80,7 +81,8 @@ class Environment():
             if function.name == name:
                 signatureCheckresult = function.signature.check(args)
                 if signatureCheckresult[0]:
-                    self.scopes.append({ argName: argValue for argName, argValue in zip(function.arguments, list(signatureCheckresult[1:])) })
+                    self.scopes.append(function.defaultArgs)
+                    self.scopes[-1].update({ argName: argValue for argName, argValue in zip(function.arguments, list(signatureCheckresult[1:])) })
                     self.callStack.append(CallStackItem(name))
                     result = Type.void()
                     try:
@@ -93,11 +95,11 @@ class Environment():
                 raise IllegalFunctionInvocationException(f"{function.name}{function.signature.string}", f"{name}{argsTypesToString(args)}")
         return (False, None)
 
-    def addCustomFunction(self, name, signature, arguments, body):
+    def addCustomFunction(self, name, signature, arguments, body, defaultArguments):
         if len([fun for fun in self.functions + self.customFunctions if fun.name == name]) > 0:
             raise RuntimeException(f"Cannot redeclare function '{name}'", None)
 
-        self.customFunctions.append(CustomFunction(name, signature, arguments, body))
+        self.customFunctions.append(CustomFunction(name, signature, arguments, body, defaultArguments))
 
     # TODO:
     # There is still problem with checking existing of generic types, like lists:
@@ -108,14 +110,14 @@ class Environment():
     #   function foo() { return 2 }
     # }
     # Then calling [1, 2, 3, 4].foo() will produce 1, when the second method is more suitable
-    def addCustomMethod(self, typeSignature, alias, name, signature, arguments, body):
+    def addCustomMethod(self, typeSignature, alias, name, signature, arguments, body, defaultArguments):
         if len([m for m in self.methods if m.name == name and m.signature.matchers[0] == typeSignature.matchers[0]]) > 0:
             raise RuntimeException(f"Cannot redeclare method '{name}' for type '{typeSignature.matchers[0]}'", None)
 
         if len([m for m in self.customMethods if m.name == name and m.typeSignature.matchers[0] == typeSignature.matchers[0]]) > 0:
             raise RuntimeException(f"Cannot redeclare method '{name}' for type '{typeSignature.matchers[0]}'", None)
 
-        self.customMethods.append(CustomMethod(typeSignature, alias, name, signature, arguments, body))
+        self.customMethods.append(CustomMethod(typeSignature, alias, name, signature, arguments, body, defaultArguments))
 
     def findVariable(self, name, type=None, pos=None):
         for scope in reversed(self.scopes):
@@ -175,18 +177,20 @@ class CallStackItem:
 
 
 class CustomFunction:
-    def __init__(self, name, signature, arguments, body):
+    def __init__(self, name, signature, arguments, body, defaultArgs):
         self.name = name
         self.signature = signature
         self.arguments = arguments
         self.body = body
+        self.defaultArgs = defaultArgs
 
 
 class CustomMethod:
-    def __init__(self, typeSignature, alias, name, signature, arguments, body):
+    def __init__(self, typeSignature, alias, name, signature, arguments, body, defaultArgs):
         self.typeSignature = typeSignature
         self.alias = alias
         self.name = name
         self.signature = signature
         self.arguments = arguments
         self.body = body
+        self.defaultArgs = defaultArgs
