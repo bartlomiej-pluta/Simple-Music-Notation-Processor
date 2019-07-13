@@ -6,13 +6,14 @@ from smnp.type.model import Type
 
 
 class Environment():
-    def __init__(self, scopes, functions, methods):
+    def __init__(self, scopes, functions, methods, source):
         self.scopes = scopes
         self.functions = functions
         self.methods = methods
         self.customFunctions = []
         self.customMethods = []
         self.callStack = []
+        self.source = source
 
     def invokeMethod(self, object, name, args):
         builtinMethodResult = self._invokeBuiltinMethod(object, name, args)

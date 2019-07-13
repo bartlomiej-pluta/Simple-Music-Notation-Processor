@@ -5,5 +5,5 @@ from smnp.program.interpreter import Interpreter
 
 def loadStandardLibrary():
     mainSource = resource_string('smnp.library.code', 'main.mus').decode("utf-8")
-    env = Interpreter.interpretString(mainSource)
+    env = Interpreter.interpretString(mainSource, "<stdlib>")
     return env
