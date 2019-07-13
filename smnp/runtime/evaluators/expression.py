@@ -1,5 +1,5 @@
 from smnp.ast.node.condition import IfElse
-from smnp.ast.node.expression import Sum, Relation
+from smnp.ast.node.expression import Sum, Relation, And, Or
 from smnp.ast.node.factor import NotOperator, Power, Loop
 from smnp.ast.node.identifier import FunctionCall, Assignment
 from smnp.ast.node.term import Product
@@ -24,6 +24,8 @@ def expressionEvaluator(doAssert=False):
         from smnp.runtime.evaluators.sum import SumEvaluator
         from smnp.runtime.evaluators.relation import RelationEvaluator
         from smnp.runtime.evaluators.condition import IfElseEvaluator
+        from smnp.runtime.evaluators.logic import AndEvaluator
+        from smnp.runtime.evaluators.logic import OrEvaluator
         result = Evaluator.oneOf(
             Evaluator.forNodes(FunctionCallEvaluator.evaluate, FunctionCall),
             Evaluator.forNodes(MinusEvaluator.evaluate, MinusOperator),
@@ -36,6 +38,8 @@ def expressionEvaluator(doAssert=False):
             Evaluator.forNodes(SumEvaluator.evaluate, Sum),
             Evaluator.forNodes(RelationEvaluator.evaluate, Relation),
             Evaluator.forNodes(IfElseEvaluator.evaluate, IfElse),
+            Evaluator.forNodes(AndEvaluator.evaluate, And),
+            Evaluator.forNodes(OrEvaluator.evaluate, Or),
             AtomEvaluator.evaluate
         )(node, environment)
 
