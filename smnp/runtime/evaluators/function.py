@@ -4,6 +4,7 @@ from smnp.runtime.evaluators.expression import expressionEvaluator
 from smnp.runtime.evaluators.iterable import abstractIterableEvaluator
 from smnp.runtime.tools.error import updatePos
 from smnp.runtime.tools.signature import argumentsNodeToMethodSignature
+from smnp.type.model import Type
 
 
 class FunctionCallEvaluator(Evaluator):
@@ -38,8 +39,6 @@ class BodyEvaluator(Evaluator):
     def evaluator(cls, node, environment):
         for child in node.children:
             evaluate(child, environment)
-            if environment.callStack[-1].value is not None:
-                return environment.callStack[-1].value
 
 
 class ReturnEvaluator(Evaluator):
@@ -47,7 +46,21 @@ class ReturnEvaluator(Evaluator):
     @classmethod
     def evaluator(cls, node, environment):
         if len(environment.callStack) > 0:
-            returnValue = expressionEvaluator(doAssert=True)(node.value, environment)
-            environment.callStack[-1].value = returnValue.value
+            returnValue = expressionEvaluator()(node.value, environment).value
+            raise Return(returnValue)
+            # Disclaimer
+            # Exception system usage to control program execution flow is really bad idea.
+            # However because of lack of 'goto' instruction equivalent in Python
+            # there is to need to use some mechanism to break function execution on 'return' statement
+            # and immediately go to Environment's method 'invokeFunction()' or 'invokeMethod()',
+            # which can handle value that came with exception and return it to code being executed.
         else:
             raise RuntimeException("Cannot use 'return' statement outside a function or method", node.pos, environment)
+
+
+class Return(Exception):
+    def __init__(self, value):
+        if value is None:
+            value = Type.void()
+
+        self.value = value

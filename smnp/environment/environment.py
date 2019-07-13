@@ -1,7 +1,8 @@
 from smnp.error.function import FunctionNotFoundException, MethodNotFoundException, IllegalFunctionInvocationException
 from smnp.error.runtime import RuntimeException
 from smnp.function.tools import argsTypesToString
-from smnp.runtime.evaluators.function import BodyEvaluator
+from smnp.runtime.evaluators.function import BodyEvaluator, Return
+from smnp.type.model import Type
 
 
 class Environment():
@@ -41,7 +42,11 @@ class Environment():
                     self.scopes.append({argName: argValue for argName, argValue in zip(method.arguments, list(signatureCheckresult[1:]))})
                     self.scopes[-1][method.alias] = object
                     self.callStack.append(CallStackItem(name))
-                    result = BodyEvaluator.evaluate(method.body, self).value  # TODO check if it isn't necessary to verify 'result' attr of EvaluatioNResult
+                    result = Type.void()
+                    try:
+                        BodyEvaluator.evaluate(method.body, self).value  # TODO check if it isn't necessary to verify 'result' attr of EvaluatioNResult
+                    except Return as r:
+                        result = r.value
                     self.callStack.pop(-1)
                     self.scopes.pop(-1)
                     return (True, result)
@@ -76,7 +81,11 @@ class Environment():
                 if signatureCheckresult[0]:
                     self.scopes.append({ argName: argValue for argName, argValue in zip(function.arguments, list(signatureCheckresult[1:])) })
                     self.callStack.append(CallStackItem(name))
-                    result = BodyEvaluator.evaluate(function.body, self).value #TODO check if it isn't necessary to verify 'result' attr of EvaluatioNResult
+                    result = Type.void()
+                    try:
+                        BodyEvaluator.evaluate(function.body, self).value #TODO check if it isn't necessary to verify 'result' attr of EvaluatioNResult
+                    except Return as r:
+                        result = r.value
                     self.callStack.pop(-1)
                     self.scopes.pop(-1)
                     return (True, result)
@@ -162,7 +171,6 @@ class Environment():
 class CallStackItem:
     def __init__(self, function):
         self.function = function
-        self.value = None
 
 
 class CustomFunction:
