@@ -3,7 +3,7 @@ from smnp.runtime.evaluator import Evaluator, evaluate
 from smnp.runtime.evaluators.expression import expressionEvaluator
 from smnp.runtime.evaluators.iterable import abstractIterableEvaluator
 from smnp.runtime.tools.error import updatePos
-from smnp.runtime.tools.signature import argumentsNodeToMethodSignature, evaluateDefaultArguments
+from smnp.runtime.tools.signature import argumentsNodeToMethodSignature
 from smnp.type.model import Type
 
 
@@ -25,9 +25,8 @@ class FunctionDefinitionEvaluator(Evaluator):
     def evaluator(cls, node, environment):
         try:
             name = node.name.value
-            signature = argumentsNodeToMethodSignature(node.arguments)
+            defaultArguments, signature = argumentsNodeToMethodSignature(node.arguments, environment)
             arguments = [ arg.variable.value for arg in node.arguments ]
-            defaultArguments = evaluateDefaultArguments(node.arguments, environment)
             body = node.body
             environment.addCustomFunction(name, signature, arguments, body, defaultArguments)
         except RuntimeException as e:

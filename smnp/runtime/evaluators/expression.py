@@ -50,3 +50,15 @@ def expressionEvaluator(doAssert=False):
 
 
     return evaluateExpression
+
+
+def expressionEvaluatorWithMatcher(matcher, exceptionProvider, doAssert=True):
+    def evaluate(node, environment):
+        value = expressionEvaluator(doAssert=doAssert)(node, environment).value
+
+        if not matcher.match(value):
+            raise exceptionProvider(value)
+
+        return value
+
+    return evaluate
