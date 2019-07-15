@@ -14,6 +14,7 @@ class TokenType(Enum):
     CLOSE_ANGLE = '>'
     SEMICOLON = ';'
     ASTERISK = '*'
+    PERCENT = '%'
     ASSIGN = '='
     ARROW = '->'
     COMMA = ','
@@ -44,7 +45,6 @@ class TokenType(Enum):
     AS = 'as'
     IDENTIFIER = 'identifier'
     COMMENT = 'comment'
-    PERCENT = 'percent'
 
     @property
     def key(self):

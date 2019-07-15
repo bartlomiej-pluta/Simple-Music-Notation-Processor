@@ -25,7 +25,7 @@ class Or(BinaryOperator):
 class Loop(BinaryOperator):
     def __init__(self, pos):
         super().__init__(pos)
-        self.children.append(NoneNode())
+        self.children.extend([NoneNode(), NoneNode()])
 
     @property
     def parameters(self):
@@ -35,13 +35,22 @@ class Loop(BinaryOperator):
     def parameters(self, value):
         self[3] = value
 
+    @property
+    def filter(self):
+        return self[4]
+
+    @filter.setter
+    def filter(self, value):
+        self[4] = value
+
     @classmethod
-    def loop(cls, left, parameters, operator, right):
+    def loop(cls, left, parameters, operator, right, filter):
         node = cls(left.pos)
         node.left = left
         node.parameters = parameters
         node.operator = operator
         node.right = right
+        node.filter = filter
         return node
 
 
@@ -94,11 +103,19 @@ def LoopParser(input):
         name="loop parameters"
     )
 
+    loopFilter = Parser.allOf(
+        Parser.terminal(TokenType.PERCENT),
+        Parser.doAssert(ExpressionWithoutLoopParser, "filter as bool expression"),
+        createNode=lambda percent, expr: expr,
+        name="loop filter"
+    )
+
     return Parser.allOf(
         ExpressionWithoutLoopParser,
         Parser.optional(loopParameters),
         Parser.terminal(TokenType.DASH, createNode=Operator.withValue),
         StatementParser,
+        Parser.optional(loopFilter),
         createNode=Loop.loop,
         name="dash-loop"
     )(input)
