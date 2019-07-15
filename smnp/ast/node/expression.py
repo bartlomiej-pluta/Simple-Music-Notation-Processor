@@ -1,4 +1,6 @@
-from smnp.ast.node.operator import BinaryOperator
+from smnp.ast.node.model import Node
+from smnp.ast.node.none import NoneNode
+from smnp.ast.node.operator import BinaryOperator, Operator
 from smnp.ast.node.term import TermParser
 from smnp.ast.parser import Parser
 from smnp.token.type import TokenType
@@ -20,7 +22,34 @@ class Or(BinaryOperator):
     pass
 
 
-def ExpressionParser(input):
+class Loop(BinaryOperator):
+    def __init__(self, pos):
+        super().__init__(pos)
+        self.children.append(NoneNode())
+
+    @property
+    def parameters(self):
+        return self[3]
+
+    @parameters.setter
+    def parameters(self, value):
+        self[3] = value
+
+    @classmethod
+    def loop(cls, left, parameters, operator, right):
+        node = cls(left.pos)
+        node.left = left
+        node.parameters = parameters
+        node.operator = operator
+        node.right = right
+        return node
+
+
+class LoopParameters(Node):
+    pass
+
+
+def ExpressionWithoutLoopParser(input):
     expr1 = Parser.leftAssociativeOperatorParser(
         TermParser,
         [TokenType.PLUS, TokenType.MINUS],
@@ -49,3 +78,34 @@ def ExpressionParser(input):
         lambda left, op, right: Or.withValues(left, op, right)
     )(input)
 
+
+def LoopParser(input):
+    from smnp.ast.node.identifier import IdentifierLiteralParser
+    from smnp.ast.node.iterable import abstractIterableParser
+    from smnp.ast.node.statement import StatementParser
+
+    loopParameters = Parser.allOf(
+        Parser.terminal(TokenType.AS),
+        Parser.oneOf(
+            Parser.wrap(IdentifierLiteralParser, lambda id: LoopParameters.withChildren([id], id.pos)),
+            abstractIterableParser(LoopParameters, TokenType.OPEN_PAREN, TokenType.CLOSE_PAREN, IdentifierLiteralParser)
+        ),
+        createNode=lambda asKeyword, parameters: parameters,
+        name="loop parameters"
+    )
+
+    return Parser.allOf(
+        ExpressionWithoutLoopParser,
+        Parser.optional(loopParameters),
+        Parser.terminal(TokenType.DASH, createNode=Operator.withValue),
+        StatementParser,
+        createNode=Loop.loop,
+        name="dash-loop"
+    )(input)
+
+
+def ExpressionParser(input):
+    return Parser.oneOf(
+        LoopParser,
+        ExpressionWithoutLoopParser
+    )(input)

@@ -27,6 +27,7 @@ tokenizers = (
     defaultTokenizer(TokenType.CLOSE_SQUARE),
     defaultTokenizer(TokenType.OPEN_ANGLE),
     defaultTokenizer(TokenType.CLOSE_ANGLE),
+    defaultTokenizer(TokenType.SEMICOLON),
     defaultTokenizer(TokenType.ASTERISK),
     defaultTokenizer(TokenType.ASSIGN),
     defaultTokenizer(TokenType.COMMA),

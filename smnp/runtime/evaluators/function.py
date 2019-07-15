@@ -25,10 +25,10 @@ class FunctionDefinitionEvaluator(Evaluator):
     def evaluator(cls, node, environment):
         try:
             name = node.name.value
-            signature = argumentsNodeToMethodSignature(node.arguments)
+            defaultArguments, signature = argumentsNodeToMethodSignature(node.arguments, environment)
             arguments = [ arg.variable.value for arg in node.arguments ]
             body = node.body
-            environment.addCustomFunction(name, signature, arguments, body)
+            environment.addCustomFunction(name, signature, arguments, body, defaultArguments)
         except RuntimeException as e:
             raise updatePos(e, node)
 

@@ -1,6 +1,6 @@
 from smnp.ast.node.condition import IfElse
-from smnp.ast.node.expression import Sum, Relation, And, Or
-from smnp.ast.node.factor import NotOperator, Power, Loop
+from smnp.ast.node.expression import Sum, Relation, And, Or, Loop
+from smnp.ast.node.factor import NotOperator, Power
 from smnp.ast.node.identifier import FunctionCall, Assignment
 from smnp.ast.node.term import Product
 from smnp.ast.node.unit import MinusOperator, Access
@@ -50,3 +50,15 @@ def expressionEvaluator(doAssert=False):
 
 
     return evaluateExpression
+
+
+def expressionEvaluatorWithMatcher(matcher, exceptionProvider, doAssert=True):
+    def evaluate(node, environment):
+        value = expressionEvaluator(doAssert=doAssert)(node, environment).value
+
+        if not matcher.match(value):
+            raise exceptionProvider(value)
+
+        return value
+
+    return evaluate

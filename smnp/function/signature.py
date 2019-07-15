@@ -12,6 +12,9 @@ class Signature:
 
 def varargSignature(varargMatcher, *basicSignature, wrapVarargInValue=False):
     def check(args):
+        if any([ matcher.optional for matcher in [ varargMatcher, *basicSignature ]]):
+            raise RuntimeError("Vararg signature can't have optional arguments")
+
         if len(basicSignature) > len(args):
             return doesNotMatchVararg(basicSignature)
 
@@ -38,7 +41,7 @@ def doesNotMatchVararg(basicSignature):
 
 def signature(*signature):
     def check(args):
-        if len(signature) != len(args):
+        if len(args) > len(signature) or len(args) < len([ matcher for matcher in signature if not matcher.optional ]):
             return doesNotMatch(signature)
 
         for s, a in zip(signature, args):
@@ -50,6 +53,12 @@ def signature(*signature):
     string = f"({', '.join([str(m) for m in signature])})"
 
     return Signature(check, string, signature)
+
+
+def optional(matcher):
+    matcher.optional = True
+    matcher.string += "?"
+    return matcher
 
 
 def doesNotMatch(sign):

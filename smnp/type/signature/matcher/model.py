@@ -3,6 +3,7 @@ class Matcher:
         self.type = objectType
         self.matcher = matcher
         self.string = string
+        self.optional = False
 
     def match(self, value):
         if self.type is not None and self.type != value.type:

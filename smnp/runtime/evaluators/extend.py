@@ -32,8 +32,8 @@ class ExtendEvaluator(Evaluator):
     @classmethod
     def _evaluateMethodDefinition(cls, node, environment, type, variable):
         name = node.name.value
-        signature = argumentsNodeToMethodSignature(node.arguments)
+        defaultArguments, signature = argumentsNodeToMethodSignature(node.arguments, environment)
         arguments = [arg.variable.value for arg in node.arguments]
         body = node.body
-        environment.addCustomMethod(type, variable, name, signature, arguments, body)
+        environment.addCustomMethod(type, variable, name, signature, arguments, body, defaultArguments)
 

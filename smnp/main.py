@@ -9,9 +9,6 @@ def main():
     try:
         stdLibraryEnv = loadStandardLibrary()
         Interpreter.interpretFile(sys.argv[1], printTokens=False, printAst=False, execute=True, baseEnvironment=stdLibraryEnv)
-        #draft()
-        #tokens = tokenize(['function a(b...) { x+y}'])
-        #FunctionDefinitionParser(tokens).node.print()
 
     except SmnpException as e:
         print(e.message())
