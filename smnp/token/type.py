@@ -12,6 +12,7 @@ class TokenType(Enum):
     CLOSE_SQUARE = ']'
     OPEN_ANGLE = '<'
     CLOSE_ANGLE = '>'
+    SEMICOLON = ';'
     ASTERISK = '*'
     ASSIGN = '='
     ARROW = '->'
