@@ -5,12 +5,12 @@ class BlockEvaluator(Evaluator):
 
     @classmethod
     def evaluator(cls, node, environment):
-        environment.scopes.append({})
+        environment.appendScope()
 
         for child in node.children:
             evaluate(child, environment)
 
-        environment.scopes.pop(-1)
+        environment.popScope()
 
 #
 # def evaluateBlock(block, environment):

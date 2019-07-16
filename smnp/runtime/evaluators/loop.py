@@ -13,23 +13,23 @@ class LoopEvaluator(Evaluator):
         parameters = [ identifier.value for identifier in node.parameters ] if type(node.parameters) != NoneNode() else []
 
         try:
-            environment.scopes.append({})
+            environment.appendScope()
 
             output = {
                 Type.INTEGER: cls.numberEvaluator,
                 Type.BOOL: cls.boolEvaluator,
                 Type.LIST: cls.listEvaluator,
                 Type.MAP: cls.mapEvaluator
-            }[iterator.type](node, environment, iterator, parameters)
+            }[iterator.type](node, environment, iterator, parameters, node.filter)
 
-            environment.scopes.pop(-1)
+            environment.popScope()
         except KeyError:
             raise RuntimeException(f"The {iterator.type.name.lower()} type cannot stand as an iterator for loop statement", node.left.pos)
 
         return Type.list(output)
 
     @classmethod
-    def numberEvaluator(cls, node, environment, evaluatedIterator, parameters):
+    def numberEvaluator(cls, node, environment, evaluatedIterator, parameters, filter):
         output = []
 
 
@@ -40,14 +40,28 @@ class LoopEvaluator(Evaluator):
             if len(parameters) > 0:
                 environment.scopes[-1][parameters[0]] = Type.integer(i)
 
-            output.append(evaluate(node.right, environment).value)
+            if cls.doFilter(filter, environment):
+                output.append(evaluate(node.right, environment).value)
 
 
 
         return output
 
     @classmethod
-    def boolEvaluator(cls, node, environment, evaluatedIterator, parameters):
+    def doFilter(cls, filter, environment):
+        if type(filter) is not NoneNode:
+            evaluation = expressionEvaluator(doAssert=True)(filter, environment).value
+            if evaluation.type != Type.BOOL:
+                raise RuntimeException(f"Expected {Type.BOOL.name.lower()} as filter expression, found {evaluation.type.name.lower()}", filter.pos)
+
+            return evaluation.value
+
+        return True
+
+
+
+    @classmethod
+    def boolEvaluator(cls, node, environment, evaluatedIterator, parameters, filter):
         output = []
 
         if len(parameters) > 0:
@@ -55,13 +69,14 @@ class LoopEvaluator(Evaluator):
 
         condition = evaluatedIterator
         while condition.value:
-            output.append(evaluate(node.right, environment).value)
+            if cls.doFilter(filter, environment):
+                output.append(evaluate(node.right, environment).value)
             condition = expressionEvaluator(doAssert=True)(node.left, environment).value
 
         return output
 
     @classmethod
-    def listEvaluator(cls, node, environment, evaluatedIterator, parameters):
+    def listEvaluator(cls, node, environment, evaluatedIterator, parameters, filter):
         output = []
 
         if len(parameters) > 2:
@@ -74,13 +89,14 @@ class LoopEvaluator(Evaluator):
                 environment.scopes[-1][parameters[0]] = Type.integer(i)
                 environment.scopes[-1][parameters[1]] = value
 
-            output.append(evaluate(node.right, environment).value)
+            if cls.doFilter(filter, environment):
+                output.append(evaluate(node.right, environment).value)
 
         return output
 
 
     @classmethod
-    def mapEvaluator(cls, node, environment, evaluatedIterator, parameters):
+    def mapEvaluator(cls, node, environment, evaluatedIterator, parameters, filter):
         output = []
 
         if len(parameters) > 3:
@@ -99,6 +115,7 @@ class LoopEvaluator(Evaluator):
                 environment.scopes[-1][parameters[2]] = value
                 i += 1
 
-            output.append(evaluate(node.right, environment).value)
+            if cls.doFilter(filter, environment):
+                output.append(evaluate(node.right, environment).value)
 
         return output

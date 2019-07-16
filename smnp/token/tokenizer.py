@@ -29,6 +29,7 @@ tokenizers = (
     defaultTokenizer(TokenType.CLOSE_ANGLE),
     defaultTokenizer(TokenType.SEMICOLON),
     defaultTokenizer(TokenType.ASTERISK),
+    defaultTokenizer(TokenType.PERCENT),
     defaultTokenizer(TokenType.ASSIGN),
     defaultTokenizer(TokenType.COMMA),
     defaultTokenizer(TokenType.SLASH),

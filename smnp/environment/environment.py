@@ -81,7 +81,7 @@ class Environment():
             if function.name == name:
                 signatureCheckresult = function.signature.check(args)
                 if signatureCheckresult[0]:
-                    self.scopes.append(function.defaultArgs)
+                    self.appendScope(function.defaultArgs)
                     self.scopes[-1].update({ argName: argValue for argName, argValue in zip(function.arguments, list(signatureCheckresult[1:])) })
                     self.callStack.append(CallStackItem(name))
                     result = Type.void()
@@ -90,7 +90,7 @@ class Environment():
                     except Return as r:
                         result = r.value
                     self.callStack.pop(-1)
-                    self.scopes.pop(-1)
+                    self.popScope(mergeVariables=False)
                     return (True, result)
                 raise IllegalFunctionInvocationException(f"{function.name}{function.signature.string}", f"{name}{argsTypesToString(args)}")
         return (False, None)
@@ -139,6 +139,17 @@ class Environment():
                         return scope
                 else:
                     return scope
+
+    def appendScope(self, variables=None):
+        if variables is None:
+            variables = {}
+
+        self.scopes.append(variables)
+
+    def popScope(self, mergeVariables=True):
+        lastScope = self.scopes.pop(-1)
+        if mergeVariables:
+            self.scopes[-1].update(lastScope)
 
     def scopesToString(self):
         return "Scopes:\n" + ("\n".join([ f"  [{i}]: {scope}" for i, scope in enumerate(self.scopes) ]))

@@ -78,8 +78,18 @@ def AtomParser(input):
     from smnp.ast.node.identifier import IdentifierParser
     from smnp.ast.node.list import ListParser
     from smnp.ast.node.map import MapParser
+    from smnp.ast.node.expression import ExpressionParser
+
+    parentheses = Parser.allOf(
+        Parser.terminal(TokenType.OPEN_PAREN),
+        Parser.doAssert(ExpressionParser, "expression"),
+        Parser.terminal(TokenType.CLOSE_PAREN),
+        createNode=lambda open, expr, close: expr,
+        name="grouping parentheses"
+    )
 
     return Parser.oneOf(
+        parentheses,
         LiteralParser,
         IdentifierParser,
         ListParser,
