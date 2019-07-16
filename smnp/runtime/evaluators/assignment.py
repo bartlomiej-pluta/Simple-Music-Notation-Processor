@@ -8,11 +8,7 @@ class AssignmentEvaluator(Evaluator):
     def evaluator(cls, node, environment):
         target = node.left.value
         value = expressionEvaluator(doAssert=True)(node.right, environment).value #TODO check if it isn't necessary to verify 'result' attr of EvaluatioNResult
-        scopeOfExistingVariable = environment.findVariableScope(target)
-        if scopeOfExistingVariable is None:
-            environment.scopes[-1][target] = value
-        else:
-            scopeOfExistingVariable[target] = value
+        environment.scopes[-1][target] = value
 
         return value
 

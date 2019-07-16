@@ -13,7 +13,7 @@ class LoopEvaluator(Evaluator):
         parameters = [ identifier.value for identifier in node.parameters ] if type(node.parameters) != NoneNode() else []
 
         try:
-            environment.scopes.append({})
+            environment.appendScope()
 
             output = {
                 Type.INTEGER: cls.numberEvaluator,
@@ -22,7 +22,7 @@ class LoopEvaluator(Evaluator):
                 Type.MAP: cls.mapEvaluator
             }[iterator.type](node, environment, iterator, parameters, node.filter)
 
-            environment.scopes.pop(-1)
+            environment.popScope()
         except KeyError:
             raise RuntimeException(f"The {iterator.type.name.lower()} type cannot stand as an iterator for loop statement", node.left.pos)
 
