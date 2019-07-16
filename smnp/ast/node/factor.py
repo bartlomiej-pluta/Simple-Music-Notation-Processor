@@ -11,26 +11,11 @@ class Power(BinaryOperator):
     pass
 
 def FactorParser(input):
-    from smnp.ast.node.expression import ExpressionParser
-
-    parentheses = Parser.allOf(
-        Parser.terminal(TokenType.OPEN_PAREN),
-        Parser.doAssert(ExpressionParser, "expression"),
-        Parser.terminal(TokenType.CLOSE_PAREN),
-        createNode=lambda open, expr, close: expr,
-        name="grouping parentheses"
-    )
-
-    factorOperands = Parser.oneOf(
-        parentheses,
-        UnitParser,
-        name="factor operands"
-    )
 
     powerFactor = Parser.leftAssociativeOperatorParser(
-        factorOperands,
+        UnitParser,
         [TokenType.DOUBLE_ASTERISK],
-        factorOperands,
+        UnitParser,
         lambda left, op, right: Power.withValues(left, op, right),
         name="power operator"
     )
