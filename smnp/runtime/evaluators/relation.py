@@ -29,7 +29,7 @@ class RelationEvaluator(Evaluator):
 
     @classmethod
     def otherRelationOperatorsEvaluator(cls, left, operator, right):
-        if left.type == right.type == Type.INTEGER:
+        if left.type in [Type.INTEGER, Type.FLOAT] and right.type in [Type.INTEGER, Type.FLOAT]:
             if operator.value == ">":
                 return Type.bool(left.value > right.value)
 

@@ -11,6 +11,7 @@ class MinusEvaluator(Evaluator):
         try:
             return {
                 Type.INTEGER: cls.evaluateForInteger,
+                Type.FLOAT: cls.evaluateForFloat,
                 Type.STRING: cls.evaluateForString,
                 Type.LIST: cls.evaluateForList
             }[value.type](value.value)
@@ -19,8 +20,11 @@ class MinusEvaluator(Evaluator):
 
     @classmethod
     def evaluateForInteger(cls, value):
-
         return Type.integer(-value)
+
+    @classmethod
+    def evaluateForFloat(cls, value):
+        return Type.float(-value)
 
     @classmethod
     def evaluateForString(cls, value):

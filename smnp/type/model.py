@@ -8,6 +8,7 @@ from smnp.type.value import Value
 
 class Type(Enum):
     INTEGER = (int, lambda x: str(x))
+    FLOAT = (float, lambda x: str(x))
     STRING = (str, lambda x: x)
     LIST = (list, lambda x: f"[{', '.join([e.stringify() for e in x])}]")
     MAP = (dict, lambda x: '{' + ', '.join(f"'{k.stringify()}' -> '{v.stringify()}'" for k, v in x.items()) + '}')
@@ -24,6 +25,10 @@ class Type(Enum):
     @staticmethod
     def integer(value):
         return Value(Type.INTEGER, value, {})
+
+    @staticmethod
+    def float(value):
+        return Value(Type.FLOAT, value, {})
 
     @staticmethod
     def string(value):

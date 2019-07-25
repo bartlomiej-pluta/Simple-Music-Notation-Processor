@@ -11,8 +11,8 @@ class SumEvaluator(Evaluator):
         left = expressionEvaluator(doAssert=True)(node.left, environment).value
         right = expressionEvaluator(doAssert=True)(node.right, environment).value
 
-        if left.type == right.type == Type.INTEGER:
-            return cls.integerEvaluator(left, node.operator, right)
+        if left.type in [Type.INTEGER, Type.FLOAT] and right.type in [Type.INTEGER, Type.FLOAT]:
+            return cls.numberEvaluator(left, node.operator, right)
 
         if left.type == right.type == Type.STRING:
             return cls.stringEvaluator(left, node.operator, right)
@@ -23,15 +23,17 @@ class SumEvaluator(Evaluator):
         if left.type == right.type == Type.MAP:
             return cls.mapEvaluator(left, node.operator, right)
 
-        raise RuntimeException(f"Operator {node.operator.value} is not supported by {left.type.name.lower()} and {right.type.name.lower()} types", node.operator.pos)
+        raise RuntimeException(
+            f"Operator {node.operator.value} is not supported by {left.type.name.lower()} and {right.type.name.lower()} types",
+            node.operator.pos)
 
     @classmethod
-    def integerEvaluator(cls, left, operator, right):
+    def numberEvaluator(cls, left, operator, right):
         if operator.value == "+":
-            return Type.integer(left.value + right.value)
+            return getProperTypeProvider(left.value + right.value)
 
         if operator.value == "-":
-            return Type.integer(left.value - right.value)
+            return getProperTypeProvider(left.value - right.value)
 
         raise RuntimeError("This line should never be reached")
 
@@ -64,3 +66,10 @@ class SumEvaluator(Evaluator):
             raise RuntimeException(f"Operator {operator.value} is not supported by map types", operator.pos)
 
         raise RuntimeError("This line should never be reached")
+
+
+def getProperTypeProvider(value):
+    return {
+        int: lambda v: Type.integer(v),
+        float: lambda v: Type.float(v)
+    }[type(value)](value)
