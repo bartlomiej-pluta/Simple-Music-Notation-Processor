@@ -30,6 +30,7 @@ class TokenType(Enum):
     NOT = 'not'
     INTEGER = 'integer'
     STRING = 'string'
+    FLOAT = 'float'
     NOTE = 'note'
     BOOL = 'bool'
     TYPE = 'type'

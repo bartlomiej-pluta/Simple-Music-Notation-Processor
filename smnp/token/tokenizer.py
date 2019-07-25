@@ -2,6 +2,7 @@ from smnp.error.syntax import SyntaxException
 from smnp.token.model import TokenList
 from smnp.token.tokenizers.bool import boolTokenizer
 from smnp.token.tokenizers.comment import commentTokenizer
+from smnp.token.tokenizers.float import floatTokenizer
 from smnp.token.tokenizers.identifier import identifierTokenizer
 from smnp.token.tokenizers.keyword import typeTokenizer
 from smnp.token.tokenizers.note import noteTokenizer
@@ -41,6 +42,7 @@ tokenizers = (
     defaultTokenizer(TokenType.DOT),
 
     # Types
+    separated(floatTokenizer),
     mapValue(separated(regexPatternTokenizer(TokenType.INTEGER, r'\d')), int),
     stringTokenizer,
     noteTokenizer,
