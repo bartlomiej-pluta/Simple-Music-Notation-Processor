@@ -1,25 +1,17 @@
 from smnp.token.model import Token
-from smnp.token.tools import regexPatternTokenizer, keywordTokenizer
+from smnp.token.tools import regexPatternTokenizer, keywordTokenizer, allOf
 from smnp.token.type import TokenType
 
 
-def floatTokenizer(input, current, line):
-    consumedChars = 0
-    value = ""
-    consumed, token = regexPatternTokenizer(TokenType.INTEGER, r'\d')(input, current, line)
-    if consumed > 0:
-        consumedChars += consumed
-        value += token.value
-        consumed, token = keywordTokenizer(TokenType.DOT, ".")(input, current+consumedChars, line)
-        if consumed > 0:
-            consumedChars += consumed
-            value += token.value
-            consumed, token = regexPatternTokenizer(TokenType.INTEGER, r'\d')(input, current+consumedChars, line)
-            if consumed > 0:
-                consumedChars += consumed
-                value += token.value
-                print(value)
-                return (consumedChars, Token(TokenType.FLOAT, float(value), (current, line), value))
+def createToken(pos, beforeDot, dot, afterDot):
+    rawValue = f"{beforeDot.value}.{afterDot.value}"
+    value = float(rawValue)
+    return Token(TokenType.FLOAT, value, pos, rawValue)
 
 
-    return (0, None)
+floatTokenizer = allOf(
+    regexPatternTokenizer(TokenType.INTEGER, r'\d'),
+    keywordTokenizer(None, "."),
+    regexPatternTokenizer(TokenType.INTEGER, r'\d'),
+    createToken=createToken
+)
