@@ -21,10 +21,16 @@ class RelationEvaluator(Evaluator):
 
     @classmethod
     def equalOperatorEvaluator(cls, left, operator, right):
+        if left.type in [Type.INTEGER, Type.FLOAT] and right.type in [Type.INTEGER, Type.FLOAT]:
+            return Type.bool(left.value == right.value)
+
         return Type.bool(left.type == right.type and left.value == right.value)
 
     @classmethod
     def notEqualOperatorEvaluator(cls, left, operator, right):
+        if left.type in [Type.INTEGER, Type.FLOAT] and right.type in [Type.INTEGER, Type.FLOAT]:
+            return Type.bool(left.value != right.value)
+
         return Type.bool(left.type != right.type or left.value != right.value)
 
     @classmethod
@@ -40,7 +46,7 @@ class RelationEvaluator(Evaluator):
                 return Type.bool(left.value < right.value)
 
             if operator.value == "<=":
-                return Type.bool(left.value < right.value)
+                return Type.bool(left.value <= right.value)
 
         raise RuntimeException(f"Operator {operator.value} is not supported by {left.type.name.lower()} and {right.type.name.lower()} types", operator.pos)
 
