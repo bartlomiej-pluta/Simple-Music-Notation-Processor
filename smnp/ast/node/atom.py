@@ -27,6 +27,10 @@ class IntegerLiteral(Atom):
     pass
 
 
+class FloatLiteral(Atom):
+    pass
+
+
 class StringLiteral(Atom):
     pass
 
@@ -45,6 +49,10 @@ class TypeLiteral(Atom):
 
 def IntegerParser(input):
     return Parser.terminal(TokenType.INTEGER, createNode=IntegerLiteral.withValue)(input)
+
+
+def FloatParser(input):
+    return Parser.terminal(TokenType.FLOAT, createNode=FloatLiteral.withValue)(input)
 
 
 def StringParser(input):
@@ -66,6 +74,7 @@ def TypeLiteralParser(input):
 def LiteralParser(input):
     return Parser.oneOf(
         IntegerParser,
+        FloatParser,
         StringParser,
         NoteParser,
         BoolParser,

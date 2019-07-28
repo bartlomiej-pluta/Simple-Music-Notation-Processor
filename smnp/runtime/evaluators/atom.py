@@ -1,10 +1,11 @@
-from smnp.ast.node.atom import StringLiteral, IntegerLiteral, NoteLiteral, BoolLiteral, TypeLiteral
+from smnp.ast.node.atom import StringLiteral, IntegerLiteral, NoteLiteral, BoolLiteral, TypeLiteral, FloatLiteral
 from smnp.ast.node.identifier import Identifier
 from smnp.ast.node.list import List
 from smnp.ast.node.map import Map
 from smnp.error.runtime import RuntimeException
 from smnp.runtime.evaluator import Evaluator
 from smnp.runtime.evaluators.expression import expressionEvaluator
+from smnp.runtime.evaluators.float import FloatEvaluator
 from smnp.runtime.evaluators.iterable import abstractIterableEvaluator
 from smnp.runtime.tools.error import updatePos
 from smnp.type.model import Type
@@ -85,6 +86,7 @@ class AtomEvaluator(Evaluator):
         return Evaluator.oneOf(
             Evaluator.forNodes(StringEvaluator.evaluate, StringLiteral),
             Evaluator.forNodes(IntegerEvaluator.evaluate, IntegerLiteral),
+            Evaluator.forNodes(FloatEvaluator.evaluate, FloatLiteral),
             Evaluator.forNodes(NoteEvaluator.evaluate, NoteLiteral),
             Evaluator.forNodes(BoolEvaluator.evaluate, BoolLiteral),
             Evaluator.forNodes(TypeEvaluator.evaluate, TypeLiteral),

@@ -61,3 +61,19 @@ def mapValue(tokenizer, mapper):
         return (0, None)
 
     return tokenize
+
+def allOf(*tokenizers, createToken):
+    def combinedTokenizer(input, current, line):
+        consumedChars = 0
+        tokens = []
+        for tokenizer in tokenizers:
+            consumed, token = tokenizer(input, current+consumedChars, line)
+            if consumed > 0:
+                consumedChars += consumed
+                tokens.append(token)
+            else:
+                return (0, None)
+
+        return (consumedChars, createToken((current, line), *tokens))
+
+    return combinedTokenizer
