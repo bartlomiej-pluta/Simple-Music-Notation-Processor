@@ -46,7 +46,7 @@ def sineForNote(note, bpm, overtones):
 
 
 def sound(frequency, duration, overtones):
-    return sum(a.value * sine((i+1) * frequency, duration) for i, a in enumerate(overtones))
+    return sum(a * sine((i+1) * frequency, duration) for i, a in enumerate(overtones))
 
 
 def sine(frequency, duration):
