@@ -46,8 +46,20 @@ def getOvertones(config):
     return DEFAULT_OVERTONES
 
 
-_signature1 = varargSignature(listOf(Type.NOTE, Type.INTEGER), ofType(Type.MAP))
-def _function1(env, config, notes):
+
+_signature1 = varargSignature(listOf(Type.NOTE, Type.INTEGER))
+def _function1(env, notes):
+    rawNotes = [note.value for note in notes]
+    play(rawNotes, DEFAULT_BPM, DEFAULT_OVERTONES)
+
+
+_signature2 = varargSignature(ofTypes(Type.NOTE, Type.INTEGER))
+def _function2(env, notes):
+    play([ notes ], DEFAULT_BPM, DEFAULT_OVERTONES)
+
+
+_signature3 = varargSignature(listOf(Type.NOTE, Type.INTEGER), ofType(Type.MAP))
+def _function3(env, config, notes):
     rawNotes = [note.value for note in notes]
     bpm = getBpm(config)
     overtones = getOvertones(config)
@@ -55,8 +67,8 @@ def _function1(env, config, notes):
     play(rawNotes, bpm, overtones)
 
 
-_signature2 = varargSignature(ofTypes(Type.NOTE, Type.INTEGER), ofType(Type.MAP))
-def _function2(env, config, notes):
+_signature4 = varargSignature(ofTypes(Type.NOTE, Type.INTEGER), ofType(Type.MAP))
+def _function4(env, config, notes):
     bpm = getBpm(config)
     overtones = getOvertones(config)
     play([ notes ], bpm, overtones)
@@ -65,5 +77,7 @@ def _function2(env, config, notes):
 function = CombinedFunction(
     'synth',
     Function(_signature1, _function1),
-    Function(_signature2, _function2)
+    Function(_signature2, _function2),
+    Function(_signature3, _function3),
+    Function(_signature4, _function4),
 )
