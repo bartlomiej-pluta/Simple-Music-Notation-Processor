@@ -1,4 +1,5 @@
 from smnp.ast.node.atom import LiteralParser
+from smnp.ast.node.identifier import IdentifierLiteralParser
 from smnp.ast.node.iterable import abstractIterableParser
 from smnp.ast.node.model import Node
 from smnp.ast.node.operator import BinaryOperator, Operator
@@ -31,12 +32,15 @@ class Map(Node):
 
 def MapParser(input):
     from smnp.ast.node.expression import ExpressionParser
-    keyParser = LiteralParser
+    keyParser = Parser.oneOf(
+        LiteralParser,
+        IdentifierLiteralParser
+    )
     valueParser = ExpressionParser
 
     mapEntryParser = Parser.allOf(
         keyParser,
-        Parser.terminal(TokenType.ARROW, createNode=Operator.withValue, doAssert=True),
+        Parser.terminal(TokenType.ARROW, createNode=Operator.withValue),
         Parser.doAssert(valueParser, "expression"),
         createNode=MapEntry.withValues
     )

@@ -3,7 +3,7 @@ from smnp.ast.node.identifier import Identifier
 from smnp.ast.node.list import List
 from smnp.ast.node.map import Map
 from smnp.error.runtime import RuntimeException
-from smnp.runtime.evaluator import Evaluator
+from smnp.runtime.evaluator import Evaluator, EvaluationResult
 from smnp.runtime.evaluators.expression import expressionEvaluator
 from smnp.runtime.evaluators.float import FloatEvaluator
 from smnp.runtime.evaluators.iterable import abstractIterableEvaluator
@@ -59,12 +59,15 @@ class MapEvaluator(Evaluator):
     @classmethod
     def evaluator(cls, node, environment):
         map = {}
-        exprEvaluator = expressionEvaluator(doAssert=True)
+        keyEvaluator = Evaluator.oneOf(
+            Evaluator.forNodes(lambda node, environment: EvaluationResult.OK(Type.string(node.value)), Identifier),
+            expressionEvaluator(doAssert=True)
+        )
         for entry in node.children:
-            key = exprEvaluator(entry.key, environment).value
+            key = keyEvaluator(entry.key, environment).value
             if key in map:
                 raise RuntimeException(f"Duplicated key '{key.stringify()}' found in map", entry.pos)
-            map[key] = exprEvaluator(entry.value, environment).value
+            map[key] = expressionEvaluator(doAssert=True)(entry.value, environment).value
 
         return Type.map(map)
 
