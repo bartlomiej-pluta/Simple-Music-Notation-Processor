@@ -29,7 +29,7 @@ def getOvertones(config):
     if key in config.value:
         overtones = config.value[key]
         rawOvertones = [overtone.value for overtone in overtones.value]
-        if overtones.type != Type.LIST or not all(overtone.type == Type.FLOAT for overtone in overtones.value):
+        if overtones.type != Type.LIST or not all(overtone.type in [Type.FLOAT, Type.INTEGER] for overtone in overtones.value):
             raise RuntimeException("The 'overtones' property must be list of floats", None)
 
         if len(rawOvertones) < 1:
