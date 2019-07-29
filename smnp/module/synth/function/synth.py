@@ -10,6 +10,7 @@ from smnp.type.signature.matcher.type import ofTypes, ofType
 
 DEFAULT_BPM = 120
 DEFAULT_OVERTONES = [0.4, 0.3, 0.1, 0.1, 0.1]
+DEFAULT_DECAY = 4
 
 
 def getBpm(config):
@@ -46,16 +47,38 @@ def getOvertones(config):
     return DEFAULT_OVERTONES
 
 
+def getDecay(config):
+    key = Type.string("decay")
+    if key in config.value:
+        decay = config.value[key]
+        if not decay.type in [Type.INTEGER, Type.FLOAT] or decay.value < 0:
+            raise RuntimeException("The 'decay' property must be non-negative integer or float", None)
+
+        return decay.value
+
+    return DEFAULT_DECAY
+
+
+class Config:
+    def __init__(self, bpm, overtones, decay):
+        self.bpm = bpm
+        self.overtones = overtones
+        self.decay = decay
+
+    @staticmethod
+    def default():
+        return Config(DEFAULT_BPM, DEFAULT_OVERTONES, DEFAULT_DECAY)
+
 
 _signature1 = varargSignature(listOf(Type.NOTE, Type.INTEGER))
 def _function1(env, notes):
     rawNotes = [note.value for note in notes]
-    play(rawNotes, DEFAULT_BPM, DEFAULT_OVERTONES)
+    play(rawNotes, Config.default())
 
 
 _signature2 = varargSignature(ofTypes(Type.NOTE, Type.INTEGER))
 def _function2(env, notes):
-    play([ notes ], DEFAULT_BPM, DEFAULT_OVERTONES)
+    play([ notes ], Config.default())
 
 
 _signature3 = varargSignature(listOf(Type.NOTE, Type.INTEGER), ofType(Type.MAP))
@@ -63,15 +86,18 @@ def _function3(env, config, notes):
     rawNotes = [note.value for note in notes]
     bpm = getBpm(config)
     overtones = getOvertones(config)
+    decay = getDecay(config)
 
-    play(rawNotes, bpm, overtones)
+    play(rawNotes, Config(bpm, overtones, decay))
 
 
 _signature4 = varargSignature(ofTypes(Type.NOTE, Type.INTEGER), ofType(Type.MAP))
 def _function4(env, config, notes):
     bpm = getBpm(config)
     overtones = getOvertones(config)
-    play([ notes ], bpm, overtones)
+    decay = getDecay(config)
+
+    play([ notes ], Config(bpm, overtones, decay))
 
 
 function = CombinedFunction(
