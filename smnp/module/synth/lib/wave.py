@@ -54,7 +54,7 @@ def sineForNote(note, config):
 
 
 def sound(frequency, duration, config):
-    return attack(decay(sum(a * sine((i+1) * frequency, duration) for i, a in enumerate(config.overtones)), config), config)
+    return attack(decay(sum(overtone * sine((i+1) * frequency, duration) for i, overtone in enumerate(config.overtones) if overtone > 0), config), config)
 
 
 def decay(wave, config):
