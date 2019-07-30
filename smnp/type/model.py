@@ -12,7 +12,6 @@ class Type(Enum):
     STRING = (str, lambda x: x)
     LIST = (list, lambda x: f"[{', '.join([e.stringify() for e in x])}]")
     MAP = (dict, lambda x: '{' + ', '.join(f"'{k.stringify()}' -> '{v.stringify()}'" for k, v in x.items()) + '}')
-    PERCENT = (float, lambda x: f"{int(x * 100)}%")
     NOTE = (Note, lambda x: x.note.name)
     BOOL = (bool, lambda x: str(x).lower())
     SOUND = (Sound, lambda x: x.file)

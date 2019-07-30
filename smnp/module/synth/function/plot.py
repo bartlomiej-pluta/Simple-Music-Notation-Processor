@@ -1,19 +1,16 @@
 from smnp.error.runtime import RuntimeException
-from smnp.function.model import Function, CombinedFunction
-from smnp.function.signature import varargSignature
-from smnp.module.synth.lib.wave import play
-
+from smnp.function.model import CombinedFunction, Function
+from smnp.function.signature import signature
+from smnp.module.synth.lib.wave import plot
 from smnp.type.model import Type
-from smnp.type.signature.matcher.list import listOf
-from smnp.type.signature.matcher.type import ofTypes, ofType
-
+from smnp.type.signature.matcher.type import ofType
 
 DEFAULT_BPM = 120
 DEFAULT_OVERTONES = [0.4, 0.3, 0.1, 0.1, 0.1]
 DEFAULT_DECAY = 4
 DEFAULT_ATTACK = 100
 
-
+# TODO: this code is shared with synth.py module, remove repetition
 def getBpm(config):
     key = Type.string("bpm")
     if key in config.value:
@@ -84,42 +81,26 @@ class Config:
         return Config(DEFAULT_BPM, DEFAULT_OVERTONES, DEFAULT_DECAY, DEFAULT_ATTACK)
 
 
-_signature1 = varargSignature(listOf(Type.NOTE, Type.INTEGER))
-def _function1(env, notes):
-    rawNotes = [note.value for note in notes]
-    play(rawNotes, Config.default())
+_signature1 = signature(ofType(Type.NOTE))
+def _function1(env, note):
+    config = Config.default()
+
+    plot(note.value, config)
 
 
-_signature2 = varargSignature(ofTypes(Type.NOTE, Type.INTEGER))
-def _function2(env, notes):
-    play([ notes ], Config.default())
-
-
-_signature3 = varargSignature(listOf(Type.NOTE, Type.INTEGER), ofType(Type.MAP))
-def _function3(env, config, notes):
-    rawNotes = [note.value for note in notes]
+_signature2 = signature(ofType(Type.MAP), ofType(Type.NOTE))
+def _function2(env, config, note):
     bpm = getBpm(config)
     overtones = getOvertones(config)
     decay = getDecay(config)
     attack = getAttack(config)
 
-    play(rawNotes, Config(bpm, overtones, decay, attack))
-
-
-_signature4 = varargSignature(ofTypes(Type.NOTE, Type.INTEGER), ofType(Type.MAP))
-def _function4(env, config, notes):
-    bpm = getBpm(config)
-    overtones = getOvertones(config)
-    decay = getDecay(config)
-    attack = getAttack(config)
-
-    play([ notes ], Config(bpm, overtones, decay, attack))
+    plot(note.value, Config(bpm, overtones, decay, attack))
 
 
 function = CombinedFunction(
-    'synth',
+    'plot',
     Function(_signature1, _function1),
-    Function(_signature2, _function2),
-    Function(_signature3, _function3),
-    Function(_signature4, _function4),
+    Function(_signature2, _function2)
 )
+

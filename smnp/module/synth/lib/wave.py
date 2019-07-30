@@ -1,5 +1,6 @@
 import time
 
+import matplotlib.pyplot as plt
 import numpy as np
 import sounddevice as sd
 
@@ -10,6 +11,13 @@ FS = 44100
 
 def pause(value, bpm):
     time.sleep(60 * 4 / value / bpm)
+
+
+def plot(note, config):
+    Y = sineForNote(note, config)
+    X = np.arange(len(Y))
+    plt.plot(X, Y)
+    plt.show()
 
 
 def play(notes, config):
@@ -46,11 +54,19 @@ def sineForNote(note, config):
 
 
 def sound(frequency, duration, config):
-    return decay(sum(a * sine((i+1) * frequency, duration) for i, a in enumerate(config.overtones)), config)
+    return attack(decay(sum(a * sine((i+1) * frequency, duration) for i, a in enumerate(config.overtones)), config), config)
 
 
 def decay(wave, config):
     magnitude = np.exp(-config.decay/len(wave) * np.arange(len(wave)))
+
+    return magnitude * wave
+
+
+def attack(wave, config):
+    magnitude = -np.exp(-config.attack / len(wave) * np.arange(len(wave)))+1 \
+    if config.attack > 0 \
+    else np.ones(len(wave))
 
     return magnitude * wave
 
