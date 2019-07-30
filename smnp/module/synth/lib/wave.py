@@ -13,17 +13,15 @@ def pause(value, bpm):
     time.sleep(60 * 4 / value / bpm)
 
 
-def plot(note, config):
-    Y = sineForNote(note, config)
-    X = np.arange(len(Y))
-    plt.plot(X, Y)
+def plot(wave):
+    X = np.arange(len(wave))
+    plt.plot(X, wave)
     plt.show()
 
 
-def play(notes, config):
-    compiled = compilePolyphony(notes, config)
-    sd.play(compiled)
-    time.sleep(len(compiled) / FS)
+def play(wave):
+    sd.play(wave)
+    time.sleep(len(wave) / FS)
 
 
 def compilePolyphony(notes, config):
