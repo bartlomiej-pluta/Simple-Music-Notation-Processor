@@ -16,8 +16,8 @@ class Note:
         self.duration = duration    
         self.dot = dot        
     
-    def toFrequency(self):
-        return self.note.toFrequency() * 2 ** self.octave
+    def toFrequency(self, tuning):
+        return tuning[self.note] * 2 ** self.octave
     
     def transpose(self, interval):
         origIntRepr = self._intRepr()
