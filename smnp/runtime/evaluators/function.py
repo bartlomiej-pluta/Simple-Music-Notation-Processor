@@ -51,7 +51,7 @@ class ReturnEvaluator(Evaluator):
             # Disclaimer
             # Exception system usage to control program execution flow is really bad idea.
             # However because of lack of 'goto' instruction equivalent in Python
-            # there is to need to use some mechanism to break function execution on 'return' statement
+            # there is a need to use some mechanism to break function execution on 'return' statement
             # and immediately go to Environment's method 'invokeFunction()' or 'invokeMethod()',
             # which can handle value that came with exception and return it to code being executed.
         else:
