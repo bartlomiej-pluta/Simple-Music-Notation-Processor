@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sounddevice as sd
 
+from smnp.note.pitch import Tuning
 from smnp.type.model import Type
 
 FS = 44100
@@ -25,7 +26,8 @@ def play(wave):
 
 
 def compilePolyphony(notes, config):
-    compiledLines = [1 / len(notes) * compileNotes(line, config) for line in notes]
+    tuning = Tuning(config.tuning)
+    compiledLines = [1 / len(notes) * compileNotes(line, config, tuning) for line in notes]
     return sum(adjustSize(compiledLines))
 
 
@@ -35,17 +37,17 @@ def adjustSize(compiledLines):
     return [np.concatenate([line, np.zeros(maxSize - len(line))]) for line in compiledLines]
 
 
-def compileNotes(notes, config):
+def compileNotes(notes, config, tuning):
     dispatcher = {
-        Type.NOTE: lambda note, overtones: sineForNote(note.value, config),
+        Type.NOTE: lambda note, overtones: sineForNote(note.value, config, tuning),
         Type.INTEGER: lambda note, overtones: silenceForPause(note.value, config)
     }
 
     return np.concatenate([dispatcher[note.type](note, config) for note in notes])
 
 
-def sineForNote(note, config):
-    frequency = note.toFrequency()
+def sineForNote(note, config, tuning):
+    frequency = note.toFrequency(tuning)
     duration = 60 * 4 / note.duration / config.bpm
     duration *= 1.5 if note.dot else 1
     return sound(frequency, duration, config)

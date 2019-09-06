@@ -2,6 +2,7 @@ from enum import Enum
 
 from smnp.error.note import NoteException
 
+_semitone = 2**(1/12)
 
 class NotePitch(Enum):
     C = 0
@@ -17,21 +18,21 @@ class NotePitch(Enum):
     AIS = 10
     H = 11
 
-    def toFrequency(self):
-        return {
-            NotePitch.C: 16.35,
-            NotePitch.CIS: 17.32,
-            NotePitch.D: 18.35,
-            NotePitch.DIS: 19.45,
-            NotePitch.E: 20.60,
-            NotePitch.F: 21.83,
-            NotePitch.FIS: 23.12,
-            NotePitch.G: 24.50,
-            NotePitch.GIS: 25.96,
-            NotePitch.A: 27.50,
-            NotePitch.AIS: 29.17,
-            NotePitch.H: 30.87
-        }[self]
+    # def toFrequency(self):
+    #     return {
+    #         NotePitch.C: 16.35,
+    #         NotePitch.CIS: 17.32,
+    #         NotePitch.D: 18.35,
+    #         NotePitch.DIS: 19.45,
+    #         NotePitch.E: 20.60,
+    #         NotePitch.F: 21.83,
+    #         NotePitch.FIS: 23.12,
+    #         NotePitch.G: 24.50,
+    #         NotePitch.GIS: 25.96,
+    #         NotePitch.A: 27.50,
+    #         NotePitch.AIS: 29.17,
+    #         NotePitch.H: 30.87
+    #     }[self]
 
     def __str__(self):
         return self.name
@@ -48,6 +49,14 @@ class NotePitch(Enum):
             return NotePitch[string.upper()]
 
         raise NoteException(f"Note '{string}' does not exist")
+
+
+class Tuning(object):
+    def __init__(self, a4=440):
+        self.tuning = { value: a4/_semitone**(57-i) for i, value in enumerate(NotePitch.__members__) }
+
+    def __getitem__(self, item):
+        return self.tuning[str(item)]
 
 
 stringToPitch = {
