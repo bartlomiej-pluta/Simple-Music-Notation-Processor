@@ -1,0 +1,2 @@
+You have to have installed `PortAudio` in order to use app.
+
