@@ -10,6 +10,7 @@ sounddevice = "*"
 soundfile = "*"
 numpy = "*"
 matplotlib = "*"
+tkinter = "*"
 
 [requires]
 python_version = "3.7"

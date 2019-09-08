@@ -10,4 +10,4 @@ def _function(env, wave):
     plot(rawWave)
 
 
-function = Function(_signature, _function, 'plotWave')
+function = Function(_signature, _function, 'plot')
