@@ -1,11 +1,9 @@
-import sys
-import time
-
+from smnp.cli.parser import CliParser
 from smnp.error.base import SmnpException
 from smnp.library.loader import loadStandardLibrary
-from smnp.program.interpreter import Interpreter
-from smnp.cli.parser import CliParser
 from smnp.module.mic.lib.detector.noise import NoiseDetector
+from smnp.program.interpreter import Interpreter
+
 
 def interpretFile(args, file):
     stdLibraryEnv = loadStandardLibrary() if not args.dry_run else None

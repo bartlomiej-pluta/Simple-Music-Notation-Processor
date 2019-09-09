@@ -12,6 +12,7 @@ DEFAULT_BPM = 120
 DEFAULT_OVERTONES = [0.4, 0.3, 0.1, 0.1, 0.1]
 DEFAULT_DECAY = 4
 DEFAULT_ATTACK = 100
+DEFAULT_TUNING = 440
 
 
 def getBpm(config):
@@ -72,16 +73,29 @@ def getAttack(config):
     return DEFAULT_ATTACK
 
 
+def getTuning(config):
+    key = Type.string("tuning")
+    if key in config.value:
+        tuning = config.value[key]
+        if not tuning.type in [Type.INTEGER, Type.FLOAT] or tuning.value < 0:
+            raise RuntimeException("The 'tuning' property must be non-negative integer or float", None)
+
+        return tuning.value
+
+    return DEFAULT_TUNING
+
+
 class Config:
-    def __init__(self, bpm, overtones, decay, attack):
+    def __init__(self, bpm, overtones, decay, attack, tuning):
         self.bpm = bpm
         self.overtones = overtones
         self.decay = decay
         self.attack = attack
+        self.tuning = tuning
 
     @staticmethod
     def default():
-        return Config(DEFAULT_BPM, DEFAULT_OVERTONES, DEFAULT_DECAY, DEFAULT_ATTACK)
+        return Config(DEFAULT_BPM, DEFAULT_OVERTONES, DEFAULT_DECAY, DEFAULT_ATTACK, DEFAULT_TUNING)
 
 
 _signature1 = varargSignature(listOf(Type.NOTE, Type.INTEGER))
@@ -114,8 +128,9 @@ def __function3(config, notes):
     overtones = getOvertones(config)
     decay = getDecay(config)
     attack = getAttack(config)
+    tuning = getTuning(config)
 
-    return compilePolyphony(rawNotes, Config(bpm, overtones, decay, attack))
+    return compilePolyphony(rawNotes, Config(bpm, overtones, decay, attack, tuning))
 
 
 _signature4 = varargSignature(ofTypes(Type.NOTE, Type.INTEGER), ofType(Type.MAP))
@@ -128,8 +143,9 @@ def __function4(config, notes):
     overtones = getOvertones(config)
     decay = getDecay(config)
     attack = getAttack(config)
+    tuning = getTuning(config)
 
-    return compilePolyphony([ notes ], Config(bpm, overtones, decay, attack))
+    return compilePolyphony([ notes ], Config(bpm, overtones, decay, attack, tuning))
 
 
 function = CombinedFunction(
