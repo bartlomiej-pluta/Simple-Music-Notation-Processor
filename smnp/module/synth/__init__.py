@@ -1,4 +1,4 @@
-from smnp.module.synth.function import synth, pause, plot, compile
+from smnp.module.synth.function import synth, pause, plot, compile, fft
 
-functions = [ synth.function, pause.function, plot.function, compile.function ]
+functions = [ synth.function, pause.function, plot.function, compile.function, fft.function ]
 methods = []
