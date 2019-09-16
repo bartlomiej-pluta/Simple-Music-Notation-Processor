@@ -47,7 +47,7 @@ def getValueAccordingToType(value, type):
 
             raise ValueError()
 
-        raise RuntimeException(f"Type {type.value.name.lower()} is not suuported", None)
+        raise RuntimeException(f"Type {type.value.name.lower()} is not supported", None)
 
     except ValueError:
         raise RuntimeException(f"Invalid value '{value}' for type {type.value.name.lower()}", None)

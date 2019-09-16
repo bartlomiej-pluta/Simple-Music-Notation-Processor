@@ -1684,7 +1684,7 @@ using `--tokens` flag, for example:
 ```
 $ smnp --tokens --dry-run -c "[1, 2, 3] as i ^ println(\"Current: \" + i.toString());"
 [Current(0): {OPEN_SQUARE, '[', (0, 0)}
-{OPEN_SQUARE, '[', (0, 0)}, {INTEGER, '1', (0, 1)}, {COMMA, ',', (0, 2)}, {INTEGER, '2', (0, 4)}, {COMMA, ',', (0, 5)}, {INTEGER, '3', (0, 7)}, {CLOSE_SQUARE, ']', (0, 8)}, {AS, 'as', (0, 10)}, {IDENTIFIER, 'i', (0, 13)}, {DASH, '^', (0, 15)}, {IDENTIFIER, 'println', (0, 17)}, {OPEN_PAREN, '(', (0, 24)}, {STRING, 'Current: ', (0, 25)}, {PLUS, '+', (0, 37)}, {IDENTIFIER, 'i', (0, 39)}, {DOT, '.', (0, 40)}, {IDENTIFIER, 'toString', (0, 41)}, {OPEN_PAREN, '(', (0, 49)}, {CLOSE_PAREN, ')', (0, 50)}, {CLOSE_PAREN, ')', (0, 51)}, {SEMICOLON, ';', (0, 52)}]
+{OPEN_SQUARE, '[', (0, 0)}, {INTEGER, '1', (0, 1)}, {COMMA, ',', (0, 2)}, {INTEGER, '2', (0, 4)}, {COMMA, ',', (0, 5)}, {INTEGER, '3', (0, 7)}, {CLOSE_SQUARE, ']', (0, 8)}, {AS, 'as', (0, 10)}, {IDENTIFIER, 'i', (0, 13)}, {CARET, '^', (0, 15)}, {IDENTIFIER, 'println', (0, 17)}, {OPEN_PAREN, '(', (0, 24)}, {STRING, 'Current: ', (0, 25)}, {PLUS, '+', (0, 37)}, {IDENTIFIER, 'i', (0, 39)}, {DOT, '.', (0, 40)}, {IDENTIFIER, 'toString', (0, 41)}, {OPEN_PAREN, '(', (0, 49)}, {CLOSE_PAREN, ')', (0, 50)}, {CLOSE_PAREN, ')', (0, 51)}, {SEMICOLON, ';', (0, 52)}]
 ``` 
 
 Tokenizer tries to match input with all available patterns, sticking

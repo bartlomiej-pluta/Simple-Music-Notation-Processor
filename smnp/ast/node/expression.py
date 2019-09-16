@@ -113,11 +113,11 @@ def LoopParser(input):
     return Parser.allOf(
         ExpressionWithoutLoopParser,
         Parser.optional(loopParameters),
-        Parser.terminal(TokenType.DASH, createNode=Operator.withValue),
+        Parser.terminal(TokenType.CARET, createNode=Operator.withValue),
         StatementParser,
         Parser.optional(loopFilter),
         createNode=Loop.loop,
-        name="dash-loop"
+        name="caret-loop"
     )(input)
 
 

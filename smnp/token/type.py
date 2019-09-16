@@ -21,7 +21,7 @@ class TokenType(Enum):
     SLASH = '/'
     MINUS = '-'
     PLUS = '+'
-    DASH = '^'
+    CARET = '^'
     DOTS = '...'
     AMP = '&'
     DOT = '.'
