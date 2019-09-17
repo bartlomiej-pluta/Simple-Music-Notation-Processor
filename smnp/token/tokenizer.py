@@ -36,7 +36,7 @@ tokenizers = (
     defaultTokenizer(TokenType.SLASH),
     defaultTokenizer(TokenType.MINUS),
     defaultTokenizer(TokenType.PLUS),
-    defaultTokenizer(TokenType.DASH),
+    defaultTokenizer(TokenType.CARET),
     defaultTokenizer(TokenType.DOTS),
     defaultTokenizer(TokenType.AMP),
     defaultTokenizer(TokenType.DOT),

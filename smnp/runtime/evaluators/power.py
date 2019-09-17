@@ -18,4 +18,4 @@ class PowerEvaluator(Evaluator):
         if not right.type in supportedTypes:
             raise RuntimeException(f"Operator '{node.operator.value}' is supported only by {[t.name.lower() for t in supportedTypes]} type", node.right.pos)
 
-        return Type.integer(int(left.value ** right.value))
+        return Type.float(float(left.value ** right.value))

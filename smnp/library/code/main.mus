@@ -1,0 +1,492 @@
+function flat(list lists...) {
+    return _flat(lists as l ^ _flat(l, []), []);
+}
+
+function _flat(list l, list output) {
+    l as elem ^ {
+        if (typeOf(elem) == list) {
+            output = _flat(elem, output);
+        } else {
+            output = output + [elem];
+        }
+    }
+
+    return output;
+}
+
+extend note as n {
+    function withOctave(integer octave) {
+        return Note(n.pitch, octave, n.duration, n.dot);
+    }
+
+    function withDuration(integer duration) {
+        return Note(n.pitch, n.octave, duration, n.dot);
+    }
+
+    function withDot(bool dot) {
+        return Note(n.pitch, n.octave, n.duration, dot);
+    }
+
+    function toIntRepr() {
+        return n.octave * 12 + _pitchToNumber(n.pitch);
+    }
+
+    function transpose(integer value) {
+        return noteFromIntRepr(n.toIntRepr() + value, n.duration, n.dot);
+    }
+}
+
+function noteFromIntRepr(integer intRepr, integer duration, bool dot) {
+    pitch = _numberToPitch(mod(intRepr, 12));
+    octave = Integer(intRepr / 12);
+    return Note(pitch, octave, duration, dot);
+}
+
+function mod(integer a, integer b) {
+    return a - b * Integer(a/b);
+}
+
+function _pitchToNumber(string pitch) {
+    return _keysToIntMapper(
+        "C",
+        "CIS",
+        "D",
+        "DIS",
+        "E",
+        "F",
+        "FIS",
+        "G",
+        "GIS",
+        "A",
+        "AIS",
+        "H"
+    ).get(pitch);
+}
+
+function _keysToIntMapper(keys...) {
+    return Map(keys as (i, key) ^ [key, i]);
+}
+
+function _numberToPitch(integer number) {
+    return ["C", "CIS", "D", "DIS", "E", "F", "FIS", "G", "GIS", "A", "AIS", "H"].get(number);
+}
+
+function transpose(integer value, <note, integer, list<note, integer>> notes...) {
+    if (notes.size == 1) {
+        first = notes.get(0);
+        if (typeOf(first) == integer) {
+            return first;
+        } else if (typeOf(first) == note) {
+            return first.transpose(value);
+        } else if (typeOf(first) == list) {
+            return _transpose(value, first);
+        }
+    }
+
+    noteOrInteger = false;
+    lists = false;
+
+    notes as n ^ {
+        if (typeOf(n) == note or typeOf(n) == integer) {
+            noteOrInteger = true;
+            if (lists) {
+                throw "Mixing notes and integers with lists of them is not supported";
+            }
+        } else if (typeOf(n) == list) {
+            lists = true;
+            if (noteOrInteger) {
+                throw "Mixing notes and integers with lists of them is not supported";
+            }
+        }
+    }
+
+    output = [];
+    notes as n ^ {
+        if (typeOf(n) == integer) {
+            output = output + [n];
+        } else if (typeOf(n) == note) {
+            output = output + [n.transpose(value)];
+        } else if (typeOf(n) == list) {
+            output = output + [_transpose(value, n)];
+        }
+    }
+
+    return output;
+}
+
+function _transpose(integer value, list<note, integer> notes) {
+    output = [];
+    notes as n ^ {
+        if (typeOf(n) == integer) {
+            output = output + [n];
+        } else if (typeOf(n) == note) {
+            output = output + [n.transpose(value)];
+        }
+    }
+    return output;
+}
+
+function transposeTo(note target, <note, integer, list<note, integer>> notes...) {
+    if (notes.size == 1) {
+        first = notes.get(0);
+        if (typeOf(first) == integer) {
+            return first;
+        } else if (typeOf(first) == note) {
+            return _transposeTo(target, notes).get(0);
+        } else if (typeOf(first) == list) {
+            return _transposeTo(target, first);
+        }
+    }
+
+    noteOrInteger = false;
+    lists = false;
+
+    notes as n ^ {
+        if (typeOf(n) == note or typeOf(n) == integer) {
+            noteOrInteger = true;
+            if (lists) {
+                throw "Mixing notes and integers with lists of them is not supported";
+            }
+        } else if (typeOf(n) == list) {
+            lists = true;
+            if (noteOrInteger) {
+                throw "Mixing notes and integers with lists of them is not supported";
+            }
+        }
+    }
+
+    if (noteOrInteger) {
+        return _transposeTo(target, notes);
+    }
+
+    if (lists) {
+        return notes as n ^ _transposeTo(target, n);
+    }
+}
+
+function _transposeTo(note target, list<note, integer> notes) {
+    if (notes.size == 0) {
+        throw "Provide list with one note at least";
+    }
+
+    firstNote = notes.get(0);
+    semitones = semitones(firstNote, target);
+    return transpose(semitones, notes);
+}
+
+function tuplet(integer n, integer m, note notes...) {
+    if (n != notes.size) {
+        throw "Expected " + n.toString() + " notes exactly, whereas " + notes.size.toString() + " was passed";
+    }
+
+    return notes as x ^ x.withDuration(x.duration * n / m);
+}
+
+extend list as l with function contains(expectedValue) {
+    return (l as value ^ value % value == expectedValue).size > 0;
+}
+
+extend map as m {
+    function containsKey(expectedKey) {
+        return m.keys.contains(expectedKey);
+    }
+
+    function containsValue(expectedValue) {
+        return m.values.contains(expectedValue);
+    }
+
+    function contains(key, value) {
+        if (m.keys.contains(key)) {
+            return m.get(key) == value;
+        }
+
+        return false;
+    }
+}
+
+function sample(items...) {
+    if (items.size == 0) {
+        throw "Provide one item at least";
+    }
+
+    if (items.size == 1 and typeOf(items) == list) {
+        return items.get(0).get(rand(0, items.get(0).size-1));
+    }
+
+    return items.get(rand(0, items.size-1));
+}
+
+extend string as s with function join(list<string> l) {
+    output = "";
+    l as (index, item) ^ {
+        output = output + item;
+        if (index < l.size - 1) {
+            output = output + s;
+        }
+    }
+
+    return output;
+}
+
+function random(map<string><> items...) {
+    accumulator = 0;
+    items as (index, item) ^ {
+        if (item.size != 2) {
+            throw "Expected lists with two items: percent and value";
+        }
+
+        if (not item.containsKey("percent")) {
+            throw "Item " + (index+1).toString() + " does not have 'percent' key";
+        }
+
+        if (not item.containsKey("value")) {
+            throw "Item " + (index+1).toString() + " does not have 'value' key";
+        }
+
+        accumulator = accumulator + item.get("percent");
+    }
+
+    if (accumulator != 100) {
+        throw "Sum of first element of each item must be equal to 100";
+    }
+
+    accumulator = 0;
+    random = rand(0, 99);
+    items as item ^ {
+        accumulator = accumulator + item.get("percent");
+        if (random < accumulator) {
+            return item.get("value");
+        }
+    }
+}
+
+function semitones(<note, integer, list<note, integer>> notes...) {
+    noteOrInteger = false;
+    lists = false;
+
+    notes as n ^ {
+        if (typeOf(n) == note or typeOf(n) == integer) {
+            noteOrInteger = true;
+            if (lists) {
+                throw "Mixing notes and integers with lists of them is not supported";
+            }
+        } else if (typeOf(n) == list) {
+            lists = true;
+            if (noteOrInteger) {
+                throw "Mixing notes and integers with lists of them is not supported";
+            }
+        }
+    }
+
+    if (noteOrInteger) {
+        return _semitones(notes);
+    }
+
+    if (lists) {
+        output = [];
+        notes as n ^ {
+            output = output + [_semitones(n)];
+        }
+
+        #if (output.size == 1) {
+        #    return output.get(0)
+        #}
+
+        return output;
+    }
+
+    return [];
+}
+
+function _semitones(list<note, integer> notes) {
+    onlyNotes = notes as n ^ n % typeOf(n) == note;
+
+    if (onlyNotes.size == 2 and typeOf(onlyNotes.get(0)) == note and typeOf(onlyNotes.get(1)) == note) {
+        first = onlyNotes.get(0);
+        second = onlyNotes.get(1);
+        return second.toIntRepr() - first.toIntRepr();
+    }
+
+    if (onlyNotes.size < 2) {
+        throw "Provide 2 notes at least to evaluate semitones between them";
+    }
+
+    output = [];
+    range(1, onlyNotes.size-1) as i ^ {
+        output = output + [onlyNotes.get(i).toIntRepr() - onlyNotes.get(i-1).toIntRepr()];
+    }
+
+    return output;
+}
+
+function stringInterval(integer semitones) {
+    return [
+        "1",
+        "2m",
+        "2M",
+        "3m",
+        "3M",
+        "4",
+        "5d/4A",
+        "5",
+        "6m",
+        "6M",
+        "7m",
+        "7M"
+    ].get(semitones);
+}
+
+function interval(<note, integer, list<note, integer>> notes...) {
+    noteOrInteger = false;
+    lists = false;
+
+    notes as n ^ {
+        if (typeOf(n) == note or typeOf(n) == integer) {
+            noteOrInteger = true;
+            if (lists) {
+                throw "Mixing notes and integers with lists of them is not supported";
+            }
+        } else if (typeOf(n) == list) {
+            lists = true;
+            if (noteOrInteger) {
+                throw "Mixing notes and integers with lists of them is not supported";
+            }
+        }
+    }
+
+    if (noteOrInteger) {
+        semitones = _semitones(notes);
+        if (typeOf(semitones) == list) {
+            return semitones as n ^ stringInterval(n);
+        } else {
+            return stringInterval(semitones);
+        }
+    }
+
+    if (lists) {
+        output = [];
+        notes as n ^ {
+            semitones = _semitones(n);
+            if (typeOf(semitones) == list) {
+                output = output + [_semitones(n) as semitone ^ stringInterval(semitone)];
+            } else {
+                output = output + [stringInterval(semitones)];
+            }
+        }
+
+        #if (output.size == 1) {
+        #    return output.get(0);
+        #}
+
+        return output;
+    }
+
+    return [];
+}
+
+function noteRange(note a, note b, string filter = "all") {
+    filters = {
+        "all" -> [ "C", "CIS", "D", "DIS", "E", "F", "FIS", "G", "GIS", "A", "AIS", "H" ],
+        "diatonic" -> [ "C", "D", "E", "F", "G", "A", "H" ],
+        "chromatic" -> [ "CIS", "DIS", "FIS", "GIS", "AIS" ]
+    };
+
+    if (not filters.containsKey(filter)) {
+        throw "Unknown filter: '" + filter + "'";
+    }
+
+    notes = range(a.toIntRepr(), b.toIntRepr()) as intRepr ^ noteFromIntRepr(intRepr, a.duration, a.dot);
+    return notes as n ^ n % filters.get(filter).contains(n.pitch);
+
+}
+
+function range(<integer, float> a, <integer, float> b, <integer, float> step = 1) {
+    if (not (step > 0)) {
+        throw "Step should be greater than 0";
+    }
+
+    if (a > b) {
+        throw "Upper range value should be greater than lower or equal to";
+    }
+
+    output = [];
+
+    i = a;
+    i <= b ^ {
+        output = output + [i];
+        i = i + step;
+    }
+
+    return output;
+}
+
+function alert(<integer, bool> cycles = true, string melody = "beep", list<float, integer> overtones = [0.5, 0.0, 0.0, 0.5]) {
+    if (not [integer, bool].contains(typeOf(cycles))) {
+        throw "Provide 'true' or number of cycles as first argument";
+    }
+
+    if (typeOf(cycles) == integer) {
+        if (cycles < 1) {
+            throw "Number of cycles cannot be less than 1";
+        }
+    }
+
+    if (typeOf(cycles) == bool) {
+        if (not cycles) {
+            throw "Provide 'true' or number of cycles as first argument";
+        }
+    }
+
+    notes = {
+        "beep" -> [@c5:16, 32, @c5:16, 3],
+        "s1" -> noteRange(@c5:32, @g5:32),
+        "s2" -> _upDown(noteRange(@c5:32, @g5:32)),
+        "s3" -> [@a5:16, @d5:16],
+        "semitone" -> [@c5:16, @db5:16]
+    };
+
+    if (not notes.containsKey(melody)) {
+        throw "Unknown melody '" + melody + "'. Available: 'beep', 's1', 's2', 's3' and 'semitone'";
+    }
+
+    config = {
+        bpm -> 120,
+        decay -> 0.5,
+        attack -> 200,
+        overtones -> overtones
+    };
+
+    wave = wave(config, notes.get(melody));
+
+    cycles ^ synth(wave);
+}
+
+function _upDown(list l) {
+    return l + -l;
+}
+
+function metronome(integer bpm = 120, integer beats = 4, countMeasures = false) {
+    accent = wave({
+        overtones -> flat([0.5, 0.1, 10^0, 0.1, 10^0, 0.1, 20^0, 0.1, 25^0, 0.05, 25^0, 0.05]),
+        attack -> 0,
+        decay -> 5,
+        bpm -> bpm
+    }, @c);
+
+    beat = wave({
+        overtones -> flat([0.5, 10^0, 0.3, 10^0, 0.2]),
+        attack -> 0,
+        decay -> 100,
+        bpm -> bpm
+    }, @c);
+
+    measure = 1;
+    true ^ {
+        if (countMeasures) {
+            println(measure);
+            measure = measure + 1;
+        }
+        synth(accent);
+        beats - 1 ^ synth(beat);
+    }
+}
