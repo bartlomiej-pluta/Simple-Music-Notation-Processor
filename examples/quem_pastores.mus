@@ -1,0 +1,31 @@
+println("Narodził się nam Zbawiciel / Quem pastores laudavere");
+println("mel.: XIV w.");
+println("sł.: XV - XVI w.");
+println("harm.: Bartłomiej Pluta");
+
+s1 = [@f:2, @a, @c5:2, @a, @c5:2, @d5, @c5, @g:2];
+s2 = [@a:2, @c5, @b:2, @g, @f:2, @d, @e, @c:2];
+s3 = [@a:2, @b, @c5:2, @d5, @c5:2, @g, @a, @f:2];
+s4 = [@b:2, @b, @a, @g, @a, @f, @d, @e, @f:2d];
+
+a1 = [@c:2, @f, @g:2, @f, @f, @g, @f, @f, @f, @e];
+a2 = [@f, @e, @eb, @d:2, @c, @d:2, @d, @c, @c, @b3];
+a3 = [@c:2, @c, @f, @d, @g, @g:2, @e, @e, @d:2];
+a4 = [@f:2, @f, @f, @e, @f, @c:2, @c, @c:2d];
+
+t1 = [@a, @b, @c5, @c5, @b, @c5, @a:2, @b, @a, @c5:2];
+t2 = [@c5:2, @a, @b:2, @c5, @d5, @c, @b, @g, @g:2];
+t3 = [@f, @a, @g, @a:2, @b, @b:2, @g, @g, @a:2];
+t4 = [@d5, @db5, @db5, @c5, @b, @a, @g:2, @b, @a:2d];
+
+b1 = [@f:2, @f, @e:2, @f, @f:2, @f, @c, @c:2];
+b2 = [@f:2, @f#, @g, @f, @e, @d, @f, @g, @c, @e:2];
+b3 = [@f:2, @e, @f, @f#, @g, @e, @d, @c, @c#, @d, @c];
+b4 = [@b3:2, @b, @c:2, @c, @c:2, @c, @f:2d];
+
+S = s1 + s2 + s3 + s4;
+A = a1 + a2 + a3 + a4;
+T = transpose(-12, t1 + t2 + t3 + t4);
+B = transpose(-12, b1 + b2 + b3 + b4);
+
+synth({ overtones -> [0.6, 0.25, 0.1] + (2 ^ 0.0) + [0.05], attack -> 50, decay -> 1 }, S, A, T, B);
