@@ -1,0 +1,45 @@
+extend list as array {
+    function withoutIndex(integer index) {
+        return array as (i, element) ^ element % i != index;
+    }
+
+    function push(integer index, value) {
+        return (index as i ^ array.get(i)) + [value] + ((array.size-index) as i ^ array.get(i+index));
+    }
+
+    function replace(integer index, value) {
+        return array
+            .withoutIndex(index)
+            .push(index, value);
+    }
+
+    function swap(integer a, integer b) {
+        A = array.get(a);
+        B = array.get(b);
+        return array
+            .replace(a, B)
+            .replace(b, A);
+    }
+}
+
+function bubbleSort(list<integer, float> numbers) {
+    sorted = numbers;
+    -(numbers.size as n ^ n) as i ^ {
+        i as j ^ {
+            if (sorted.get(j) > sorted.get(j+1)) {
+                sorted = sorted.swap(j, j+1);
+            }
+        }
+    }
+
+    return sorted;
+}
+
+min = 0;
+max = 100;
+size = 30;
+
+randList = size ^ rand(min, max);
+
+println(randList);
+println(bubbleSort(randList));
