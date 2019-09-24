@@ -253,7 +253,7 @@ Note literal is written with the following syntax:
 ; where
 
 PITCH := (c|d|e|f|g|a) [b|#] | h# | b
-       | (C|D|E|F|G|A) [B|#] | H# | B
+       | (C|D|E|F|G|A) [b|#] | H# | B
 OCTAVE := 1-9
 DURATION := /non-negative integer/
 ```
@@ -277,7 +277,7 @@ Examples (note that pitch is case-insensitive):
 * `@F5:2` is half note with pitch *f''*
 * `@g#3:4d` is dotted quarter note with pitch *g♯*
 * `@Ab6:16` is sixteenth note with pitch *a♭'''*
-* `@b2:1` is whole note with pitch *B* (*H♯*)
+* `@b2:1` is whole note with pitch *B* (*H♭*)
 * `@C#1:32d` is dotted thirty-second note with pitch *C♯,*
 
 **Note:** note literal syntax cannot include any whitespace character. 

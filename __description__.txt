@@ -1,0 +1,1 @@
+Simple Music Notation Processor is a command line tool enabling you to do some music stuff using custom domain-specific language.

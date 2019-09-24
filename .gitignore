@@ -2,3 +2,4 @@ __pycache__/
 *.mus
 .idea/*
 venv/
+SMNP.egg-info
