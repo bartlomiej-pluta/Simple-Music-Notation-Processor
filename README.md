@@ -2364,3 +2364,9 @@ to see what is going on at each language processing stage:
 * `--ast` - *pretty-prints* abstract syntax tree as parser's output for passed code
 * `--dry-run` - runs language-processing tools without involving evaluator
 
+## Installation
+To install SMNP:
+1. Make sure you have already installed *PortAudio* in your OS (it is required by Audio Module
+to send data frames to your sound device)
+2. Clone this repository
+3. Run `pip install .`
