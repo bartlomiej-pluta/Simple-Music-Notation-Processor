@@ -1,9 +1,11 @@
 import argparse
-import os
+
+from pkg_resources import resource_string
 
 
 def file(file):
-    return open(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, file)).read()
+    return resource_string('smnp.meta', file).decode("utf-8")
+
 
 
 class CliParser(object):

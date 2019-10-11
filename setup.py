@@ -8,9 +8,9 @@ def file(file):
 
 setup(
     name='SMNP',
-    version=file('__version__.txt'),
-    packages=find_packages(include=['smnp']),
-    description=file('__description__.txt'),
+    version=file('smnp/meta/__version__.txt'),
+    packages=find_packages(),
+    description=file('smnp/meta/__description__.txt'),
     author='Bartlomiej P. Pluta',
     url='https://gitlab.com/bartlomiej.pluta/smnp',
     install_requires=[
@@ -29,5 +29,8 @@ setup(
     entry_points={
         'console_scripts': ['smnp=smnp.main:main']
     },
-    package_data={'smnp.library.code': ['main.mus']}
+    package_data={
+        'smnp.library.code': ['main.mus'],
+        'smnp.meta': ['__version__.txt', '__description__.txt']
+    }
 )
