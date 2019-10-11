@@ -1,13 +1,16 @@
 import argparse
 
-VERSION = "0.1"
-DESCRIPTION = """
-    Simple Music Notation Processor is a command line tool enabling you to do some music stuff using custom domain-specific language.
-"""
+from pkg_resources import resource_string
+
+
+def file(file):
+    return resource_string('smnp.meta', file).decode("utf-8")
+
+
 
 class CliParser(object):
     def __init__(self):
-        self.parser = argparse.ArgumentParser(description=DESCRIPTION)
+        self.parser = argparse.ArgumentParser(description=file("__description__.txt"))
         self.parser.add_argument('file', nargs='*', help='a file containing SMNP code')
         self.parser.add_argument('-c', '--code', action='append', default=[], type=str, help='a string with SMNP code')
         self.parser.add_argument('-m', '--mic',  action='store_true', help='test microphone level')
@@ -17,7 +20,7 @@ class CliParser(object):
         self.parser.add_argument('--tokens', action='store_true', help='print tokens of parsed code')
         self.parser.add_argument('--ast', action='store_true', help='print abstract syntax tree of parsed code')
         self.parser.add_argument('--dry-run', action='store_true', help='don\'t execute passed code')
-        self.parser.version = VERSION
+        self.parser.version = file("__version__.txt")
 
     def parse(self):
         return self.parser.parse_args()
